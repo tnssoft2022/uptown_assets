@@ -49,6 +49,18 @@ back once. You don't see the director's conversation, so work only from what the
      [missing] if not given.
 
 4. Write it all to `brief.md` in the output folder the task names (or the asset folder's parent if none):
+   - "Readiness" (first, at the top), so the director sees at a glance whether the video can be made:
+     - Rooms: each room label with its count of usable assets, and the usual rooms that have none (exterior,
+       entry, living, kitchen, primary suite, bathroom). Mark a missing room that the listing names as a
+       standout feature.
+     - Low-resolution assets: photos under 1080 px on the short side, which will look soft in a 9:16 frame or
+       when zoomed.
+     - Missing facts, split into must-have and nice-to-have. Must-have: the agent contact for the end card
+       (name and phone or link), sale or rent, the price or rent, and the licence for any music file given.
+       Nice-to-have: everything else from step 2.
+     - Verdict, one of: "Ready", "Ready but shorter" (say the length the usable assets support, at about
+       1–2 seconds per shot) or "Not ready" (any must-have fact missing, or fewer than 5 usable assets),
+       with a one-line reason.
    - "Assets": a table of every file with its labels, and the unusable ones with the reason.
    - "Facts": the facts and the missing ones.
    - "Treatment": the hook, the story order and the music mood, written so the director can show it to the user.
@@ -57,5 +69,6 @@ back once. You don't see the director's conversation, so work only from what the
      output folder, end card text and music (with, without or both), in the form the editor agent expects.
    - "Open questions": what the director needs to ask the user.
 
-Your report (the director reads only this): the path to brief.md, the treatment in a few lines, the target
+Your report (the director reads only this): the path to brief.md, the readiness verdict with its reason and
+the missing rooms, the treatment in a few lines, the target
 length, the voice-over script if any, the unusable assets, the missing facts, any compliance flags and the open questions.
