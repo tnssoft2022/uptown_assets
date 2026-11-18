@@ -40,6 +40,11 @@ back once. You don't see the director's conversation, so work only from what the
    - A shot list: asset path, duration, on-screen text, and the transition. Use 0.3 s crossfades
      unless the task says otherwise, and work out the total length minus the overlaps.
    - Captions with timings (start and end second for each line), short enough to read in time.
+   - Voice-over, only if the task asks for one: a script line per shot (a shot may have none), with each
+     shot's start second and duration. Use only facts from the listing, keep it in step with the on-screen
+     text, and leave the hook's first second and the end card quiet unless the task says otherwise. Keep each
+     line short enough to say in its shot: in Thai about 12 characters per second of speech, in English about
+     2.5 words per second. When there is a voice-over, captions follow the spoken lines.
    - The music mood, and the end card: agent name, contact and call to action as the task gives them, or
      [missing] if not given.
 
@@ -47,9 +52,10 @@ back once. You don't see the director's conversation, so work only from what the
    - "Assets": a table of every file with its labels, and the unusable ones with the reason.
    - "Facts": the facts and the missing ones.
    - "Treatment": the hook, the story order and the music mood, written so the director can show it to the user.
+   - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the voice agent.
    - "Editor brief": the shot list, captions with timings, transitions, target total length, asset paths,
      output folder, end card text and music (with, without or both), in the form the editor agent expects.
    - "Open questions": what the director needs to ask the user.
 
 Your report (the director reads only this): the path to brief.md, the treatment in a few lines, the target
-length, the unusable assets, the missing facts, any compliance flags and the open questions.
+length, the voice-over script if any, the unusable assets, the missing facts, any compliance flags and the open questions.

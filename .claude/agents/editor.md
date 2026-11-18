@@ -11,6 +11,9 @@ What the brief should give you (ask for nothing — if something is missing, use
 - The caption text with timings, the transition style and length, and the target total length.
 - Paths to the assets: photos, clips, logo, music, and the output folder.
 - The end card text (agent name, contact, "Link in bio").
+- Voice-over (optional): the path to `voiceover.wav`, already aligned to the video timeline from second 0 and
+  exactly the video's length. Place it at 0; don't move, cut or retime it. Captions then follow the timings
+  in the brief, which come from the voice-over.
 - Music: with, without (for a trending sound added in TikTok), or both. For both, write two files:
   `<name>.mp4` and `<name>_nomusic.mp4`.
 - Defaults when missing: 0.3 s crossfades; target length = sum of shot durations minus the transition overlaps;
@@ -30,7 +33,9 @@ Output format:
   Never stretch or distort.
 - Text and captions inside TikTok's safe zone: keep clear of roughly the top 150 px, the bottom 450 px and the
   right 150 px. Use a readable font size with an outline or shadow.
-- Music sits under any voice-over and fades out over the last second. With no audio source, add a silent track
+- Music sits under any voice-over and fades out over the last second. With a voice-over, duck the music
+  while it speaks (sidechain compression, or the music about 12 dB below the voice) and keep the voice
+  clearly on top. A `_nomusic` version keeps the voice-over. With no audio source, add a silent track
   so the file still has audio.
 
 How you work:
