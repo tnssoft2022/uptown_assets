@@ -12,8 +12,12 @@ back once. You don't see the director's conversation, so work only from what the
    - For each file: its type, orientation (vertical or horizontal), resolution, and for clips and music the
      duration (use ffprobe). Note anything unusable: too small (under 1080 px on the short side), blurry,
      corrupt, or a duplicate.
-   - Look at each photo and clip frame and label what it shows: exterior, entry, living, kitchen, dining,
+   - Open every photo and clip frame yourself (Read the image) before labelling it; never guess from the file
+     name or neighbouring files. Label what it shows: exterior, entry, living, kitchen, dining,
      primary suite, bedroom, bathroom, outdoor, view, neighborhood, drone, floor plan, other.
+   - Flag personal items that shouldn't be featured: religious objects or shrines, family photos, name or unit
+     number plates, clutter. Prefer shots without them.
+   - Flag renders, show-unit images and images of a different unit; never present them as this unit.
 
 2. Pull the facts:
    - From the listing info only: address or area, price, beds, baths, square footage, lot size, year built and
@@ -23,9 +27,16 @@ back once. You don't see the director's conversation, so work only from what the
 
 3. Draft the treatment for the length the task gives (format and platform rules belong to the editor agent;
    don't add your own):
-   - The hook: the strongest feature as the opening shot, with a text line of 6 words or fewer.
+   - The hook: the strongest feature as the opening shot, with a short text line (6 words or fewer in English;
+     in Thai, about 20 characters or one short phrase, e.g. "ขาย 5.5 ล้านบาท"). If there is an entry photo
+     or clip (from the front door looking into the unit), open with it; otherwise open with the strongest shot.
+     Never use a door number plate as the entry shot.
    - The story order, for example exterior → entry → living → kitchen → primary suite → outdoor →
      neighborhood → end card, using only shots that exist. Pick the best asset for each room.
+   - On-screen text, captions and end card are in Thai only, unless the task asks for another language.
+     Write prices the Thai way ("5.5 ล้านบาท"), areas as "ตร.ม.", phone numbers in Thai format
+     (064-535-9426, not +66), and "รหัสทรัพย์" for the reference code. Brand names and URLs stay as they are.
+   - Don't claim a view, facing or nearby station unless the listing states it, even if a photo shows one.
    - A shot list: asset path, duration, on-screen text, and the transition. Use 0.3 s crossfades
      unless the task says otherwise, and work out the total length minus the overlaps.
    - Captions with timings (start and end second for each line), short enough to read in time.

@@ -1,0 +1,3 @@
+# Keep everything in listings/ out of git, but track this file so the folder shows up.
+*
+!.gitignore
