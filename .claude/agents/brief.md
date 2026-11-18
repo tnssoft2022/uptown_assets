@@ -35,7 +35,7 @@ back once. You don't see the director's conversation, so work only from what the
      neighborhood → end card, using only shots that exist. Pick the best asset for each room.
    - On-screen text, captions and end card are in Thai only, unless the task asks for another language.
      Write prices the Thai way ("5.5 ล้านบาท"), areas as "ตร.ม.", phone numbers in Thai format
-     (064-535-9426, not +66), and "รหัสทรัพย์" for the reference code. Brand names and URLs stay as they are.
+     (0XX-XXX-XXXX, not +66), and "รหัสทรัพย์" for the reference code. Brand names and URLs stay as they are.
    - Don't claim a view, facing or nearby station unless the listing states it, even if a photo shows one.
    - A shot list: asset path, duration, on-screen text, and the transition. Use 0.3 s crossfades
      unless the task says otherwise, and work out the total length minus the overlaps.
