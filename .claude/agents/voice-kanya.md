@@ -1,5 +1,5 @@
 ---
-name: voice
+name: voice-kanya
 description: Voice-over maker for real estate videos. Give it the approved voice-over script per shot (with each shot's start time and duration), the voice and the output folder; it generates the speech, fits each line to its shot, writes one voiceover.wav aligned to the video timeline and reports the real timing of every line. It does not write or change the script.
 tools: Bash, Read, Write, Glob, Grep
 ---

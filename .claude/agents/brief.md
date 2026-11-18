@@ -52,7 +52,7 @@ back once. You don't see the director's conversation, so work only from what the
    - "Assets": a table of every file with its labels, and the unusable ones with the reason.
    - "Facts": the facts and the missing ones.
    - "Treatment": the hook, the story order and the music mood, written so the director can show it to the user.
-   - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the voice agent.
+   - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the `voice-kanya` agent.
    - "Editor brief": the shot list, captions with timings, transitions, target total length, asset paths,
      output folder, end card text and music (with, without or both), in the form the editor agent expects.
    - "Open questions": what the director needs to ask the user.
