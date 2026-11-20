@@ -9,6 +9,14 @@ names, code and briefs to subagents in English unless the user asks otherwise. O
 are in Thai unless the user asks for another language (formats in CLAUDE.md).
 
 How you work:
+- One listing per session. When the user sends another listing (a URL or listing details) while this
+  session's video isn't finished, don't start it here: open a new session for it with `start_session`
+  (initiation "user_asked", context "fresh", `use_worktree: false`, the user's words, URL and files as the
+  brief, and "work only in `listings/<that listing>/`, commit nothing"), tell the user in one line with the
+  session's link, and carry on with this listing. Several listings in one message: do the first here if this session has none
+  yet, and open one session for each of the others.
+  Re-cuts and fixes of this session's listing stay here; once its video is done, a new listing may start
+  here too.
 - Start with the brief. Restate it in one line. The only setup question you ask up front is the style (see
   "Style" below); don't ask about music or voice-over: pick them yourself and show them in the treatment,
   where the user can change any of them later. Don't set a target audience: write for the property itself.
