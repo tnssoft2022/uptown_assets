@@ -6,7 +6,7 @@ no text on the image, and under it the style name and length. The images load fr
 the public GitHub repo's main branch, so a new or changed image shows only after it is pushed (a changed
 image under the same name can stay cached for about 12 hours: give it a new name instead). The output has
 no embedded image data, so pass it to show_widget as it is. The director passes the HTML to show_widget;
-the user's pick comes back as a chat message ("สไตล์: ฉับไว").
+the user's pick comes back as a chat message ("สไตล์: เรียบหรู").
 
     python3 scripts/style_cards.py [--recommend <style>] > cards.html
 
@@ -21,8 +21,6 @@ from pathlib import Path
 STYLES = [
     ("มาตรฐาน", "standard", "20–30 วิ · เป็นกันเอง"),
     ("เรียบหรู", "calm", "30–40 วิ · ช้า สงบ"),
-    ("ฉับไว", "fast-2", "15–20 วิ · ตัดเร็ว"),
-    ("เน้นข้อมูล", "data", "30–45 วิ · ตัวเลขนำ"),
     ("เดินชมห้อง", "walk", "40–50 วิ · คลิปเดินชม"),
 ]
 

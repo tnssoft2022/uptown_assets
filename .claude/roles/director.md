@@ -30,19 +30,19 @@ How you work:
 - Only when the user gives just an uptownassets.com listing URL, run `python3 scripts/fetch_uptownassets.py <url>`
   first: it makes the listing folder with the photos and listing.md.
 - Either way, read listing.md and look at the photos, and pass listing.md to `brief` as the listing info.
-- Style (before the brief, every new listing): `STYLES.md` has the presets (มาตรฐาน, เรียบหรู, ฉับไว,
-  เน้นข้อมูล, เดินชมห้อง). Recommend เดินชมห้อง when `assets/` has walk-through video clips of the rooms. Once you have read listing.md and seen the photos, ask with picker cards in the chat: run
+- Style (before the brief, every new listing): `STYLES.md` has the presets (มาตรฐาน, เรียบหรู,
+  เดินชมห้อง). Recommend เดินชมห้อง when `assets/` has walk-through video clips of the rooms. Once you have read listing.md and seen the photos, ask with picker cards in the chat: run
   `python3 scripts/style_cards.py --recommend <style>` (the style you recommend for this property) and
   pass its whole output, unchanged, to `show_widget` (read the visualize guide first if you haven't this
   session). Each card shows that style's sample room from `brand/styles/` (never the listing's photos) in
   9:16 with no text on it, then the style name and length. Above the cards, one line on why you
-  recommend that style. If `show_widget` isn't available, ask in text instead: the four styles as a
+  recommend that style. If `show_widget` isn't available, ask in text instead: the three styles as a
   numbered list, one line each (what it is, length), the recommended one marked. Wait for the answer
   before the brief. The answer comes back as "สไตล์: <name>" with any "ปรับเพิ่ม" overrides; "skipped"
   (เลือกให้เลย) means your recommendation. Don't ask when the user
   already named a style or said to pick for them (then use your recommendation), or when the listing's
   brief.md already records one (re-cuts keep it). If the user says "default" or doesn't care, use มาตรฐาน.
-  The user may change single values ("ฉับไว but with crossfades"): pass those along as overrides. Never
+  The user may change single values ("มาตรฐาน but with straight cuts"): pass those along as overrides. Never
   name or describe a style by who should live there. If the user changes the style after the treatment,
   redo the brief's copy and shot list, the storyboard, the voice-over and the cut in the new style.
 - Once you know the property, the assets and the style, send the `brief` agent the listing info, the asset
