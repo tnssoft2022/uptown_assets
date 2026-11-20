@@ -1,20 +1,67 @@
-# Shanti Roles
+# Uptown Assets: ระบบทำวิดีโอ TikTok สำหรับอสังหาริมทรัพย์
 
-Claude Code plugins (mods) that make sessions easier to steer and to watch:
+ระบบนี้ใช้ Claude Code ทำวิดีโอแนวตั้ง (9:16) สำหรับโพสต์ขายหรือเช่าทรัพย์บน TikTok ตั้งแต่อ่านข้อมูลประกาศ วางเรื่อง ทำเสียงพากย์ ไปจนถึงตัดต่อเป็นไฟล์ MP4 พร้อมโพสต์
+งานแบ่งให้ AI หลายตัวทำตามหน้าที่ โดยมี **director** (ผู้กำกับ) เป็นตัวที่คุยกับเราและสั่งงานตัวอื่น
 
-| Plugin | What it does |
+## ทีมงาน
+
+| ชื่อ | ไฟล์ | หน้าที่ |
+|---|---|---|
+| **director** (role) | [.claude/roles/director.md](.claude/roles/director.md) | ผู้กำกับ เป็น role เริ่มต้นของโปรเจกต์ คุยกับเราเป็นภาษาไทย ถามข้อมูลที่ขาด วาง treatment และ shot list เขียน copy กับ caption สั่งงาน agent ด้านล่าง แล้วตรวจผลงานก่อนรายงาน |
+| **brief** (agent) | [.claude/agents/brief.md](.claude/agents/brief.md) | อ่านข้อมูลประกาศ ตรวจรูปและคลิปทุกไฟล์ แยกตามห้อง ดึงข้อเท็จจริงของทรัพย์ แล้วเขียน `brief.md` (ความพร้อม, treatment ร่าง, สคริปต์เสียงพากย์, brief สำหรับ editor) |
+| **voice-kanya** (agent) | [.claude/agents/voice-kanya.md](.claude/agents/voice-kanya.md) | ทำเสียงพากย์ภาษาไทยด้วยเสียง Kanya ของ macOS (`say`) ทำงานบนเครื่องทั้งหมด ฟรี แต่เสียงจะออกแนวหุ่นยนต์ ได้ไฟล์ `voiceover.wav` ที่ตรงกับไทม์ไลน์วิดีโอ |
+| **editor** (agent) | [.claude/agents/editor.md](.claude/agents/editor.md) | ตัดต่อด้วย ffmpeg ทำเฉพาะวิดีโอ TikTok (1080×1920, 20–30 วินาที, ไม่เกิน 60) ใส่ Ken Burns, caption, เพลง และ end card แล้วตรวจไฟล์ก่อนส่ง |
+
+## ขั้นตอนการทำวิดีโอ
+
+1. **เตรียมไฟล์**: สร้างโฟลเดอร์ `listings/<รหัส>-<ชื่อทรัพย์>/assets/` แล้วใส่รูป คลิป โลโก้ และเพลง
+2. **เปิดเซสชันในโปรเจกต์นี้**: role `director` จะถูกเลือกให้อัตโนมัติ บอกว่าทรัพย์คืออะไร ส่งข้อมูลประกาศ (ข้อความหรือไฟล์) และบอกโฟลเดอร์ assets
+3. **ตอบคำถามของ director**: กลุ่มเป้าหมาย ความยาว โทน เพลง และต้องการเสียงพากย์ไหม (เสียง Kanya หรือไฟล์เสียงที่อัดเอง)
+4. **agent `brief` เตรียมบรีฟ**: เขียน `listings/<ทรัพย์>/brief.md` แล้ว director ตรวจข้อเท็จจริงกับประกาศอีกรอบ
+5. **อนุมัติ treatment**: director จะแสดง hook วินาทีแรก ลำดับเรื่อง shot list ข้อความบนจอ สคริปต์เสียงพากย์ และ end card ระบบจะยังไม่ทำงานชิ้นใหญ่จนกว่าเราจะตอบตกลง
+6. **ทำเสียงพากย์** (ถ้าต้องการ): agent `voice-kanya` ทำ `voiceover.wav` แล้ว director ตั้งเวลา caption ตามเสียง
+7. **ตัดต่อ**: agent `editor` สร้างวิดีโอใน `listings/<ทรัพย์>/output/` พร้อม `build.sh` ไว้สร้างซ้ำได้ ถ้าจะใส่เพลงเทรนด์ในแอป TikTok เอง ขอให้ทำ 2 เวอร์ชัน คือมีเพลงกับไม่มีเพลง (`_nomusic.mp4`)
+8. **ตรวจและแก้**: director ตรวจไฟล์ (ความยาว ความละเอียด เสียง ข้อความอ่านออก) แล้วรายงาน ถ้าต้องแก้ก็สั่งตัดใหม่ได้
+
+## โครงสร้างโฟลเดอร์ทรัพย์
+
+```
+listings/
+  <รหัส>-<ชื่อทรัพย์>/
+    assets/      รูป คลิป โลโก้ เพลง (ต้นฉบับ ระบบจะไม่แก้หรือลบ)
+    brief.md     บรีฟจาก agent brief
+    output/      วิดีโอที่ตัดเสร็จ, build.sh, voiceover.wav, voice/
+```
+
+ทุกอย่างใน `listings/` ถูกตั้งไว้ใน [listings/.gitignore](listings/.gitignore) ให้ไม่เข้า git (รวมถึง `brief.md` และวิดีโอที่ตัดเสร็จ) ต้องสำรองไฟล์เอง ทรัพย์ที่มีในเครื่องตอนนี้คือ `4269-manor-sanambinnam` และ `445-land-bang-yai`
+
+## กฎที่ระบบยึด
+
+- **ข้อเท็จจริงมาจากประกาศเท่านั้น**: ไม่แต่งราคา ขนาด หรือจุดเด่นเพิ่ม และไม่อ้างวิว ทิศ หรือสถานีใกล้เคียงถ้าประกาศไม่ได้ระบุ
+- **ไม่แต่งรูปจนผิดจากของจริง**: ไม่ใช้ภาพ render หรือห้องตัวอย่างแทนห้องจริง
+- **ข้อความบนจอเป็นภาษาไทย**: ราคาเขียนแบบ "5.5 ล้านบาท" พื้นที่ใช้ "ตร.ม." เบอร์โทรใช้รูปแบบ 0XX-XXX-XXXX และใช้คำว่า "รหัสทรัพย์"
+- **Fair housing**: บรรยายตัวทรัพย์ ไม่ระบุว่าใครควรอยู่
+- **ลิขสิทธิ์**: ใช้เฉพาะเพลง รูป และฟุตเทจที่มีสิทธิ์ใช้ ถ้าไม่ชัด (เช่นภาพหน้าจอ Google Maps) ระบบจะแจ้งก่อน
+- **Caption ฝังในวิดีโอเสมอ** เพราะคนดูจำนวนมากปิดเสียง
+
+## สิ่งที่ต้องมีในเครื่อง
+
+- Claude Code (แอปเดสก์ท็อปหรือเทอร์มินัล) เวอร์ชัน 2.1.286 ขึ้นไป
+- `ffmpeg` และ `ffprobe`
+- macOS ที่มีเสียง Kanya (สำหรับเสียงพากย์ภาษาไทย)
+
+---
+
+## ปลั๊กอินพื้นฐาน: shanti-roles
+
+ระบบ role ข้างบนทำงานด้วยปลั๊กอินที่ก๊อปมาจาก [MrLudy-BxB/shanti-roles](https://github.com/MrLudy-BxB/shanti-roles)
+
+| ปลั๊กอิน | หน้าที่ |
 |---|---|
-| **session-role** | Gives each session a **Role**: a job description for the Claude you talk to, picked from a dropdown above the chat box. Roles are markdown files, global (`~/.claude/roles/`) or per project (`.claude/roles/`), with an optional edit fence and tool limits. Shows when Claude is working and which subagents are running. |
-| **usage-band** | An always-on line above the chat box: how full the context window is, and your plan's session and weekly usage with reset times. |
+| **session-role** | ให้แต่ละเซสชันมี Role (หน้าที่ของ Claude) เลือกได้จาก dropdown เหนือช่องแชท หรือพิมพ์ `/role <ชื่อ>` แสดงสถานะการทำงานและ subagent ที่กำลังทำงาน |
+| **usage-band** | แถบเหนือช่องแชท แสดงว่า context และโควตาการใช้งานของรอบนี้และของสัปดาห์เหลือเท่าไร |
 
-```
-Role [ frontend ▾ ] ⓘ  ● Working                     Subagents  Explore ×2 · general-purpose  ↻
-Context ▬▬── 35% 352.8k / 1M          Session ▬─── 10% ↻ 16:30          Week ▬─── 3% ↻ Mon 7:00
-```
-
-## Install
-
-Needs Claude Code **2.1.286 or newer** (desktop app or terminal).
+ติดตั้ง:
 
 ```bash
 claude plugin marketplace add MrLudy-BxB/shanti-roles
@@ -22,33 +69,11 @@ claude plugin install session-role@shanti-roles
 claude plugin install usage-band@shanti-roles
 ```
 
-The band appears right away (start a new session if it doesn't). Update later with `claude plugin marketplace update shanti-roles`, then `claude plugin update session-role@shanti-roles` and `claude plugin update usage-band@shanti-roles` (refreshing the marketplace alone doesn't update installed plugins), and restart the app.
-
-## Your first role
-
-Create `~/.claude/roles/reviewer.md`:
-
-```markdown
----
-description: Careful reviewer — reads and reports, never edits.
-tools: Read, Grep, Glob
----
-You are a careful reviewer. Back every finding with a file:line reference, most important first.
-```
-
-Pick **reviewer** in the dropdown, or start a session with `/role reviewer check the auth code`.
-
-Or let Claude build the system for you: `session-role` includes a **roles** skill, so you can just say *"set up roles for this project"*. Claude splits your CLAUDE.md into a role-neutral project description plus role files, and shows you the changes first.
-
-More in [session-role/README.md](session-role/README.md), the design in [session-role/ARCHITECTURE.md](session-role/ARCHITECTURE.md), and two paired examples (`frontend`, `backend`) in [session-role/examples/roles/](session-role/examples/roles/).
-
-## Repository layout
+รายละเอียดเพิ่มเติมอยู่ใน [session-role/README.md](session-role/README.md) และ [session-role/ARCHITECTURE.md](session-role/ARCHITECTURE.md)
 
 ```
-.claude-plugin/marketplace.json   the catalog Claude Code reads (marketplace "shanti-roles")
-session-role/                     plugin: roles, picker, edit fence, subagent indicator, role-builder skill
-usage-band/                       plugin: context and usage band
-export.py                         maintainer tool: re-export a plugin from its dev folder
+.claude-plugin/marketplace.json   แคตตาล็อกปลั๊กอิน (marketplace "shanti-roles")
+session-role/                     ปลั๊กอิน role, ตัวเลือก role, ขอบเขตการแก้ไฟล์, ตัวแสดง subagent
+usage-band/                       ปลั๊กอินแถบแสดงการใช้งาน
+export.py                         เครื่องมือสำหรับ export ปลั๊กอินจากโฟลเดอร์ dev
 ```
-
-Each plugin folder also has a `PROMPT.md`: paste it into Claude Code and Claude rebuilds the plugin for you, without installing anything from GitHub.
