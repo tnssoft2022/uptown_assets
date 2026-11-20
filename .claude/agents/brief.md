@@ -32,10 +32,20 @@ back once. You don't see the director's conversation, so work only from what the
 3. Draft the treatment for the length the task gives (format and platform rules belong to the editor agent;
    don't add your own). Read `COPY_STYLE.md` at the project root first and write every hook, on-screen line,
    caption, voice-over line and end card by it (tone, lengths, hook formulas, words to avoid, checklist):
-   - The hook: the strongest feature as the opening shot, with a short text line (6 words or fewer in English;
-     in Thai, about 20 characters or one short phrase, e.g. "ขาย 5.5 ล้านบาท"). If there is an entry photo
-     or clip (from the front door looking into the unit), open with it; otherwise open with the strongest shot.
-     Never use a door number plate as the entry shot.
+   - The hook: the first second must stop the scroll, so the opening shot and its text line are both on screen
+     from second 0 (no fade from black). The text line is short (6 words or fewer in English; in Thai, about
+     20 characters or one short phrase, e.g. "ขาย 5.5 ล้านบาท").
+     - Opening shot, in this order of preference: (1) an entry photo or clip (from the front door looking
+       into the unit), if it looks good; (2) the strongest feature (e.g. a high-ceiling living room, a pool,
+       a view the listing states); (3) the exterior or drone shot, for houses or land with a strong frontage
+       or when the location is the selling point. Use (2) over (1) when the feature is clearly the bigger draw.
+     - Never open with a door number plate or a closed door, a bathroom, corridor or storeroom, or a logo or
+       company card (keep those for the end card).
+     - Text line, from the property's strongest selling point: the price when it is good for the area, the
+       location when the listing states it (e.g. "ใกล้ BTS อ่อนนุช"), beds and area when they stand out
+       (e.g. "4 นอน 250 ตร.ม."), or the monthly rent for a rental.
+     - Offer 2–3 hook options (opening shot + text line, with a one-line reason each) and mark the one you
+       recommend; the shot list uses the recommended one.
    - The story order, for example exterior → entry → living → kitchen → primary suite → outdoor →
      neighborhood → end card, using only shots that exist. Pick the best asset for each room.
    - On-screen text, captions and end card are in Thai only, unless the task asks for another language.
