@@ -72,7 +72,7 @@ const project = (on: On) => {
   on('session.start', (_, e) => ({ cwd: e.cwd }))
 }
 
-test('the band shows the button with the video count', async ($, on) => {
+test('the band shows the button without a count', async ($, on) => {
   project(on)
   await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
 
@@ -80,7 +80,7 @@ test('the band shows the button with the video count', async ($, on) => {
     const ui = await $.ui.mount({ ...BAND, surface })
     await ui.press({ key: 'open-videos' })
     const button = await ui.find({ type: 'Button', key: 'open-videos' })
-    expect(button?.text).toContain('วีดีโอทั้งหมด (2)')
+    expect(button?.text).toBe('🎬 วีดีโอทั้งหมด')
     await ui.unmount()
   }
 })
@@ -155,7 +155,7 @@ test('beside a session-role row, the button joins that line', async ($, on) => {
     )
     expect(await ui.find({ type: 'Text', text: 'own row' })).toBeFalsy()
     const button = await ui.find({ type: 'Button', key: 'open-videos' })
-    expect(button?.text).toContain('วีดีโอทั้งหมด (2)')
+    expect(button?.text).toBe('🎬 วีดีโอทั้งหมด')
     await ui.unmount()
   }
 })

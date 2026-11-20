@@ -141,13 +141,12 @@ export const register: Register = on => {
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e)
     const { Box, Button } = $.ui.resolve(e)
-    const count = (await read($, videos)).length
 
     return (
       <Box flexDirection="row" justifyContent="flex-end">
         <Button
           key="open-videos"
-          label={`🎬 ${TITLE} (${count})`}
+          label={`🎬 ${TITLE}`}
           onPress={() => openPane($)}
         />
       </Box>
@@ -168,7 +167,6 @@ export const register: Register = on => {
       props: { ...e.props, rows: rows.filter(row => row !== mine) },
     })
     const { Box, Button } = $.ui.resolve(e)
-    const count = (await read($, videos)).length
 
     return (
       <Box flexDirection="row" alignItems="flex-start" columnGap={1}>
@@ -177,7 +175,7 @@ export const register: Register = on => {
         </Box>
         <Button
           key="open-videos"
-          label={`🎬 ${TITLE} (${count})`}
+          label={`🎬 ${TITLE}`}
           plain
           onPress={() => openPane($)}
         />
