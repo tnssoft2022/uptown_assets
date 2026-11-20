@@ -75,6 +75,27 @@ claude plugin install session-role@shanti-roles
 
 รายละเอียดเพิ่มเติมอยู่ใน [session-role/README.md](session-role/README.md) และ [session-role/ARCHITECTURE.md](session-role/ARCHITECTURE.md)
 
+## ปลั๊กอินของโปรเจกต์: video-list
+
+| ปลั๊กอิน | หน้าที่ |
+|---|---|
+| **video-list** | ปุ่ม **🎬 วีดีโอทั้งหมด** บนบรรทัด Role ต่อจาก ↻ (ถ้าไม่มี session-role จะขึ้นเป็นบรรทัดของตัวเอง) กดแล้วเปิดแผงด้านข้าง แสดงวิดีโอใน `listings/*/output/` แยกตามทรัพย์ พร้อมความยาว ขนาด วันที่ และปุ่ม **เปิด** / **Finder** พิมพ์ `/videos` ก็เปิดได้ |
+
+ติดตั้ง (ทำครั้งเดียวต่อเครื่อง หลัง clone โปรเจกต์แล้ว) ให้รันในโฟลเดอร์โปรเจกต์:
+
+```bash
+cd uptown_assets
+claude plugin marketplace add "$PWD" --scope local
+claude plugin install video-list@uptown-assets --scope local
+```
+
+แล้วเปิดเซสชันใหม่ในโปรเจกต์นี้ ปุ่มจะขึ้นเหนือช่องแชท
+
+- ติดตั้งแบบ `local` คือใช้เฉพาะโปรเจกต์นี้บนเครื่องนั้น ค่าตั้งอยู่ใน `.claude/settings.local.json` ซึ่งไม่ขึ้น git
+- ปลั๊กอินอ่านไฟล์จากโฟลเดอร์ `video-list/` ของโปรเจกต์โดยตรง หลัง `git pull` ได้เวอร์ชันใหม่ ให้เปิดเซสชันใหม่ก็พอ
+- ต้องใช้ macOS (คำสั่ง `open`) และ `ffprobe` สำหรับอ่านความยาววิดีโอ
+- ต้องมีคำสั่ง `claude` ในเทอร์มินัล ถ้าใช้แต่แอปเดสก์ท็อป ให้ติดตั้ง Claude Code CLI ก่อน
+
 ```
 .claude-plugin/marketplace.json   แคตตาล็อกปลั๊กอิน (marketplace "uptown-assets")
 session-role/                     ปลั๊กอิน role, ตัวเลือก role, ขอบเขตการแก้ไฟล์, ตัวแสดง subagent
