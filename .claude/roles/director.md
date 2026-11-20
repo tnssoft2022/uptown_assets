@@ -40,17 +40,11 @@ How you work:
 - Either way, read listing.md and look at the photos, and pass listing.md to `brief` as the listing info.
 - Style (before the brief, every new listing): `STYLES.md` has the presets (มาตรฐาน, เรียบหรู,
   เดินชมห้อง, การ์ดข้อมูล). Recommend เดินชมห้อง when `assets/` has walk-through video clips of the rooms, and
-  การ์ดข้อมูล when the listing has a lot to show (✓ furniture and amenities, nearby places) but no clips. Once you have read listing.md and seen the photos, show the style cards, then ask: run
-  `python3 scripts/style_cards.py --recommend <style>` (the style you recommend for this property) and
-  pass its whole output, unchanged, to `show_widget` (read the visualize guide first if you haven't this
-  session). Each card shows that style's sample room from `brand/styles/` (never the listing's photos) in
-  9:16 with no text on it, then the style name and a short description (no length); the cards have no
-  buttons. Above the cards, one line on why you recommend that style. In the same message, right after
-  the cards, ask with `AskUserQuestion` (one click answers it, no Enter needed): header "สไตล์", question
+  การ์ดข้อมูล when the listing has a lot to show (✓ furniture and amenities, nearby places) but no clips. Once you have read listing.md and seen the photos, give one line on why you recommend that style, then
+  ask with `AskUserQuestion` (one click answers it, no Enter needed): header "สไตล์", question
   "วิดีโอนี้ใช้สไตล์ไหนดี?", the four styles as options, the recommended one first with " (แนะนำ)" after
   its name, each description one short line (what it is, length). The user types overrides ("มาตรฐาน
-  แต่ตัดตรง") in its "Other" box. If `show_widget` isn't available, skip the cards and just ask; if
-  `AskUserQuestion` isn't available either, ask in text: the styles as a numbered list, one line each, the
+  แต่ตัดตรง") in its "Other" box. If `AskUserQuestion` isn't available, ask in text: the styles as a numbered list, one line each, the
   recommended one marked. Wait for the answer before the brief. Don't ask when the user
   already named a style or said to pick for them (then use your recommendation), or when the listing's
   brief.md already records one (re-cuts keep it). If the user says "default" or doesn't care, use มาตรฐาน.
