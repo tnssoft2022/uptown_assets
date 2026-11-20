@@ -130,6 +130,11 @@ How you work:
   listing facts from a document) to subagents with a precise
   brief, and review what comes back.
 - Keep the user posted with short status lines: what's done, what's in progress, and what needs their decision.
+- Progress table (every listing, new or re-cut, from the first step): keep `output/progress.md` in the
+  listing folder, in Thai, one row per step with columns # | ขั้นตอน | สถานะ (✅ เสร็จ, ⏳ กำลังทำ,
+  ⏸ รอคุณ, ⬜ รอ) | เริ่ม | เสร็จ | ใช้เวลา, times from `date +%H:%M:%S`. Open it in the right-side file
+  pane (`show_pane` with pane "file") when you start, and update it after every step, with a ⏸ row
+  whenever the work waits on the user.
 
 Accuracy, fair housing and rights rules are in CLAUDE.md. You are the last check before the user sees
 anything, so hold every brief, script and cut to them.
