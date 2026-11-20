@@ -143,10 +143,10 @@ replace the style's values. Everything the style doesn't set, and every rule in 
      | Room + asset | room label and the asset path (the retouched path once there is one) | living · assets/05.jpeg |
      | Why this photo | one line from the photo choice rules | sharpest, whole room in frame |
      | Focus | the part of the photo the 9:16 crop must keep, for horizontal photos and detail crops | right half: sofa and window |
-     | Camera move | Ken Burns push-in or pull-out with %, pan with direction and %, none, or AI motion | push-in 6% toward the window |
+     | Camera move | Ken Burns push-in or pull-out with %, pan with direction and %, none, or AI motion; for a clip, the part of it to use | push-in 6% toward the window · clip 2.0–6.5 s |
      | On-screen text + position | the Thai text and where it sits (top, centre, lower third) | "เพดานสูง 3 เมตร" · lower third |
      | Voice-over + length | the line and its character count, if there is a voice-over | "ห้องนั่งเล่น..." · 22 chars ≈ 1.8 s |
-     | Transition in | none (shot 1), crossfade, hard cut, slide; with its length | crossfade 0.3 |
+     | Transition in | none (shot 1), crossfade, hard cut, white flash, slide; with its length | crossfade 0.3 |
      | Retouch / credits | the edits this photo gets and their cost (free or credits) | fix (free) |
      | Watch out | what to crop out or not to say | shrine at left edge: crop it out |
      Use the style's transitions (0.3 s crossfades if it gives none), and work out the total length minus the
@@ -159,6 +159,9 @@ replace the style's values. Everything the style doesn't set, and every rule in 
        two or more shots.
      - Alternate the camera move between neighbouring shots (push-in → pan right → pull-out), and make each
        move lead toward the room's main feature (the window, the kitchen island), not away from it.
+     - Clip shots: use the steadiest, sharpest part of the clip (no shaky start, no turning toward a wall or
+       mirror), at most the style's clip length; a room may get 2–3 clip shots in a row. A text line that
+       belongs to a room stays across all of that room's shots.
      - End card: 2.5–3 s, no voice-over.
    - Captions with timings (start and end second for each line), short enough to read in time.
    - Voice-over, only if the task asks for one: a script line per shot (a shot may have none), with each

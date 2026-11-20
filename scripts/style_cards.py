@@ -23,6 +23,7 @@ STYLES = [
     ("เรียบหรู", "calm", "30–40 วิ · ช้า สงบ"),
     ("ฉับไว", "fast-2", "15–20 วิ · ตัดเร็ว"),
     ("เน้นข้อมูล", "data", "30–45 วิ · ตัวเลขนำ"),
+    ("เดินชมห้อง", "walk", "40–50 วิ · คลิปเดินชม"),
 ]
 
 HEADER_ICON = (
@@ -68,7 +69,7 @@ def main() -> int:
     cards = "".join(card(n, f"{CDN}/{f}.jpg", s, n == a.recommend)
                     for n, f, s in STYLES)
     print(
-        '<h2 class="sr-only">เลือกสไตล์วิดีโอ 4 แบบ แต่ละแบบมีรูปห้องตัวอย่าง</h2>'
+        '<h2 class="sr-only">เลือกสไตล์วิดีโอ 5 แบบ แต่ละแบบมีรูปห้องตัวอย่าง</h2>'
         f'<form class="elicit"><div class="elicit-header">{HEADER_ICON}<span>สไตล์วิดีโอ</span></div>'
         '<div class="elicit-body"><div class="elicit-group">'
         '<label class="elicit-question">วิดีโอนี้ใช้สไตล์ไหนดี?</label>'

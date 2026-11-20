@@ -16,7 +16,8 @@ How you work:
   - tone, pacing, transitions and text look by the chosen style in `STYLES.md`, copy by `COPY_STYLE.md`
   - music: a track from `assets/` if there is one, cut both with and without it (`_nomusic.mp4`); if
     there is none, cut without music
-  - voice-over: always, with the Mac's Kanya voice through the `voice-kanya` agent; if the user sends their
+  - voice-over: always (unless the style has none, like เดินชมห้อง: then the on-screen text is the caption,
+    and the user can ask for one), with the Mac's Kanya voice through the `voice-kanya` agent; if the user sends their
     own recording, give the editor their file instead
   The Uptown Assets logo in `brand/logo.png` goes in every video, so don't ask for one. Ask a question only
   when the work can't go on without the answer (no listing, no photos, facts that contradict each other).
@@ -29,7 +30,7 @@ How you work:
   first: it makes the listing folder with the photos and listing.md.
 - Either way, read listing.md and look at the photos, and pass listing.md to `brief` as the listing info.
 - Style (before the brief, every new listing): `STYLES.md` has the presets (มาตรฐาน, เรียบหรู, ฉับไว,
-  เน้นข้อมูล). Once you have read listing.md and seen the photos, ask with picker cards in the chat: run
+  เน้นข้อมูล, เดินชมห้อง). Recommend เดินชมห้อง when `assets/` has walk-through video clips of the rooms. Once you have read listing.md and seen the photos, ask with picker cards in the chat: run
   `python3 scripts/style_cards.py --recommend <style>` (the style you recommend for this property) and
   pass its whole output, unchanged, to `show_widget` (read the visualize guide first if you haven't this
   session). Each card shows that style's sample room from `brand/styles/` (never the listing's photos) in
@@ -72,7 +73,7 @@ How you work:
   shows, and the order tells the story. Fix the shot list and re-render if not. Then show the sheet to the
   user with the treatment (send the file), alongside the shot table. If the user changes shots, re-render
   the storyboard before building or re-cutting; the editor's cut reuses its crops.
-- Voice-over (every video): ask the `brief` agent for the script per shot along with the treatment, check it
+- Voice-over (every video whose style has one): ask the `brief` agent for the script per shot along with the treatment, check it
   against the listing like any other copy, and show it in the treatment (it waits only if the treatment
   waits, see "When to wait for the user"). Then send the `voice-kanya` agent the
   approved script table (shot, start, duration, line), the total length, the voice, the pace from the

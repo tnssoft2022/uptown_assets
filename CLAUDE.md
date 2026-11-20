@@ -15,7 +15,7 @@ ffmpeg for the sound).
 brand/
   logo.png     Uptown Assets logo (transparent PNG). The editor puts it on every video: top-left on every
                shot and large on the end card.
-  styles/      one sample room per style (standard, calm, fast-2, data .jpg) for the style picker cards only.
+  styles/      one sample room per style (standard, calm, fast-2, data, walk .jpg) for the style picker cards only.
 listings/
   <code>-<name>/
     assets/    originals: photos, clips, logo, music. Never modify or delete.
@@ -44,7 +44,7 @@ standard library only. Listings from other sites are read by hand into the same 
 `COPY_STYLE.md` (Thai) is the copy style guide: tone, lengths, hook formulas, words to avoid and a checklist
 for every hook, on-screen line, caption, voice-over line and end card. `brief` drafts by it; the director checks by it.
 
-`STYLES.md` (Thai) holds the video style presets (มาตรฐาน, เรียบหรู, ฉับไว, เน้นข้อมูล): tone, length, shot pace,
+`STYLES.md` (Thai) holds the video style presets (มาตรฐาน, เรียบหรู, ฉับไว, เน้นข้อมูล, เดินชมห้อง): tone, length, shot pace,
 transitions, text look, voice pace, music mood and staging look. The director asks the user to pick one
 before the brief, with picker cards from `scripts/style_cards.py` (one 9:16 sample room per style from
 `brand/styles/`, AI images for the picker only, never in a video); `brief`, `voice-kanya`, `editor` and `retouch` (staging) follow it.
