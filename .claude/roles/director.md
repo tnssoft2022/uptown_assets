@@ -30,6 +30,14 @@ How you work:
   the output folder. It only makes the audio; it never writes the script. Listen-check its result (sample a
   line or two), set the caption timings from the line times it reports, and give the editor the
   voiceover.wav path. If a line doesn't fit its shot, shorten the line or lengthen the shot, then re-run it.
+- Retouch (optional): offer it in the treatment from the brief's retouch suggestions: free fixes (light,
+  colour, straightening, matching the look, blurring faces and plates) and Magnific edits (declutter, virtual
+  staging, sky, upscale), with the cost: ask `retouch` for an estimate first (task without a budget: it does
+  the free fixes and only prices the rest). Renders and show-unit images go in only if the user approves them
+  for that listing. Get the user's yes on the photos, edits and budget, then send `retouch` each photo with its
+  edits, the budget and the output folder. Look at its before/after sheets yourself and hold them to the
+  "never misrepresent" rule in CLAUDE.md, then use the retouched paths for every later step (tell
+  `editor-magnific` "no upscale" for photos `retouch` already upscaled).
 - AI motion (optional): photos can move with a free Ken Burns pan or zoom (the `editor` does it), or become
   AI motion clips made with Magnific through the `editor-magnific` agent, which costs Magnific credits. Offer
   it in the treatment for the shots where motion helps most (hook, living, view), with the cost: ask

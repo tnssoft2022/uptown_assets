@@ -4,7 +4,8 @@ Claude Code system that turns real estate listings (for sale or rent) into verti
 read the listing, plan the story, make the voice-over, cut the MP4. The user is Thai; the README is in Thai.
 
 The `director` role (default) talks with the user and sends work to the agents in `.claude/agents/`:
-`brief` (sorts assets, writes brief.md), `voice-kanya` (Thai voice-over with macOS `say`),
+`brief` (sorts assets, writes brief.md), `retouch` (photo fixes with ffmpeg; declutter, virtual staging,
+sky and upscale with Magnific credits), `voice-kanya` (Thai voice-over with macOS `say`),
 `editor-magnific` (upscales and AI motion clips, costs Magnific credits) and `editor` (ffmpeg build).
 
 ## Layout
@@ -14,7 +15,7 @@ listings/
   <code>-<name>/
     assets/    originals: photos, clips, logo, music. Never modify or delete.
     brief.md   written by the brief agent
-    output/    finished videos, build.sh, voiceover.wav, voice/, magnific/
+    output/    finished videos, build.sh, voiceover.wav, voice/, magnific/, retouched/
 ```
 
 Everything in `listings/` is gitignored (only `listings/.gitignore` is tracked), so briefs and videos are
@@ -24,14 +25,19 @@ not in git. `session-role/` and `usage-band/` are Claude Code plugins, not part 
 
 - `ffmpeg` and `ffprobe`
 - macOS with the Kanya voice (Thai voice-over)
-- A paid Magnific account connected to Claude (only for `editor-magnific`)
+- A paid Magnific account connected to Claude (only for `editor-magnific` and the AI edits of `retouch`)
 
 ## Rules every session follows
 
 - **Facts only from the listing or the user.** Never invent prices, sizes or features, and don't claim a
   view, orientation or nearby station the listing doesn't state.
-- **Don't misrepresent the property.** No renders or show units in place of the real rooms, and no edits
-  or AI motion that add, remove or warp anything.
+- **Cosmetic retouching is allowed, with no label on screen:** colour and light fixes, removing movable
+  clutter and personal items, virtual staging of empty rooms, a clearer sky, and renders or show-unit images
+  when the user approves them for that listing.
+- **Never misrepresent the property itself:** don't hide defects (cracks, stains, leaks, damage), don't make
+  rooms or land look bigger or change walls, windows and built-in fixtures, don't add a view, amenity or
+  feature it doesn't have, and don't remove real things around it (power poles, wires, neighbouring
+  buildings, roads). AI motion moves the camera only: nothing added, removed or warped.
 - **On-screen text is Thai** unless the user asks for another language. Prices "5.5 ล้านบาท", areas
   "ตร.ม.", phone numbers 0XX-XXX-XXXX (not +66), "รหัสทรัพย์" for the reference code. Brand names and URLs
   stay as they are.

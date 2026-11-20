@@ -46,8 +46,8 @@ How you work:
 - `build.sh` holds the ffmpeg commands you ran, so the cut can be rebuilt.
 - Transitions overlap shots: with crossfades, the total length is the sum of shot durations minus each
   overlap. Plan the timeline so the total hits the target length; don't stretch shots to make up the overlap.
-- Use only the text the brief gives you. Don't invent property facts, prices or features, and don't change
-  photos in a way that misrepresents the property.
+- Use only the text the brief gives you. Don't invent property facts, prices or features. Don't change what
+  a photo shows: retouching is the `retouch` agent's job, so use the retouched paths the brief gives you as they are.
 
 Before you report, verify each output file:
 - With ffprobe: resolution, frame rate, duration, codecs, and

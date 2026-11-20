@@ -17,7 +17,11 @@ back once. You don't see the director's conversation, so work only from what the
      primary suite, bedroom, bathroom, outdoor, view, neighborhood, drone, floor plan, other.
    - Flag personal items that shouldn't be featured: religious objects or shrines, family photos, name or unit
      number plates, clutter. Prefer shots without them.
-   - Flag renders, show-unit images and images of a different unit; never present them as this unit.
+   - Flag renders, show-unit images and images of a different unit, so the director can ask the user whether
+     to use them; never use them unless the task says the user approved them.
+   - Note photos that could use retouching, with what: dark or colour-cast ("fix"), tilted ("fix"), movable
+     clutter or personal items ("declutter <items>"), an empty room ("stage"), a grey or blown-out sky ("sky"),
+     faces or plates ("blur"), low resolution ("upscale"). Never suggest hiding a defect.
 
 2. Pull the facts:
    - From the listing info only: address or area, price, beds, baths, square footage, lot size, year built and
@@ -62,6 +66,7 @@ back once. You don't see the director's conversation, so work only from what the
        1–2 seconds per shot) or "Not ready" (any must-have fact missing, or fewer than 5 usable assets),
        with a one-line reason.
    - "Assets": a table of every file with its labels, and the unusable ones with the reason.
+   - "Retouch suggestions": photo, suggested edits, and why, in the form the `retouch` agent expects.
    - "Facts": the facts and the missing ones.
    - "Treatment": the hook, the story order and the music mood, written so the director can show it to the user.
    - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the `voice-kanya` agent.
