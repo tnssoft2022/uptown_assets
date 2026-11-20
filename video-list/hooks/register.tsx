@@ -1,7 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, McpToolResult, Register } from 'claude-code'
 
-import type { Video } from '../types'
+import type { Progress, Step, Video } from '../types'
 
 const PAGE = 'videos.html'
 const TITLE = 'วีดีโอทั้งหมด'
@@ -13,6 +13,17 @@ const EXTENSIONS = ['.mp4', '.mov', '.m4v']
 const videos = atom({ plugin: 'video-list', key: 'videos' } as const, [], {
   shape: 'videos-3',
 })
+
+// The progress table of the listing worked on last, for the steps pane.
+const progress = atom(
+  { plugin: 'video-list', key: 'progress' } as const,
+  null as Progress | null,
+  { shape: 'progress-1' },
+)
+
+const STEPS_PANE = 'steps'
+const STEPS_TITLE = 'ขั้นตอนการทำงาน'
+const STEPS_LABEL = 'เปิด/ปิดขั้นตอน'
 
 const isVideo = (name: string) =>
   EXTENSIONS.some(ext => name.toLowerCase().endsWith(ext))
@@ -132,6 +143,80 @@ async function scan($: Engine) {
   }
   await update($, videos, () => found)
 }
+
+/**
+ * The rows of a progress.md table (# | ขั้นตอน | สถานะ | ใช้เวลา), header and
+ * divider skipped; a row needs at least a step name.
+ */
+export const parseSteps = (text: string): Step[] => {
+  const steps: Step[] = []
+  for (const line of text.split('\n')) {
+    const trimmed = line.trim()
+    if (!trimmed.startsWith('|')) continue
+    const cells = trimmed.replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim())
+    if (cells.every(c => /^:?-*:?$/.test(c))) continue
+    const [number = '', name = '', status = '', time = ''] = cells
+    if (!name || name === 'ขั้นตอน') continue
+    steps.push({ number, name, status, time })
+  }
+  return steps
+}
+
+/** Reads the newest listings/*\/output/progress.md into the progress atom. */
+async function scanProgress($: Engine) {
+  try {
+    const root = await listingsDir($)
+    let newest: { listing: string; mtimeMs: number } | undefined
+    if (await $.fs.exists(root)) {
+      for (const listing of await $.fs.list(root)) {
+        if (listing.kind !== 'dir') continue
+        const output = `${root}/${listing.name}/output`
+        if (!(await $.fs.exists(output))) continue
+        const entry = (await $.fs.list(output)).find(
+          f => f.kind === 'file' && f.name === 'progress.md',
+        )
+        if (entry && (!newest || entry.mtimeMs > newest.mtimeMs)) {
+          newest = { listing: listing.name, mtimeMs: entry.mtimeMs }
+        }
+      }
+    }
+    if (!newest) {
+      await update($, progress, () => null)
+      return
+    }
+    const known = await read($, progress)
+    if (known?.listing === newest.listing && known.mtimeMs === newest.mtimeMs) return
+    const folder = `${root}/${newest.listing}`
+    const text = await $.fs.read(`${folder}/output/progress.md`)
+    const { title } = await readInfo($, folder, newest.listing)
+    const found: Progress = { ...newest, title, steps: parseSteps(text) }
+    await update($, progress, () => found)
+  } catch {
+    // A half-written file: keep what is shown until the next scan.
+  }
+}
+
+/** Opens the steps pane, or closes it when it is open. */
+async function toggleSteps($: Engine) {
+  const isOpen = (await $.ui.panes()).some(pane => pane.id === STEPS_PANE)
+  if (isOpen) {
+    await $.ui.close({ id: STEPS_PANE })
+    return
+  }
+  await scanProgress($)
+  const opened = await $.ui.open({ id: STEPS_PANE, title: STEPS_TITLE })
+  if (!opened.isPlaced) $.ui.toast(`เปิดแผงขั้นตอนไม่ได้: ${opened.reason}`)
+}
+
+/** The colour a status reads in, by its mark. */
+const colorOf = (status: string) =>
+  status.includes('✅')
+    ? 'green'
+    : status.includes('⏳')
+      ? 'yellow'
+      : status.includes('⏸')
+        ? 'magenta'
+        : undefined
 
 const escapeHtml = (text: string) =>
   text.replace(/[&<>"']/g, c =>
@@ -462,7 +547,12 @@ export const register: Register = on => {
       name: 'videos',
       description: 'Open a page of every finished listing video in the browser',
     })
+    await $.command.register({
+      name: 'steps',
+      description: 'Open or close the pane of the current listing\'s work steps',
+    })
     void scan($)
+    void scanProgress($)
     return started
   })
 
@@ -475,7 +565,54 @@ export const register: Register = on => {
   on('turn.complete', async ($, e, next) => {
     const done = await next(e)
     void scan($)
+    void scanProgress($)
     return done
+  })
+
+  // progress.md is updated after every step: redraw the pane as it changes.
+  on('tool.call', async ($, e, next) => {
+    const ran = await next(e)
+    if (['Write', 'Edit', 'Bash'].includes(e.tool)) void scanProgress($)
+    return ran
+  })
+
+  on('command.run', { command: 'steps' }, async $ => {
+    await toggleSteps($)
+    return { text: 'สลับแผงขั้นตอนการทำงานแล้ว' }
+  })
+
+  on('ui.render', { component: 'Pane', requestId: STEPS_PANE }, async ($, e) => {
+    const { Box, Text } = $.ui.resolve(e)
+    const shown = await read($, progress)
+    if (!shown) {
+      return (
+        <Box flexDirection="column">
+          <Text dimColor>ยังไม่มีขั้นตอนการทำงาน</Text>
+          <Text dimColor>จะขึ้นเมื่อเริ่มทำวีดีโอของทรัพย์ (output/progress.md)</Text>
+        </Box>
+      )
+    }
+    const done = shown.steps.filter(step => step.status.includes('✅')).length
+    return (
+      <Box flexDirection="column">
+        <Text bold>{shown.title}</Text>
+        <Text dimColor>
+          {`เสร็จ ${done}/${shown.steps.length} ขั้นตอน · ${formatDate(shown.mtimeMs)}`}
+        </Text>
+        <Box flexDirection="column" marginTop={1}>
+          {shown.steps.length === 0 && <Text dimColor>ตารางยังว่าง</Text>}
+          {shown.steps.map((step, i) => (
+            <Box key={`step-${i}`} flexDirection="row" columnGap={1}>
+              <Text dimColor>{step.number || String(i + 1)}</Text>
+              <Box flexGrow={1} flexShrink={1}>
+                <Text color={colorOf(step.status)}>{`${step.status} ${step.name}`}</Text>
+              </Box>
+              {step.time && <Text dimColor>{step.time}</Text>}
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    )
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
@@ -483,11 +620,16 @@ export const register: Register = on => {
     const { Box, Button } = $.ui.resolve(e)
 
     return (
-      <Box flexDirection="row" justifyContent="flex-end">
+      <Box flexDirection="row" justifyContent="flex-end" columnGap={1}>
         <Button
           key="open-videos"
           label={`🎬 ${TITLE}`}
           onPress={() => openPage($)}
+        />
+        <Button
+          key="toggle-steps"
+          label={`📋 ${STEPS_LABEL}`}
+          onPress={() => toggleSteps($)}
         />
       </Box>
     )
@@ -518,6 +660,12 @@ export const register: Register = on => {
           label={`🎬 ${TITLE}`}
           plain
           onPress={() => openPage($)}
+        />
+        <Button
+          key="toggle-steps"
+          label={`📋 ${STEPS_LABEL}`}
+          plain
+          onPress={() => toggleSteps($)}
         />
       </Box>
     )

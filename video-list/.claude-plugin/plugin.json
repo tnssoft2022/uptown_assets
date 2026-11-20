@@ -1,6 +1,6 @@
 {
   "name": "video-list",
-  "version": "0.1.0",
-  "description": "A button above the chat box that opens a page in the browser pane that lists and plays every finished listing video (listings/*/output).",
+  "version": "0.2.0",
+  "description": "Buttons above the chat box: a page in the browser pane that lists and plays every finished listing video (listings/*/output), and a pane of the current listing's work steps (progress.md).",
   "types": "./types/index.d.ts"
 }

@@ -14,4 +14,10 @@ the videos by property type. It shows each one's length (ffprobe), size and date
 a download button (saved under the property name) and a search box that matches the property name, type,
 sale or rent, code and file name. Press the button again to refresh the page. `/videos` does the same.
 
+A second button, **📋 เปิด/ปิดขั้นตอน**, sits after it and opens or closes a pane beside the chat with
+the work steps of the listing worked on last: the newest `listings/*/output/progress.md` table
+(# | ขั้นตอน | สถานะ | ใช้เวลา), each step coloured by its status (✅ green, ⏳ yellow, ⏸ magenta),
+with the property name and how many steps are done. The pane redraws as the director updates the table
+(after each file write and at the end of every turn). `/steps` does the same as the button.
+
 Needs `python3` for the page server, `ffprobe` on the PATH for the lengths, and macOS (`open`) for the fallback.

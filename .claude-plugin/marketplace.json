@@ -14,7 +14,7 @@
     },
     {
       "name": "video-list",
-      "description": "A button above the chat box that lists every finished listing video (listings/*/output) in a pane, with open and Finder buttons.",
+      "description": "Buttons above the chat box: a page that lists and plays every finished listing video (listings/*/output), and a pane of the current listing's work steps.",
       "source": "./video-list",
       "category": "productivity"
     }

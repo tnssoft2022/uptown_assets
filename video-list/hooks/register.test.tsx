@@ -11,6 +11,7 @@ import {
   groupByDay,
   groupByListing,
   infoOf,
+  parseSteps,
   tagOf,
 } from './register'
 
@@ -33,8 +34,11 @@ const dir = (name: string) =>
 const file = (name: string, mtimeMs: number) =>
   ({ name, kind: 'file', size: 5 * 1024 * 1024, mtimeMs, isLink: false }) as const
 
-/** A project with two listings, one video each, plus a non-video file. */
-const project = (on: On) => {
+/**
+ * A project with two listings, one video each, plus a non-video file;
+ * with a progress table, A01-condo's output/ also holds progress.md.
+ */
+const project = (on: On, progress?: string) => {
   on('fs.exists', () => ({ value: true }))
   on('fs.list', (_, e) => {
     const path = e.path
@@ -48,7 +52,13 @@ const project = (on: On) => {
       }
     }
     if (path.endsWith('/listings/A01-condo/output')) {
-      return { value: [file('final.mp4', 2000), file('build.sh', 3000)] }
+      return {
+        value: [
+          file('final.mp4', 2000),
+          file('build.sh', 3000),
+          ...(progress ? [file('progress.md', 9000)] : []),
+        ],
+      }
     }
     if (path.endsWith('/listings/B02-house/output')) {
       return { value: [file('tiktok.mp4', 5000)] }
@@ -57,6 +67,9 @@ const project = (on: On) => {
   })
   // B02-house has no listing.md heading: its title falls back to the folder.
   on('fs.read', (_, e) => {
+    if (progress && e.path === '/project/listings/A01-condo/output/progress.md') {
+      return { value: progress }
+    }
     if (e.path === '/project/listings/A01-condo/listing.md') {
       return {
         value: '# คอนโด อโศก ห้อง 12/34\n\n- รหัสทรัพย์: A01\n- ประเภททรัพย์: คอนโด\n- ประเภทประกาศ: ขาย\n',
@@ -91,6 +104,8 @@ test('the band shows the button without a count', async ($, on) => {
     await ui.press({ key: 'open-videos' })
     const button = await ui.find({ type: 'Button', key: 'open-videos' })
     expect(button?.text).toBe('🎬 วีดีโอทั้งหมด')
+    const steps = await ui.find({ type: 'Button', key: 'toggle-steps' })
+    expect(steps?.text).toBe('📋 เปิด/ปิดขั้นตอน')
     await ui.unmount()
   }
 })
@@ -260,6 +275,99 @@ test('beside a session-role row, the button joins that line', async ($, on) => {
     expect(await ui.find({ type: 'Text', text: 'own row' })).toBeFalsy()
     const button = await ui.find({ type: 'Button', key: 'open-videos' })
     expect(button?.text).toBe('🎬 วีดีโอทั้งหมด')
+    const steps = await ui.find({ type: 'Button', key: 'toggle-steps' })
+    expect(steps?.text).toBe('📋 เปิด/ปิดขั้นตอน')
     await ui.unmount()
   }
+})
+
+const PROGRESS = `# ความคืบหน้า
+
+| # | ขั้นตอน | สถานะ | ใช้เวลา |
+|---|---|---|---|
+| 1 | ดึงประกาศ | ✅ เสร็จ | 42 วิ |
+| 2 | เลือกสไตล์ | ⏸ รอคุณ | |
+| 3 | เขียนบรีฟ | ⬜ รอ | |
+`
+
+test('progress.md rows become steps', () => {
+  expect(parseSteps(PROGRESS)).toEqual([
+    { number: '1', name: 'ดึงประกาศ', status: '✅ เสร็จ', time: '42 วิ' },
+    { number: '2', name: 'เลือกสไตล์', status: '⏸ รอคุณ', time: '' },
+    { number: '3', name: 'เขียนบรีฟ', status: '⬜ รอ', time: '' },
+  ])
+  expect(parseSteps('no table')).toEqual([])
+})
+
+test('the steps button opens the pane with the newest progress table, and closes it', async ($, on) => {
+  project(on, PROGRESS)
+  // The surface's pane record: what open adds and close takes away.
+  const open = new Map<string, string>()
+  on('ui.panes', () => ({
+    value: [...open].map(([id, title]) => ({
+      id,
+      title,
+      isShown: true,
+      isFocused: false,
+      isPlaced: true,
+    })),
+  }))
+  on('ui.open', (_, e) => {
+    open.set(e.id, e.title ?? e.id)
+    return { value: { isPlaced: true } }
+  })
+  on('ui.close', (_, e) => {
+    open.delete(e.id)
+    return { value: undefined }
+  })
+  await $.session.start({ cwd: '/project', surface: 'desktop', isInteractive: true })
+
+  const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  await band.press({ key: 'toggle-steps' })
+  expect([...open]).toEqual([['steps', 'ขั้นตอนการทำงาน']])
+
+  const pane = await $.ui.mount({
+    plugin: 'video-list',
+    component: 'Pane',
+    requestId: 'steps',
+    surface: 'desktop',
+    props: {
+      title: 'ขั้นตอนการทำงาน',
+      isFocused: false,
+      bodyColumns: 60,
+      placement: 'dock',
+      scroll: { offset: 0, bodyRows: 20 },
+      view: {},
+    },
+  })
+  expect((await pane.find({ type: 'Text', text: 'คอนโด อโศก ห้อง 12/34' }))?.text).toBe('คอนโด อโศก ห้อง 12/34')
+  expect(await pane.find({ type: 'Text', text: /เสร็จ 1\/3 ขั้นตอน/ })).toBeTruthy()
+  expect(await pane.find({ type: 'Text', text: '⏸ รอคุณ เลือกสไตล์' })).toBeTruthy()
+  expect(await pane.find({ type: 'Text', text: '42 วิ' })).toBeTruthy()
+  await pane.unmount()
+
+  await band.press({ key: 'toggle-steps' })
+  expect(open.size).toBe(0)
+  await band.unmount()
+})
+
+test('with no progress table yet, the pane says so', async ($, on) => {
+  project(on)
+  await $.session.start({ cwd: '/project', surface: 'desktop', isInteractive: true })
+  const pane = await $.ui.mount({
+    plugin: 'video-list',
+    component: 'Pane',
+    requestId: 'steps',
+    surface: 'desktop',
+    props: {
+      title: 'ขั้นตอนการทำงาน',
+      isFocused: false,
+      bodyColumns: 60,
+      placement: 'dock',
+      scroll: { offset: 0, bodyRows: 20 },
+      view: {},
+    },
+  })
+  expect(await pane.find({ type: 'Text', text: 'ยังไม่มีขั้นตอนการทำงาน' })).toBeTruthy()
+  await pane.unmount()
 })
