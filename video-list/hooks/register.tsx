@@ -11,7 +11,7 @@ const EXTENSIONS = ['.mp4', '.mov', '.m4v']
 // Change the tag when Video's fields change: it declines what an earlier
 // version stored, which outlives a reload.
 const videos = atom({ plugin: 'video-list', key: 'videos' } as const, [], {
-  shape: 'videos-2',
+  shape: 'videos-3',
 })
 
 const isVideo = (name: string) =>
@@ -66,14 +66,30 @@ async function lengthOf($: Engine, path: string) {
   }
 }
 
-/** The listing's property name: the first "# " heading of its listing.md. */
-async function titleOf($: Engine, folder: string, fallback: string) {
+/** Values that mean the listing doesn't say yet, shown as nothing. */
+const UNKNOWN = new Set(['', '-', 'ถามผู้ใช้'])
+
+/** The value of a "- <label>: <value>" line of listing.md; "" without one. */
+const fieldOf = (text: string, label: string) => {
+  const value = new RegExp(`^-[ \\t]+${label}[ \\t]*:[ \\t]*(.+?)\\s*$`, 'm').exec(text)?.[1] ?? ''
+  return UNKNOWN.has(value) ? '' : value
+}
+
+/**
+ * What listing.md says about the property: its name (the first "# " heading),
+ * ประเภททรัพย์ and ประเภทประกาศ.
+ */
+export const infoOf = (text: string, fallback: string) => ({
+  title: /^#[ \t]+(.+?)\s*$/m.exec(text)?.[1] || fallback,
+  kind: fieldOf(text, 'ประเภททรัพย์'),
+  deal: fieldOf(text, 'ประเภทประกาศ'),
+})
+
+async function readInfo($: Engine, folder: string, fallback: string) {
   try {
-    const text = await $.fs.read(`${folder}/listing.md`)
-    const heading = /^#[ \t]+(.+?)\s*$/m.exec(text)?.[1]
-    return heading || fallback
+    return infoOf(await $.fs.read(`${folder}/listing.md`), fallback)
   } catch {
-    return fallback
+    return infoOf('', fallback)
   }
 }
 
@@ -94,15 +110,15 @@ async function scan($: Engine) {
       if (listing.kind !== 'dir') continue
       const output = `${root}/${listing.name}/output`
       if (!(await $.fs.exists(output))) continue
-      let title: string | undefined
+      let info: ReturnType<typeof infoOf> | undefined
       for (const file of await $.fs.list(output)) {
         if (file.kind !== 'file' || !isVideo(file.name)) continue
         const path = `${ROOT}/${listing.name}/output/${file.name}`
         const cached = known.get(`${path}:${file.mtimeMs}`)
-        title ??= await titleOf($, `${root}/${listing.name}`, listing.name)
+        info ??= await readInfo($, `${root}/${listing.name}`, listing.name)
         found.push({
           listing: listing.name,
-          title,
+          ...info,
           name: file.name,
           path,
           sizeBytes: file.size,
@@ -141,9 +157,12 @@ export const downloadName = (video: Video, isOnly: boolean) => {
   return `${base.replace(/[\\/:*?"<>|]+/g, '-').trim()}${ext}`
 }
 
-/** What the search box matches: property name, code, folder and file name. */
+/** The property type and sale/rent as one tag, e.g. "บ้านเดี่ยว · เช่า". */
+export const tagOf = (video: Video) => [video.kind, video.deal].filter(Boolean).join(' · ')
+
+/** What the search box matches: property name, type, code, folder and file name. */
 const searchTextOf = (video: Video) =>
-  [video.title, codeOf(video.listing), video.listing, video.name]
+  [video.title, video.kind, video.deal, codeOf(video.listing), video.listing, video.name]
     .join(' ')
     .toLowerCase()
 
@@ -168,10 +187,11 @@ export const dayLabel = (day: string, now: number) => {
 
 /** One video's card: player, property name, file, length, size, date, download. */
 const cardOf = (video: Video, isOnly: boolean) => `
-    <figure data-search="${escapeHtml(searchTextOf(video))}">
+    <figure data-search="${escapeHtml(searchTextOf(video))}" data-kind="${escapeHtml(video.kind)}">
       <video src="${hrefOf(video)}" controls preload="metadata" playsinline></video>
       <figcaption>
         <a class="title" href="${hrefOf(video)}" target="_blank">${escapeHtml(video.title)}</a>
+        ${tagOf(video) ? `<span class="tag">${escapeHtml(tagOf(video))}</span>` : ''}
         <span>${escapeHtml(video.name)}</span>
         <span>${formatLength(video.seconds)} · ${formatSize(video.sizeBytes)} · ${formatDate(video.mtimeMs)}</span>
         <a class="download" href="${hrefOf(video)}" download="${escapeHtml(downloadName(video, isOnly))}">⬇ ดาวน์โหลด</a>
@@ -196,7 +216,10 @@ export const buildPage = (list: readonly Video[], now: number) => {
   const byListing = groups
     .map(([listing, items]) => {
       const code = codeOf(listing)
-      const tag = code ? ` <small>รหัสทรัพย์ ${escapeHtml(code)}</small>` : ''
+      const notes = [tagOf(items[0]!), code ? `รหัสทรัพย์ ${code}` : '']
+        .filter(Boolean)
+        .join(' · ')
+      const tag = notes ? ` <small>${escapeHtml(notes)}</small>` : ''
       return section(`${escapeHtml(items[0]!.title)}${tag}`, items)
     })
     .join('')
@@ -205,6 +228,20 @@ export const buildPage = (list: readonly Video[], now: number) => {
       section(`${escapeHtml(dayLabel(day, now))} <small>${items.length} วีดีโอ</small>`, items),
     )
     .join('')
+  const kinds = [...new Set(list.map(video => video.kind).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, 'th'),
+  )
+  const kindFilter = kinds.length
+    ? `
+  <div class="kinds" role="group" aria-label="ประเภททรัพย์">
+    <button type="button" data-kind="" aria-pressed="true">ทั้งหมด</button>${kinds
+      .map(
+        kind => `
+    <button type="button" data-kind="${escapeHtml(kind)}" aria-pressed="false">${escapeHtml(kind)}</button>`,
+      )
+      .join('')}
+  </div>`
+    : ''
   const sections = `
 <div class="view" id="view-listing">${byListing}
 </div>
@@ -228,9 +265,9 @@ export const buildPage = (list: readonly Video[], now: number) => {
   [hidden] { display: none !important; }
   .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
   .tools #search { margin: 0; }
-  .views { display: inline-flex; background: #1c1c1c; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
-  .views button { font: inherit; font-size: 14px; color: #aaa; background: none; border: 0; padding: 9px 14px; cursor: pointer; }
-  .views button[aria-pressed="true"] { color: #fff; background: #2a6df4; }
+  .views, .kinds { display: inline-flex; background: #1c1c1c; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
+  .views button, .kinds button { font: inherit; font-size: 14px; color: #aaa; background: none; border: 0; padding: 9px 14px; cursor: pointer; }
+  .views button[aria-pressed="true"], .kinds button[aria-pressed="true"] { color: #fff; background: #2a6df4; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
   figure { margin: 0; background: #1c1c1c; border-radius: 10px; overflow: hidden; }
   video { width: 100%; aspect-ratio: 9 / 16; background: #000; display: block; }
@@ -238,6 +275,7 @@ export const buildPage = (list: readonly Video[], now: number) => {
   a { color: #eee; text-decoration: none; word-break: break-word; }
   a:hover { text-decoration: underline; }
   a.title { font-weight: 600; }
+  figcaption span.tag { align-self: flex-start; margin: 2px 0; padding: 1px 8px; border-radius: 10px; background: #2b2b2b; color: #ddd; font-size: 12px; }
   a.download { align-self: flex-start; margin-top: 6px; padding: 6px 12px; background: #2a6df4; border-radius: 6px; font-size: 13px; color: #fff; }
   a.download:hover { background: #1f5ad1; text-decoration: none; }
 </style>
@@ -251,13 +289,13 @@ ${
   list.length === 0
     ? empty
     : `<div class="tools">
-  <input id="search" type="search" placeholder="ค้นหาชื่อทรัพย์ รหัสทรัพย์ หรือชื่อไฟล์" autocomplete="off">
+  <input id="search" type="search" placeholder="ค้นหาชื่อทรัพย์ ประเภท รหัสทรัพย์ หรือชื่อไฟล์" autocomplete="off">
   <div class="views" role="group" aria-label="แยกวีดีโอ">
     <button type="button" data-view="listing" aria-pressed="true">ตามทรัพย์</button>
     <button type="button" data-view="day" aria-pressed="false">ตามวันที่</button>
-  </div>
+  </div>${kindFilter}
 </div>
-<p id="none" class="empty" hidden>ไม่พบวีดีโอที่ตรงกับคำค้น</p>
+<p id="none" class="empty" hidden>ไม่พบวีดีโอที่ตรงกับคำค้นหรือประเภทที่เลือก</p>
 ${sections}
 <script>
   const box = document.getElementById('search')
@@ -277,14 +315,26 @@ ${sections}
   let saved = null
   try { saved = localStorage.getItem('video-list-view') } catch {}
   if (saved === 'day') showView('day')
-  box.addEventListener('input', () => {
+  let kind = ''
+  const kindButtons = document.querySelectorAll('.kinds button')
+  for (const button of kindButtons) {
+    button.addEventListener('click', () => {
+      kind = button.dataset.kind
+      for (const other of kindButtons) {
+        other.setAttribute('aria-pressed', String(other === button))
+      }
+      apply()
+    })
+  }
+  const apply = () => {
     const words = box.value.toLowerCase().split(/\\s+/).filter(Boolean)
     let shown = 0
     for (const section of document.querySelectorAll('section')) {
       let inSection = 0
       for (const figure of section.querySelectorAll('figure')) {
         const text = figure.dataset.search
-        const isMatch = words.every(word => text.includes(word))
+        const isMatch =
+          (!kind || figure.dataset.kind === kind) && words.every(word => text.includes(word))
         figure.hidden = !isMatch
         if (isMatch) inSection++
       }
@@ -292,7 +342,8 @@ ${sections}
       shown += inSection
     }
     document.getElementById('none').hidden = shown > 0
-  })
+  }
+  box.addEventListener('input', apply)
 </script>`
 }
 </body>

@@ -24,8 +24,12 @@ back once. You don't see the director's conversation, so work only from what the
      faces or plates ("blur"), low resolution ("upscale"). Never suggest hiding a defect.
 
 2. Pull the facts:
-   - From the listing info only: address or area, price, beds, baths, square footage, lot size, year built and
-     standout features. Copy each fact as given; never estimate or fill a gap. List missing facts as missing.
+   - From the listing info only: property type, sale or rent, address or area, price, beds, baths, square
+     footage, lot size, year built and standout features. Copy each fact as given; never estimate or fill a
+     gap. List missing facts as missing.
+   - Property type and sale or rent come from listing.md's "- ประเภททรัพย์:" and "- ประเภทประกาศ:" lines
+     (e.g. "คอนโด", "เช่า"). Use those words in the hook and end card. If a line is missing or says
+     "ถามผู้ใช้", list it as missing and put it in "Open questions"; don't guess it from the photos or the name.
    - Flag anything in the listing or assets that could break fair housing rules (wording about who should live
      there) or that you can't verify.
 

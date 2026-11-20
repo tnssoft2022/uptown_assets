@@ -4,6 +4,10 @@ export type Video = {
   listing: string
   /** The property name from the first "# " line of listing.md; the folder name without one. */
   title: string
+  /** ประเภททรัพย์ from listing.md (คอนโด, บ้านเดี่ยว …); "" when it isn't there. */
+  kind: string
+  /** ประเภทประกาศ from listing.md (ขาย or เช่า); "" when it isn't there. */
+  deal: string
   /** The file name, e.g. "final.mp4". */
   name: string
   /** Path relative to the project root. */

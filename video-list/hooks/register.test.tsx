@@ -10,6 +10,8 @@ import {
   formatSize,
   groupByDay,
   groupByListing,
+  infoOf,
+  tagOf,
 } from './register'
 
 const BAND = {
@@ -56,7 +58,9 @@ const project = (on: On) => {
   // B02-house has no listing.md heading: its title falls back to the folder.
   on('fs.read', (_, e) => {
     if (e.path === '/project/listings/A01-condo/listing.md') {
-      return { value: '# คอนโด อโศก ห้อง 12/34\n\n- รหัสทรัพย์: A01\n' }
+      return {
+        value: '# คอนโด อโศก ห้อง 12/34\n\n- รหัสทรัพย์: A01\n- ประเภททรัพย์: คอนโด\n- ประเภทประกาศ: ขาย\n',
+      }
     }
     throw new Error(`no file ${e.path}`)
   })
@@ -133,6 +137,12 @@ test('the button writes the page, serves it and opens it in the browser pane', a
   expect(page!.text).toContain('download="คอนโด อโศก ห้อง 12-34.mp4"')
   expect(page!.text).toContain('รหัสทรัพย์ A01')
   expect(page!.text).toContain('>B02-house</a>')
+  expect(page!.text).toContain('<small>คอนโด · ขาย · รหัสทรัพย์ A01</small>')
+  expect(page!.text).toContain('<span class="tag">คอนโด · ขาย</span>')
+  expect(page!.text).toContain('data-kind="คอนโด" aria-pressed="false">คอนโด</button>')
+  // B02-house has no type: no tag, and no filter button for it.
+  expect(page!.text).toContain('<small>รหัสทรัพย์ B02</small>')
+  expect(page!.text.split('<span class="tag">').length - 1).toBe(2)
   expect(page!.text).toContain('id="search"')
   expect(page!.text).toContain('data-view="day"')
   // Each video shows once per view; the day view starts hidden.
@@ -154,6 +164,8 @@ test('the page escapes names and links', () => {
       {
         listing: 'A&B <x>',
         title: 'บ้าน "สวย" & ใหม่',
+        kind: 'บ้าน<เดี่ยว>',
+        deal: '',
         name: 'ไฟนอล 1.mp4',
         path: '',
         sizeBytes: 0,
@@ -163,12 +175,13 @@ test('the page escapes names and links', () => {
     ],
     0,
   )
-  expect(html).toContain('<h2>บ้าน &quot;สวย&quot; &amp; ใหม่</h2>')
+  expect(html).toContain('<h2>บ้าน &quot;สวย&quot; &amp; ใหม่ <small>บ้าน&lt;เดี่ยว&gt;</small></h2>')
   expect(html).toContain('download="บ้าน -สวย- &amp; ใหม่.mp4"')
   expect(html).toContain(
     `src="${encodeURIComponent('A&B <x>')}/output/${encodeURIComponent('ไฟนอล 1.mp4')}"`,
   )
   expect(buildPage([], 0)).toContain('ยังไม่มีวีดีโอ')
+  expect(html).toContain('<span class="tag">บ้าน&lt;เดี่ยว&gt;</span>')
   expect(buildPage([], 0)).not.toContain('id="search"')
 })
 
@@ -180,6 +193,8 @@ test('formatting helpers', () => {
   const v = (listing: string, mtimeMs: number) => ({
     listing,
     title: listing,
+    kind: '',
+    deal: '',
     name: 'x.mp4',
     path: '',
     sizeBytes: 0,
@@ -208,6 +223,14 @@ test('formatting helpers', () => {
   const video = { ...v('A', 1), title: 'ห้อง 888/71', name: 'final.v2.mp4' }
   expect(downloadName(video, true)).toBe('ห้อง 888-71.mp4')
   expect(downloadName(video, false)).toBe('ห้อง 888-71 (final.v2).mp4')
+  expect(infoOf('# บ้าน 131\n\n- ประเภททรัพย์: บ้านเดี่ยว\n- ประเภทประกาศ: เช่า\n', 'f')).toEqual({
+    title: 'บ้าน 131',
+    kind: 'บ้านเดี่ยว',
+    deal: 'เช่า',
+  })
+  expect(infoOf('- ประเภททรัพย์: ถามผู้ใช้\n- ประเภทประกาศ:  -\n', 'f')).toEqual({ title: 'f', kind: '', deal: '' })
+  expect(tagOf({ ...video, kind: 'คอนโด', deal: '' })).toBe('คอนโด')
+  expect(tagOf({ ...video, kind: '', deal: 'เช่า' })).toBe('เช่า')
 })
 
 test('beside a session-role row, the button joins that line', async ($, on) => {

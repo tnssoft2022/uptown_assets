@@ -7,7 +7,8 @@
 - saves the full-size photos to listings/<code>-<name>/assets/photo-NN.<ext>
   (the page only links thumbnails; the full size is the same path without "thumbnails/")
 - writes listings/<code>-<name>/listing.md: the listing text as the site shows it, the source
-  URLs, the date fetched, the contact on the page and which photo came from which URL
+  URLs, the date fetched, the property type and sale/rent as the listing states them
+  ("ถามผู้ใช้" when it doesn't), the contact on the page and which photo came from which URL
 
 Reuses an existing listings/<code>-*/ folder. Never overwrites a file in assets/: a photo that
 is already there is skipped, and one that differs from the site is reported, not replaced.
@@ -59,6 +60,40 @@ def parse(page: str) -> dict:
         "phone": phone.group(1) if phone else "",
         "email": email.group(1) if email else "",
     }
+
+
+# Property types the listing text can name, in the words the video list shows. Building
+# types are checked before land: a house listing often states its land area as "ที่ดิน".
+KINDS = [
+    ("ทาวน์โฮม", r"ทาวน์โฮม|ทาวน์เฮ้?าส์|town ?(?:home|house)"),
+    ("บ้านแฝด", r"บ้านแฝด|semi-detached"),
+    ("บ้านเดี่ยว", r"บ้านเดี่ยว|(?<!semi-)detached house"),
+    ("คอนโด", r"คอนโด|condo"),
+    ("อาคารพาณิชย์", r"อาคารพาณิชย์|ตึกแถว|shophouse|commercial building"),
+]
+LAND = r"ที่ดิน|\bland\b"
+ASK = "ถามผู้ใช้"
+
+
+def kind_of(text: str) -> str:
+    """The property type the listing names; ASK when it names none or more than one."""
+    found = [kind for kind, pattern in KINDS if re.search(pattern, text, re.I)]
+    if len(found) == 1:
+        return found[0]
+    if not found and re.search(LAND, text, re.I):
+        return "ที่ดิน"
+    return ASK
+
+
+def deal_of(text: str) -> str:
+    """ขาย or เช่า from the listing text; ASK when it says neither or both."""
+    sale = re.search(r"(?<!ฝ่าย)ขาย|for sale", text, re.I)
+    rent = re.search(r"เช่า|for rent", text, re.I)
+    if sale and not rent:
+        return "ขาย"
+    if rent and not sale:
+        return "เช่า"
+    return ASK
 
 
 def thai_phone(digits: str) -> str:
@@ -134,9 +169,13 @@ def main() -> int:
     phone = th.get("phone") or en.get("phone")
     email = th.get("email") or en.get("email")
     today = datetime.date.today().isoformat()
+    # Only the name and details: page titles carry an SEO suffix, not facts.
+    said = "\n".join(p.get(k, "") for p in (th, en) for k in ("name", "details"))
 
     out = [f"# {th.get('name') or en.get('name') or slug}", ""]
     out += [f"- รหัสทรัพย์ (code in the URL): {code}",
+            f"- ประเภททรัพย์: {kind_of(said)}",
+            f"- ประเภทประกาศ: {deal_of(said)}",
             f"- Source (th): {urls['th']}",
             f"- Source (en): {urls['en']}",
             f"- Fetched: {today}",
@@ -161,6 +200,7 @@ def main() -> int:
     print(f"Folder:  {folder.relative_to(ROOT)}")
     print(f"Photos:  {len(photo_rows)} ({sum(1 for r in photo_rows if r[2] == 'saved')} new)")
     print(f"Listing: {(folder / 'listing.md').relative_to(ROOT)}")
+    print(f"Type:    {kind_of(said)} · {deal_of(said)}")
     for p in problems:
         print(f"warning: {p}", file=sys.stderr)
     return 0
