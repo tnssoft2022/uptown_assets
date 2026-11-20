@@ -77,8 +77,29 @@ back once. You don't see the director's conversation, so work only from what the
      Write prices the Thai way ("5.5 ล้านบาท"), areas as "ตร.ม.", phone numbers in Thai format
      (0XX-XXX-XXXX, not +66), and "รหัสทรัพย์" for the reference code. Brand names and URLs stay as they are.
    - Don't claim a view, facing or nearby station unless the listing states it, even if a photo shows one.
-   - A shot list: asset path, duration, on-screen text, and the transition. Use 0.3 s crossfades
-     unless the task says otherwise, and work out the total length minus the overlaps.
+   - A shot list, one row per shot, with these columns (the editor renders the storyboard and the cut from
+     it, so be exact):
+     | Column | What to write | Example |
+     |---|---|---|
+     | # / time | shot number, start–end second, duration | 3 · 4.2–6.4 s (2.2 s) |
+     | Role | hook, walk-in, room, feature, detail, text card or end card | feature |
+     | Room + asset | room label and the asset path (the retouched path once there is one) | living · assets/05.jpeg |
+     | Why this photo | one line from the photo choice rules | sharpest, whole room in frame |
+     | Focus | the part of the photo the 9:16 crop must keep, for horizontal photos and detail crops | right half: sofa and window |
+     | Camera move | Ken Burns push-in or pull-out with %, pan with direction and %, none, or AI motion | push-in 6% toward the window |
+     | On-screen text + position | the Thai text and where it sits (top, centre, lower third) | "เพดานสูง 3 เมตร" · lower third |
+     | Voice-over + length | the line and its character count, if there is a voice-over | "ห้องนั่งเล่น..." · 22 chars ≈ 1.8 s |
+     | Transition in | none (shot 1), crossfade, hard cut, slide; with its length | crossfade 0.3 |
+     | Retouch / credits | the edits this photo gets and their cost (free or credits) | fix (free) |
+     | Watch out | what to crop out or not to say | shrine at left edge: crop it out |
+     Use 0.3 s crossfades unless the task says otherwise, and work out the total length minus the overlaps.
+   - Pacing rules for the shot list:
+     - Hook: 0–1.5 s, photo and text on screen from frame 0.
+     - Photo shots: 1.5–2.5 s each. A shot with a text line of about 20 Thai characters runs at least 1.5 s,
+       and its voice-over line must fit too (about 12 characters per second).
+     - Alternate the camera move between neighbouring shots (push-in → pan right → pull-out), and make each
+       move lead toward the room's main feature (the window, the kitchen island), not away from it.
+     - End card: 2.5–3 s, no voice-over.
    - Captions with timings (start and end second for each line), short enough to read in time.
    - Voice-over, only if the task asks for one: a script line per shot (a shot may have none), with each
      shot's start second and duration. Use only facts from the listing, keep it in step with the on-screen
@@ -107,7 +128,7 @@ back once. You don't see the director's conversation, so work only from what the
    - "Facts": the facts and the missing ones.
    - "Treatment": the hook, the story order and the music mood, written so the director can show it to the user.
    - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the `voice-kanya` agent.
-   - "Editor brief": the shot list, captions with timings, transitions, target total length, asset paths,
+   - "Editor brief": the shot list (every column above), captions with timings, transitions, target total length, asset paths,
      output folder, end card text and music (with, without or both), in the form the editor agent expects.
    - "Open questions": what the director needs to ask the user.
 
