@@ -30,7 +30,7 @@ export type Step = {
   time: string
 }
 
-/** The progress table of the listing worked on last (newest progress.md). */
+/** The progress table of this session's listing. */
 export type Progress = {
   /** The listing folder, e.g. "1069-condo-asoke". */
   listing: string
@@ -42,6 +42,11 @@ export type Progress = {
 
 declare module 'claude-code' {
   interface PluginState {
-    'video-list': { videos: Shaped<Video[]>; progress: Shaped<Progress | null> }
+    'video-list': {
+      videos: Shaped<Video[]>
+      progress: Shaped<Progress | null>
+      /** The listing folder whose progress.md this session wrote or read. */
+      listing: Shaped<string | null>
+    }
   }
 }

@@ -14,12 +14,33 @@ const videos = atom({ plugin: 'video-list', key: 'videos' } as const, [], {
   shape: 'videos-3',
 })
 
-// The progress table of the listing worked on last, for the steps pane.
+// The progress table of this session's listing, for the steps pane.
 const progress = atom(
   { plugin: 'video-list', key: 'progress' } as const,
   null as Progress | null,
-  { shape: 'progress-1' },
+  { shape: 'progress-2' },
 )
+
+// The listing folder whose progress.md this session wrote or read; session
+// state, so another session's listing never shows in this one's pane.
+const current = atom(
+  { plugin: 'video-list', key: 'listing' } as const,
+  null as string | null,
+  { shape: 'listing-1' },
+)
+
+const PROGRESS_PATH = /listings\/([^/\s'"`]+)\/output\/progress\.md/g
+
+/** The listing folder a tool call's progress.md path names (the last one), or null. */
+export const listingOf = (input: Record<string, unknown>): string | null => {
+  let found: string | null = null
+  for (const field of ['file_path', 'command']) {
+    const value = input[field]
+    if (typeof value !== 'string') continue
+    for (const match of value.matchAll(PROGRESS_PATH)) found = match[1] ?? found
+  }
+  return found
+}
 
 const STEPS_PANE = 'steps'
 const STEPS_TITLE = 'ขั้นตอนการทำงาน'
@@ -162,23 +183,18 @@ export const parseSteps = (text: string): Step[] => {
   return steps
 }
 
-/** Reads the newest listings/*\/output/progress.md into the progress atom. */
+/** Reads this session's listing's output/progress.md into the progress atom. */
 async function scanProgress($: Engine) {
   try {
     const root = await listingsDir($)
+    const listing = await read($, current)
     let newest: { listing: string; mtimeMs: number } | undefined
-    if (await $.fs.exists(root)) {
-      for (const listing of await $.fs.list(root)) {
-        if (listing.kind !== 'dir') continue
-        const output = `${root}/${listing.name}/output`
-        if (!(await $.fs.exists(output))) continue
-        const entry = (await $.fs.list(output)).find(
-          f => f.kind === 'file' && f.name === 'progress.md',
-        )
-        if (entry && (!newest || entry.mtimeMs > newest.mtimeMs)) {
-          newest = { listing: listing.name, mtimeMs: entry.mtimeMs }
-        }
-      }
+    const output = `${root}/${listing}/output`
+    if (listing && (await $.fs.exists(output))) {
+      const entry = (await $.fs.list(output)).find(
+        f => f.kind === 'file' && f.name === 'progress.md',
+      )
+      if (entry) newest = { listing, mtimeMs: entry.mtimeMs }
     }
     if (!newest) {
       await update($, progress, () => null)
@@ -549,7 +565,7 @@ export const register: Register = on => {
     })
     await $.command.register({
       name: 'steps',
-      description: 'Open or close the pane of the current listing\'s work steps',
+      description: 'Open or close the pane of this session\'s listing work steps',
     })
     void scan($)
     void scanProgress($)
@@ -572,7 +588,11 @@ export const register: Register = on => {
   // progress.md is updated after every step: redraw the pane as it changes.
   on('tool.call', async ($, e, next) => {
     const ran = await next(e)
-    if (['Write', 'Edit', 'Bash'].includes(e.tool)) void scanProgress($)
+    if (['Write', 'Edit', 'Bash', 'Read'].includes(e.tool)) {
+      const listing = listingOf(e)
+      const noted = listing ? update($, current, () => listing) : Promise.resolve()
+      void noted.then(() => scanProgress($)).catch(() => {})
+    }
     return ran
   })
 
@@ -587,8 +607,8 @@ export const register: Register = on => {
     if (!shown) {
       return (
         <Box flexDirection="column">
-          <Text dimColor>ยังไม่มีขั้นตอนการทำงาน</Text>
-          <Text dimColor>จะขึ้นเมื่อเริ่มทำวีดีโอของทรัพย์ (output/progress.md)</Text>
+          <Text dimColor>ยังไม่มีขั้นตอนการทำงานใน session นี้</Text>
+          <Text dimColor>จะขึ้นเมื่อ session นี้เริ่มทำวีดีโอของทรัพย์ (output/progress.md)</Text>
         </Box>
       )
     }

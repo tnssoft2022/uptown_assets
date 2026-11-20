@@ -15,7 +15,9 @@ a download button (saved under the property name) and a search box that matches 
 sale or rent, code and file name. Press the button again to refresh the page. `/videos` does the same.
 
 A second button, **📋 เปิด/ปิดขั้นตอน**, sits after it and opens or closes a pane beside the chat with
-the work steps of the listing worked on last: the newest `listings/*/output/progress.md` table
+the work steps of this session's listing only: the `listings/<listing>/output/progress.md` table this
+session last wrote or read (another session's listing never shows here; before this session touches a
+progress.md the pane says there is none yet)
 (# | ขั้นตอน | สถานะ | ใช้เวลา), each step coloured by its status (✅ green, ⏳ yellow, ⏸ magenta),
 with the property name and how many steps are done. The pane redraws as the director updates the table
 (after each file write and at the end of every turn). `/steps` does the same as the button.

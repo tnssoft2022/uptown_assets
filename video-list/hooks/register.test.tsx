@@ -11,6 +11,7 @@ import {
   groupByDay,
   groupByListing,
   infoOf,
+  listingOf,
   parseSteps,
   tagOf,
 } from './register'
@@ -299,7 +300,14 @@ test('progress.md rows become steps', () => {
   expect(parseSteps('no table')).toEqual([])
 })
 
-test('the steps button opens the pane with the newest progress table, and closes it', async ($, on) => {
+test('a tool call names its listing by the progress.md path', () => {
+  expect(listingOf({ file_path: '/project/listings/A01-condo/output/progress.md' })).toBe('A01-condo')
+  expect(listingOf({ command: "cat 'listings/B02-house/output/progress.md'" })).toBe('B02-house')
+  expect(listingOf({ file_path: '/project/listings/A01-condo/brief.md' })).toBeNull()
+  expect(listingOf({ command: 'ls' })).toBeNull()
+})
+
+test('the steps button opens the pane with this session\'s progress table, and closes it', async ($, on) => {
   project(on, PROGRESS)
   // The surface's pane record: what open adds and close takes away.
   const open = new Map<string, string>()
@@ -320,7 +328,14 @@ test('the steps button opens the pane with the newest progress table, and closes
     open.delete(e.id)
     return { value: undefined }
   })
+  on('tool.call', () => ({ result: {} }))
   await $.session.start({ cwd: '/project', surface: 'desktop', isInteractive: true })
+  await $.tool.call({
+    tool: 'Edit',
+    file_path: '/project/listings/A01-condo/output/progress.md',
+    old_string: 'a',
+    new_string: 'b',
+  })
 
   const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
   await band.press({ key: 'toggle-steps' })
@@ -351,8 +366,9 @@ test('the steps button opens the pane with the newest progress table, and closes
   await band.unmount()
 })
 
-test('with no progress table yet, the pane says so', async ($, on) => {
-  project(on)
+test('a progress table this session never touched stays out of its pane', async ($, on) => {
+  // A01-condo has a progress.md, written by another session.
+  project(on, PROGRESS)
   await $.session.start({ cwd: '/project', surface: 'desktop', isInteractive: true })
   const pane = await $.ui.mount({
     plugin: 'video-list',
@@ -368,6 +384,6 @@ test('with no progress table yet, the pane says so', async ($, on) => {
       view: {},
     },
   })
-  expect(await pane.find({ type: 'Text', text: 'ยังไม่มีขั้นตอนการทำงาน' })).toBeTruthy()
+  expect(await pane.find({ type: 'Text', text: 'ยังไม่มีขั้นตอนการทำงานใน session นี้' })).toBeTruthy()
   await pane.unmount()
 })
