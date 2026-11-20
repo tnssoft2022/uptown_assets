@@ -2,7 +2,8 @@
 """Print the style picker for the chat: one card per style in STYLES.md.
 
 Each card shows the style's sample room (brand/styles/<file>.jpg, not the listing's photos) in 9:16, with
-no text on the image, and under it the style name and length. The images load from jsDelivr, which serves
+no text on the image, and under it the style name and a
+short description (no length). The images load from jsDelivr, which serves
 the public GitHub repo's main branch, so a new or changed image shows only after it is pushed (a changed
 image under the same name can stay cached for about 12 hours: give it a new name instead). The output has
 no embedded image data, so pass it to show_widget as it is. The director passes the HTML to show_widget;
@@ -19,9 +20,9 @@ from pathlib import Path
 
 # name, sample image in brand/styles/, one-line summary
 STYLES = [
-    ("มาตรฐาน", "standard", "20–30 วิ · เป็นกันเอง"),
-    ("เรียบหรู", "calm", "30–40 วิ · ช้า สงบ"),
-    ("เดินชมห้อง", "walk", "40–50 วิ · คลิปเดินชม"),
+    ("มาตรฐาน", "standard", "เป็นกันเอง"),
+    ("เรียบหรู", "calm", "ช้า สงบ"),
+    ("เดินชมห้อง", "walk", "คลิปเดินชม"),
 ]
 
 HEADER_ICON = (
@@ -67,7 +68,7 @@ def main() -> int:
     cards = "".join(card(n, f"{CDN}/{f}.jpg", s, n == a.recommend)
                     for n, f, s in STYLES)
     print(
-        '<h2 class="sr-only">เลือกสไตล์วิดีโอ 5 แบบ แต่ละแบบมีรูปห้องตัวอย่าง</h2>'
+        f'<h2 class="sr-only">เลือกสไตล์วิดีโอ {len(STYLES)} แบบ แต่ละแบบมีรูปห้องตัวอย่าง</h2>'
         f'<form class="elicit"><div class="elicit-header">{HEADER_ICON}<span>สไตล์วิดีโอ</span></div>'
         '<div class="elicit-body"><div class="elicit-group">'
         '<label class="elicit-question">วิดีโอนี้ใช้สไตล์ไหนดี?</label>'

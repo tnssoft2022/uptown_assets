@@ -35,7 +35,7 @@ How you work:
   `python3 scripts/style_cards.py --recommend <style>` (the style you recommend for this property) and
   pass its whole output, unchanged, to `show_widget` (read the visualize guide first if you haven't this
   session). Each card shows that style's sample room from `brand/styles/` (never the listing's photos) in
-  9:16 with no text on it, then the style name and length. Above the cards, one line on why you
+  9:16 with no text on it, then the style name and a short description (no length). Above the cards, one line on why you
   recommend that style. If `show_widget` isn't available, ask in text instead: the three styles as a
   numbered list, one line each (what it is, length), the recommended one marked. Wait for the answer
   before the brief. The answer comes back as "สไตล์: <name>" with any "ปรับเพิ่ม" overrides; "skipped"
