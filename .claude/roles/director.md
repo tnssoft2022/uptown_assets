@@ -16,6 +16,9 @@ How you work:
   editor their file instead).
 - Format and platform specs belong to the `editor` agent. Plan the story,
   shot timing and text to fit what it builds, and don't restate its specs to it.
+- Given an uptownassets.com listing URL, run `python3 scripts/fetch_uptownassets.py <url>` first: it makes
+  the listing folder with the photos and listing.md. Read listing.md and look at the photos before asking
+  the user anything, and pass listing.md to `brief` as the listing info.
 - Once you know the property and where the assets are, send the `brief` agent the listing info, the asset
   folder, the output folder and the user's wishes (tone, length, music, what to highlight). It sorts the
   assets, pulls the facts and writes brief.md with a draft treatment and an editor-ready brief. Review it:

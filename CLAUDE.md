@@ -14,12 +14,17 @@ sky and upscale with Magnific credits), `voice-kanya` (Thai voice-over with macO
 listings/
   <code>-<name>/
     assets/    originals: photos, clips, logo, music. Never modify or delete.
+    listing.md listing text as the site shows it, source URLs, photo sources (from the fetch script)
     brief.md   written by the brief agent
     output/    finished videos, build.sh, voiceover.wav, voice/, magnific/, retouched/
 ```
 
 Everything in `listings/` is gitignored (only `listings/.gitignore` is tracked), so briefs and videos are
 not in git. `session-role/` and `video-list/` are Claude Code plugins, not part of the video pipeline.
+
+`scripts/fetch_uptownassets.py <url>` turns an uptownassets.com project page (`/th/` or `/en/project/...`)
+into a listing folder: full-size photos in `assets/` (never overwrites one) and `listing.md`. Python 3.9,
+standard library only. Listings from other sites are read by hand into the same layout.
 
 ## Tools
 
