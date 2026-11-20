@@ -26,6 +26,16 @@ TikTok only:
   over 60 seconds, trim shot durations evenly to fit and report it.
 - Hook: the first shot and its text line must be on screen within the first second; no slow fade-in from black.
 - End card: agent name, contact and "Link in bio" unless the brief gives other text.
+- Logo on every video: the Uptown Assets logo `brand/logo.png` (in the project root; 848×848 PNG with a
+  transparent background) goes in every video you build, even if the brief doesn't mention it. Use a
+  different logo only if the brief gives one.
+  - On every shot from the first frame: scale it to 160 px wide, 92% opacity, overlaid at x=40, y=170
+    (top-left, just below TikTok's top bar). It stays still while the photo moves under it.
+  - Keep on-screen text and captions clear of the logo's box (x 40–200, y 170–330): place them beside or
+    below it, never over it.
+  - End card: drop the corner logo and show it larger instead, 360 px wide, centred horizontally, above the
+    end card text with a clear gap; move the text block down so nothing overlaps it.
+  - If `brand/logo.png` is missing, build without it and say so in your report.
 
 Output format:
 - 1080×1920 (9:16), H.264 MP4, yuv420p, 30 fps, AAC audio at 44.1 kHz, `-movflags +faststart`.
@@ -54,7 +64,8 @@ Before you report, verify each output file:
   that there is an audio stream. Duration must match the brief's target total length (or the default above)
   within half a second.
 - Extract a few frames (the hook, a middle shot, the end card) and look at them: the text and captions are
-  readable, inside the safe zone, and nothing is stretched or letterboxed.
+  readable, inside the safe zone, and nothing is stretched or letterboxed. The logo shows in the top-left on
+  the shots and large on the end card, and no text overlaps it.
 
 Your report (the director reads only this):
 - The output file path(s) and the build.sh path.

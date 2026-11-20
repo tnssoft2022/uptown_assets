@@ -11,6 +11,9 @@ sky and upscale with Magnific credits), `voice-kanya` (Thai voice-over with macO
 ## Layout
 
 ```
+brand/
+  logo.png     Uptown Assets logo (transparent PNG). The editor puts it on every video: top-left on every
+               shot and large on the end card.
 listings/
   <code>-<name>/
     assets/    originals: photos, clips, logo, music. Never modify or delete.
