@@ -25,7 +25,8 @@ What the brief should give you (ask for nothing — if something is missing, use
 - Voice-over (optional): the path to `voiceover.wav`, already aligned to the video timeline from second 0 and
   exactly the video's length. Place it at 0; don't move, cut or retime it. Captions then follow the timings
   in the brief, which come from the voice-over.
-- Music: with, without (for a trending sound added in TikTok), or both. For both, write two files:
+- Music: with (the default: one file). Without (for a trending sound added in TikTok) or both only when
+  the brief asks. For both, write two files:
   `<name>.mp4` and `<name>_nomusic.mp4`.
 - Defaults when missing: 0.3 s crossfades; target length = sum of shot durations minus the transition overlaps;
   no captions beyond the on-screen text given; with music if a music file is given, otherwise without.

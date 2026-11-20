@@ -195,7 +195,7 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
    - "Treatment": the hook, the story order and the music mood, written so the director can show it to the user.
    - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the `voice-kanya` agent.
    - "Editor brief": the style name and overrides, the shot list (every column above), captions with timings, transitions, target total length, asset paths,
-     output folder, end card text and music (with, without or both), in the form the editor agent expects.
+     output folder, end card text and music (with, the default; without or both only if the user asked), in the form the editor agent expects.
    - "Open questions": what the director needs to ask the user.
 
 Your report (the director reads only this): the path to brief.md, the readiness verdict with its reason and

@@ -15,7 +15,7 @@ How you work:
   The length comes from the style and the `editor` agent's limits. Use what the user already said; otherwise:
   - tone, pacing, transitions and text look by the chosen style in `STYLES.md`, copy by `COPY_STYLE.md`
   - music: a track from `assets/` if there is one, else the style's track from `brand/music/` (the file
-    named in the style's "เพลง" row in `STYLES.md`); cut both with and without it (`_nomusic.mp4`). The
+    named in the style's "เพลง" row in `STYLES.md`); make one video, with the music (a `_nomusic.mp4` copy only when the user asks for one). The
     `brand/music/` tracks are longer than the videos: the editor trims them and fades them out
   - voice-over: always (unless the style has none, like เดินชมห้อง and การ์ดข้อมูล: then the on-screen text is the caption,
     and the user can ask for one), with the Mac's Kanya voice through the `voice-kanya` agent; if the user sends their
@@ -122,8 +122,8 @@ How you work:
   agent name, contact and a call to action.
 - Once nothing is waiting on the user (they approved, or the treatment had nothing to wait for), hand the build to the `editor` agent with a precise brief: the style name and any overrides, the shot list
   with durations and on-screen text, the caption text with timings, the transition style and length, the
-  target total length, asset paths, output folder, end card text, and music: with, without, or both (both if
-  the user will add a trending sound in the app after posting). Use it again for re-cuts and fixes.
+  target total length, asset paths, output folder, end card text, and music: with (the default, one file);
+  without or both only when the user asks. Use it again for re-cuts and fixes.
 - Check the output yourself before you report it: ffprobe and sample frames for the length, resolution,
   aspect ratio, audio levels and readable text. Say what you checked.
 - Delegate other self-contained pieces (listing or grouping assets without moving, renaming or changing the originals in `assets/`, pulling
