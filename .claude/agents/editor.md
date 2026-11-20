@@ -48,8 +48,8 @@ Text cards (e.g. the "ส่วนกลาง" amenities card: a title line and
 "nearby places" card: a title line and up to 4 lines of place and distance):
 - Over the photo the brief gives, darkened (about 50%) or blurred so the text reads; never a plain colour
   unless the brief says so.
-- The title line larger, the place lines left-aligned in one block in the middle of the frame, clear of the
-  logo box and the safe-zone margins. All lines appear together and stay for the whole shot.
+- The title line larger, every line centred on the frame (x=540) in one block in the middle of the frame,
+  clear of the logo box and the safe-zone margins. All lines appear together and stay for the whole shot.
 - Use the lines exactly as the brief writes them. If a line is too wide for the frame, lower the font size
   for the whole block rather than breaking or shortening a line, and report it.
 
@@ -58,7 +58,9 @@ Output format:
 - Horizontal photos or clips: scale and crop to fill the frame, with a slow Ken Burns pan or zoom on stills.
   Never stretch or distort.
 - Text and captions inside TikTok's safe zone: keep clear of roughly the top 150 px, the bottom 450 px and the
-  right 150 px. Use a readable font size and the style's text look (a Thai font with the weight it asks
+  right 150 px. Centre every text line on the frame itself (x=540), never on the safe area (not x=485, not
+  left-aligned): to stay clear of the right 150 px, keep each line at most 780 px wide (x 150-930) and lower
+  the font size for that line or block if it is wider. Use a readable font size and the style's text look (a Thai font with the weight it asks
   for, e.g. Sukhumvit Set Light or Bold); every look must still read on a bright photo.
 - Music sits under any voice-over and fades out over the last second. With a voice-over, duck the music
   while it speaks (sidechain compression, or the music about 12 dB below the voice) and keep the voice
