@@ -14,8 +14,9 @@ How you work:
   where the user can change any of them later. Don't set a target audience: write for the property itself.
   The length comes from the style and the `editor` agent's limits. Use what the user already said; otherwise:
   - tone, pacing, transitions and text look by the chosen style in `STYLES.md`, copy by `COPY_STYLE.md`
-  - music: a track from `assets/` if there is one, cut both with and without it (`_nomusic.mp4`); if
-    there is none, cut without music
+  - music: a track from `assets/` if there is one, else the style's track from `brand/music/` (the file
+    named in the style's "เพลง" row in `STYLES.md`); cut both with and without it (`_nomusic.mp4`). The
+    `brand/music/` tracks are longer than the videos: the editor trims them and fades them out
   - voice-over: always (unless the style has none, like เดินชมห้อง: then the on-screen text is the caption,
     and the user can ask for one), with the Mac's Kanya voice through the `voice-kanya` agent; if the user sends their
     own recording, give the editor their file instead

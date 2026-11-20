@@ -16,6 +16,8 @@ brand/
   logo.png     Uptown Assets logo (transparent PNG). The editor puts it on every video: top-left on every
                shot and large on the end card.
   styles/      one sample room per style (standard, calm, fast-2, data, walk .jpg) for the style picker cards only.
+  music/       one instrumental track per style (standard, calm, fast, data, walk .mp3), AI music from the
+               user's paid Magnific account (Google Lyria 3 Pro). Used when a listing's assets/ has no music.
 listings/
   <code>-<name>/
     assets/    originals: photos, clips, logo, music. Never modify or delete.
