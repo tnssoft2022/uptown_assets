@@ -74,8 +74,7 @@ def main() -> int:
         '<label class="elicit-question">วิดีโอนี้ใช้สไตล์ไหนดี?</label>'
         f'<div class="elicit-pills" data-name="สไตล์" data-multi="false">{cards}</div></div>'
         '<div class="elicit-group"><label class="elicit-question">อยากปรับอะไรเพิ่มไหม?</label>'
-        '<textarea class="elicit-textarea" data-name="ปรับเพิ่ม" '
-        'placeholder="เช่น ใช้ crossfade แทนการตัดตรง"></textarea></div></div>'
+        '<textarea class="elicit-textarea" data-name="ปรับเพิ่ม"></textarea></div></div>'
         '<div class="elicit-footer"><button type="button" class="elicit-skip">เลือกให้เลย</button>'
         '<button type="button" class="elicit-submit">ใช้สไตล์นี้</button></div></form>'
     )
