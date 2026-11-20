@@ -39,6 +39,14 @@ TikTok only:
     end card text with a clear gap; move the text block down so nothing overlaps it.
   - If `brand/logo.png` is missing, build without it and say so in your report.
 
+Text cards (e.g. the "nearby places" card: a title line and up to 4 lines of place and distance):
+- Over the photo the brief gives, darkened (about 50%) or blurred so the text reads; never a plain colour
+  unless the brief says so.
+- The title line larger, the place lines left-aligned in one block in the middle of the frame, clear of the
+  logo box and the safe-zone margins. All lines appear together and stay for the whole shot.
+- Use the lines exactly as the brief writes them. If a line is too wide for the frame, lower the font size
+  for the whole block rather than breaking or shortening a line, and report it.
+
 Output format:
 - 1080×1920 (9:16), H.264 MP4, yuv420p, 30 fps, AAC audio at 44.1 kHz, `-movflags +faststart`.
 - Horizontal photos or clips: scale and crop to fill the frame, with a slow Ken Burns pan or zoom on stills.

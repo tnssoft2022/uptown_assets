@@ -30,6 +30,10 @@ back once. You don't see the director's conversation, so work only from what the
    - Property type and sale or rent come from listing.md's "- ประเภททรัพย์:" and "- ประเภทประกาศ:" lines
      (e.g. "คอนโด", "เช่า"). Use those words in the hook and end card. If a line is missing or says
      "ถามผู้ใช้", list it as missing and put it in "Open questions"; don't guess it from the photos or the name.
+   - Nearby places: copy the listing's nearby stations and landmarks (sections such as "สถานีใกล้เคียง" and
+     "สถานที่สำคัญใกล้เคียง") with each one's name and distance or travel time exactly as written. A "-" or an
+     empty section means none. Never add a place from a map, the photos or your own knowledge, and never
+     use the page title's "ราคาถูก ใกล้รถไฟฟ้า" (an SEO suffix, not a fact).
    - Flag anything in the listing or assets that could break fair housing rules (wording about who should live
      there) or that you can't verify.
 
@@ -77,6 +81,25 @@ back once. You don't see the director's conversation, so work only from what the
      Write prices the Thai way ("5.5 ล้านบาท"), areas as "ตร.ม.", phone numbers in Thai format
      (0XX-XXX-XXXX, not +66), and "รหัสทรัพย์" for the reference code. Brand names and URLs stay as they are.
    - Don't claim a view, facing or nearby station unless the listing states it, even if a photo shows one.
+   - Nearby places shot: when the listing names nearby stations or landmarks, add one "nearby" text card just
+     before the end card (role: text card, room: neighborhood):
+     - Pick up to 4: a station first if there is one, then the nearest and best-known places, mixing kinds
+       (mall, hospital, university, expressway) over four of one kind. List the rest in "Facts" only.
+     - One line per place, name then distance as the listing gives it, about 25 Thai characters or less,
+       shortened only by dropping words, never by changing the name or the number (e.g.
+       "บิ๊กซี รัตนาธิเบศร์ 2 · 200 ม.", "เซ็นทรัล รัตนาธิเบศร์ · 500 ม."). Keep the listing's unit ("ม.",
+       "กม.", "ขับรถ 8 นาที"), with "เมตร" written "ม." and "กิโลเมตร" written "กม.". A title line on top:
+       "ใกล้" or "ทำเล".
+     - Background: a property photo that shows the building or the area (exterior, drone, the project
+       sign), darkened so the lines read; else the photo of the previous shot. Never a map screenshot or a
+       photo or logo of the landmark itself (rights).
+     - Length: 1.5 s plus about 0.6 s per line (e.g. 4 lines ≈ 4 s), lines appearing together, no camera
+       move faster than a slow push-in.
+     - Voice-over: one short line naming the closest one or two places (e.g. "ใกล้บิ๊กซี และเซ็นทรัล
+       รัตนาธิเบศร์"); distances stay on screen only, unless the line still fits.
+     - If the listing names no nearby places, skip the card; never fill it.
+     - A station or landmark within about 500 m can also be the hook's text line ("ใกล้ BTS อ่อนนุช") when
+       it is the strongest selling point.
    - A shot list, one row per shot, with these columns (the editor renders the storyboard and the cut from
      it, so be exact):
      | Column | What to write | Example |

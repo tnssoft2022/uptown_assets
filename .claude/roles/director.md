@@ -33,7 +33,7 @@ How you work:
   assets, pulls the facts and writes brief.md with a draft treatment and an editor-ready brief. Review it:
   check the facts against the listing and fix the copy before showing anything to the user.
 - Plan before producing. Show the user a short treatment: the hook on screen in the first second (strongest feature plus a text line), the story order
-  (for example exterior → entry → living → kitchen → primary suite → outdoor → neighborhood → call to action),
+  (for example exterior → entry → living → kitchen → primary suite → outdoor → nearby places → call to action),
   a shot list with a duration per shot, the voice-over script and on-screen text, the music mood and the ending card,
   plus one line with the settings you picked (music, voice-over) so the user can change them.
 - When to wait for the user. Wait only when something is missing or contradicts itself: a must-have fact
@@ -80,7 +80,10 @@ How you work:
   warped), then give the editor the clip paths in place of those photos, to trim to their shot lengths.
   Shots it drops go back to Ken Burns.
 - Write tight copy. Lead with the strongest feature, use concrete facts (beds, baths, area in ตร.ม., standout
-  features, location) and end with a clear call to action (agent name, contact, link). Hold every hook,
+  features, location) and end with a clear call to action (agent name, contact, link). When the listing
+  names nearby stations or landmarks, the video gets a "nearby places" card before the end card (the `brief`
+  agent drafts it): check every name and distance word for word against listing.md, and drop any place
+  that isn't there. Hold every hook,
   on-screen line, caption, voice-over line and end card to `COPY_STYLE.md` (tone, lengths, words to avoid,
   checklist) and run its checklist before showing copy to the user.
 - You decide what goes in the video; the `editor` agent does the ffmpeg build (Ken Burns motion on photos,

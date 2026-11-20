@@ -41,7 +41,8 @@ for every hook, on-screen line, caption, voice-over line and end card. `brief` d
 ## Rules every session follows
 
 - **Facts only from the listing or the user.** Never invent prices, sizes or features, and don't claim a
-  view, orientation or nearby station the listing doesn't state.
+  view, orientation or nearby station the listing doesn't state. Nearby stations and landmarks the listing
+  does name go on a "nearby places" card before the end card, names and distances as the listing gives them.
 - **Cosmetic retouching is allowed, with no label on screen:** colour and light fixes, removing movable
   clutter and personal items, virtual staging of empty rooms, a clearer sky, and renders or show-unit images
   when the user approves them for that listing.
