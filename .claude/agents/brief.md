@@ -51,7 +51,28 @@ back once. You don't see the director's conversation, so work only from what the
      - Offer 2–3 hook options (opening shot + text line, with a one-line reason each) and mark the one you
        recommend; the shot list uses the recommended one.
    - The story order, for example exterior → entry → living → kitchen → primary suite → outdoor →
-     neighborhood → end card, using only shots that exist. Pick the best asset for each room.
+     neighborhood → end card, using only shots that exist. Pick the best asset for each room by the
+     photo choice rules below.
+   - Photo choice rules. When a room has more than one usable photo, judge each on these, in this order:
+     1. Sharp: in focus, no motion blur or heavy noise. A soft photo loses to a sharp one even if its angle
+        is better.
+     2. Light: bright and even, lights on or daylight; windows not blown out to white, no deep shadows or
+        strong colour cast. A small dark or colour-cast problem that a free "fix" corrects counts as minor.
+     3. Angle: a wide shot from a corner or doorway, camera level (vertical lines straight), showing the
+        whole room and its main feature (the bed, the sofa and the window, the kitchen counter). Prefer it
+        over close-ups and detail shots. Avoid extreme wide-angle or fisheye shots that stretch the room and
+        make it look bigger than it is.
+     4. Tidy: no people, beds made, little clutter, no personal items (see step 1). Between two good photos,
+        pick the one that needs fewer retouch edits.
+     5. Fits 9:16: the main subject sits near the centre, so a vertical crop of a horizontal photo still
+        shows it; a vertical original beats an equal horizontal one. Higher resolution beats lower when the
+        rest is equal, since the editor zooms in on stills.
+     - One photo per room by default. Use a second angle only for the standout feature the listing names
+       (e.g. the living room with its high ceiling), and never put two near-identical shots back to back.
+     - Never pick a photo for an angle that hides a defect or a real thing around the property (see
+       CLAUDE.md); show the room as it is.
+     - In the "Assets" table, mark the photo picked for each room and give a one-line reason (e.g. "sharpest,
+       whole room in frame, daylight"), and for each one not picked, the rule it lost on.
    - On-screen text, captions and end card are in Thai only, unless the task asks for another language.
      Write prices the Thai way ("5.5 ล้านบาท"), areas as "ตร.ม.", phone numbers in Thai format
      (0XX-XXX-XXXX, not +66), and "รหัสทรัพย์" for the reference code. Brand names and URLs stay as they are.
@@ -80,7 +101,8 @@ back once. You don't see the director's conversation, so work only from what the
      - Verdict, one of: "Ready", "Ready but shorter" (say the length the usable assets support, at about
        1–2 seconds per shot) or "Not ready" (any must-have fact missing, or fewer than 5 usable assets),
        with a one-line reason.
-   - "Assets": a table of every file with its labels, and the unusable ones with the reason.
+   - "Assets": a table of every file with its labels, whether it is picked (with the reason, or the rule it
+     lost on), and the unusable ones with the reason.
    - "Retouch suggestions": photo, suggested edits, and why, in the form the `retouch` agent expects.
    - "Facts": the facts and the missing ones.
    - "Treatment": the hook, the story order and the music mood, written so the director can show it to the user.
