@@ -10,7 +10,7 @@
 | **director** (role) | [.claude/roles/director.md](.claude/roles/director.md) | ผู้กำกับ เป็น role เริ่มต้นของโปรเจกต์ คุยกับเราเป็นภาษาไทย ถามข้อมูลที่ขาด วาง treatment และ shot list เขียน copy กับ caption สั่งงาน agent ด้านล่าง แล้วตรวจผลงานก่อนรายงาน |
 | **brief** (agent) | [.claude/agents/brief.md](.claude/agents/brief.md) | อ่านข้อมูลประกาศ ตรวจรูปและคลิปทุกไฟล์ แยกตามห้อง ดึงข้อเท็จจริงของทรัพย์ แล้วเขียน `brief.md` (ความพร้อม, treatment ร่าง, สคริปต์เสียงพากย์, brief สำหรับ editor) |
 | **voice-kanya** (agent) | [.claude/agents/voice-kanya.md](.claude/agents/voice-kanya.md) | ทำเสียงพากย์ภาษาไทยด้วยเสียง Kanya ของ macOS (`say`) ทำงานบนเครื่องทั้งหมด ฟรี แต่เสียงจะออกแนวหุ่นยนต์ ได้ไฟล์ `voiceover.wav` ที่ตรงกับไทม์ไลน์วิดีโอ |
-| **editor-magnific** (agent) | [.claude/agents/editor-magnific.md](.claude/agents/editor-magnific.md) | เปลี่ยนรูปเป็นคลิปเคลื่อนไหวด้วย AI ของ Magnific (image-to-video เช่น Kling) ประเมินเครดิตก่อนและใช้ไม่เกินงบที่ director ให้ ตรวจทุกคลิปว่าไม่มีของงอก หาย หรือบิดเบี้ยว แล้วดาวน์โหลดมาไว้ให้ editor ตัดต่อ (ไม่ได้ตัดวิดีโอฉบับสุดท้ายเอง) |
+| **editor-magnific** (agent) | [.claude/agents/editor-magnific.md](.claude/agents/editor-magnific.md) | ขยายภาพให้คมขึ้น (Magnific Precision) แล้วเปลี่ยนรูปเป็นคลิปเคลื่อนไหวด้วย AI ของ Magnific (image-to-video เช่น Kling) ประเมินเครดิตก่อนและใช้ไม่เกินงบที่ director ให้ ตรวจภาพที่ขยายและทุกคลิปเทียบกับรูปต้นฉบับว่าไม่มีของงอก หาย หรือบิดเบี้ยว แล้วดาวน์โหลดมาไว้ให้ editor ตัดต่อ (ไม่ได้ตัดวิดีโอฉบับสุดท้ายเอง) |
 | **editor** (agent) | [.claude/agents/editor.md](.claude/agents/editor.md) | ตัดต่อด้วย ffmpeg ทำเฉพาะวิดีโอ TikTok (1080×1920, 20–30 วินาที, ไม่เกิน 60) ใส่ Ken Burns, caption, เพลง และ end card แล้วตรวจไฟล์ก่อนส่ง |
 
 ## ขั้นตอนการทำวิดีโอ

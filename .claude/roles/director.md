@@ -33,7 +33,7 @@ How you work:
 - AI motion (optional): photos can move with a free Ken Burns pan or zoom (the `editor` does it), or become
   AI motion clips made with Magnific through the `editor-magnific` agent, which costs Magnific credits. Offer
   it in the treatment for the shots where motion helps most (hook, living, view), with the cost: ask
-  `editor-magnific` for an estimate first (task without a budget: it only prices the clips). Get the user's
+  `editor-magnific` for an estimate first (task without a budget: it only prices the upscales and clips). Get the user's
   yes on the shots and the credit budget, then send it the shots (shot number, photo path, shot length,
   camera move), the budget and the output folder. Check its clips (sample frames: nothing added, removed or
   warped), then give the editor the clip paths in place of those photos, to trim to their shot lengths.
