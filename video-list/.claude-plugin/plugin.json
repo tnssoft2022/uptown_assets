@@ -1,0 +1,6 @@
+{
+  "name": "video-list",
+  "version": "0.1.0",
+  "description": "A button above the chat box that lists every finished listing video (listings/*/output) in a pane, with open and Finder buttons.",
+  "types": "./types/index.d.ts"
+}

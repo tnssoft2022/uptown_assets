@@ -1,15 +1,21 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "shanti-roles",
-  "description": "Shanti Roles: a Claude Code plugin that gives each session a Role picked from a dropdown above the chat box.",
+  "name": "uptown-assets",
+  "description": "Uptown Assets: Claude Code plugins for this project: session roles, and a button that lists every finished listing video.",
   "owner": {
-    "name": "ShantiLink"
+    "name": "Uptown Assets"
   },
   "plugins": [
     {
       "name": "session-role",
       "description": "Give each session a Role picked from a dropdown above the chat box: local (.claude/roles) or global (~/.claude/roles) job descriptions with an edit fence, tool limits and a live subagent indicator.",
       "source": "./session-role",
+      "category": "productivity"
+    },
+    {
+      "name": "video-list",
+      "description": "A button above the chat box that lists every finished listing video (listings/*/output) in a pane, with open and Finder buttons.",
+      "source": "./video-list",
       "category": "productivity"
     }
   ]

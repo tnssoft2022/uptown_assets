@@ -76,7 +76,8 @@ claude plugin install session-role@shanti-roles
 รายละเอียดเพิ่มเติมอยู่ใน [session-role/README.md](session-role/README.md) และ [session-role/ARCHITECTURE.md](session-role/ARCHITECTURE.md)
 
 ```
-.claude-plugin/marketplace.json   แคตตาล็อกปลั๊กอิน (marketplace "shanti-roles")
+.claude-plugin/marketplace.json   แคตตาล็อกปลั๊กอิน (marketplace "uptown-assets")
 session-role/                     ปลั๊กอิน role, ตัวเลือก role, ขอบเขตการแก้ไฟล์, ตัวแสดง subagent
+video-list/                       ปลั๊กอินปุ่ม "วีดีโอทั้งหมด" เหนือช่องแชท เปิดรายการวิดีโอที่ตัดเสร็จ
 export.py                         เครื่องมือสำหรับ export ปลั๊กอินจากโฟลเดอร์ dev
 ```

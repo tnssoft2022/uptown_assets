@@ -19,7 +19,7 @@ listings/
 ```
 
 Everything in `listings/` is gitignored (only `listings/.gitignore` is tracked), so briefs and videos are
-not in git. `session-role/` is a Claude Code plugin, not part of the video pipeline.
+not in git. `session-role/` and `video-list/` are Claude Code plugins, not part of the video pipeline.
 
 ## Tools
 
