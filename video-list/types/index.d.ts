@@ -14,6 +14,6 @@ export type Video = {
 
 declare module 'claude-code' {
   interface PluginState {
-    'video-list': { videos: Shaped<Video[]>; isScanning: boolean }
+    'video-list': { videos: Shaped<Video[]> }
   }
 }

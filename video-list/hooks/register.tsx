@@ -1,9 +1,9 @@
 import { atom, read, update } from 'claude-code'
-import type { EngineInterface, Register } from 'claude-code'
+import type { EngineInterface, McpToolResult, Register } from 'claude-code'
 
 import type { Video } from '../types'
 
-const PANE = 'video-list'
+const PAGE = 'videos.html'
 const TITLE = 'วีดีโอทั้งหมด'
 const ROOT = 'listings'
 const EXTENSIONS = ['.mp4', '.mov', '.m4v']
@@ -13,10 +13,6 @@ const EXTENSIONS = ['.mp4', '.mov', '.m4v']
 const videos = atom({ plugin: 'video-list', key: 'videos' } as const, [], {
   shape: 'videos-1',
 })
-const isScanning = atom(
-  { plugin: 'video-list', key: 'isScanning' } as const,
-  false,
-)
 
 const isVideo = (name: string) =>
   EXTENSIONS.some(ext => name.toLowerCase().endsWith(ext))
@@ -71,48 +67,200 @@ async function lengthOf($: Engine, path: string) {
 }
 
 async function scan($: Engine) {
-  await update($, isScanning, () => true)
-  try {
-    const known = new Map(
-      (await read($, videos)).map(v => [`${v.path}:${v.mtimeMs}`, v]),
-    )
-    const found: Video[] = []
-    if (await $.fs.exists(ROOT)) {
-      for (const listing of await $.fs.list(ROOT)) {
-        if (listing.kind !== 'dir') continue
-        const output = `${ROOT}/${listing.name}/output`
-        if (!(await $.fs.exists(output))) continue
-        for (const file of await $.fs.list(output)) {
-          if (file.kind !== 'file' || !isVideo(file.name)) continue
-          const path = `${output}/${file.name}`
-          const cached = known.get(`${path}:${file.mtimeMs}`)
-          found.push({
-            listing: listing.name,
-            name: file.name,
-            path,
-            sizeBytes: file.size,
-            mtimeMs: file.mtimeMs,
-            seconds: cached ? cached.seconds : await lengthOf($, path),
-          })
-        }
+  const known = new Map(
+    (await read($, videos)).map(v => [`${v.path}:${v.mtimeMs}`, v]),
+  )
+  const found: Video[] = []
+  if (await $.fs.exists(ROOT)) {
+    for (const listing of await $.fs.list(ROOT)) {
+      if (listing.kind !== 'dir') continue
+      const output = `${ROOT}/${listing.name}/output`
+      if (!(await $.fs.exists(output))) continue
+      for (const file of await $.fs.list(output)) {
+        if (file.kind !== 'file' || !isVideo(file.name)) continue
+        const path = `${output}/${file.name}`
+        const cached = known.get(`${path}:${file.mtimeMs}`)
+        found.push({
+          listing: listing.name,
+          name: file.name,
+          path,
+          sizeBytes: file.size,
+          mtimeMs: file.mtimeMs,
+          seconds: cached ? cached.seconds : await lengthOf($, path),
+        })
       }
     }
-    await update($, videos, () => found)
-  } finally {
-    await update($, isScanning, () => false)
+  }
+  await update($, videos, () => found)
+}
+
+const escapeHtml = (text: string) =>
+  text.replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
+  )
+
+/** The page's link to a video, relative to listings/ where the page sits. */
+const hrefOf = (video: Video) =>
+  [video.listing, 'output', video.name].map(encodeURIComponent).join('/')
+
+/** A self-contained page that lists and plays every video, grouped by listing. */
+export const buildPage = (list: readonly Video[], now: number) => {
+  const groups = groupByListing(list)
+  const sections = groups
+    .map(
+      ([listing, items]) => `
+<section>
+  <h2>${escapeHtml(listing)}</h2>
+  <div class="grid">${items
+    .map(
+      video => `
+    <figure>
+      <video src="${hrefOf(video)}" controls preload="metadata" playsinline></video>
+      <figcaption>
+        <a href="${hrefOf(video)}" target="_blank">${escapeHtml(video.name)}</a>
+        <span>${formatLength(video.seconds)} · ${formatSize(video.sizeBytes)} · ${formatDate(video.mtimeMs)}</span>
+      </figcaption>
+    </figure>`,
+    )
+    .join('')}
+  </div>
+</section>`,
+    )
+    .join('')
+  const empty = `<p class="empty">ยังไม่มีวีดีโอใน ${ROOT}/*/output/</p>`
+  return `<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${TITLE}</title>
+<style>
+  body { margin: 0; padding: 24px; font-family: -apple-system, "Sukhumvit Set", sans-serif; background: #111; color: #eee; }
+  header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px; }
+  h1 { margin: 0; font-size: 24px; }
+  .meta, figcaption span, .empty { color: #999; font-size: 13px; }
+  h2 { font-size: 18px; margin: 32px 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  figure { margin: 0; background: #1c1c1c; border-radius: 10px; overflow: hidden; }
+  video { width: 100%; aspect-ratio: 9 / 16; background: #000; display: block; }
+  figcaption { padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+  a { color: #eee; text-decoration: none; word-break: break-all; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎬 ${TITLE}</h1>
+  <span class="meta">${list.length} วีดีโอ · ${groups.length} ทรัพย์ · อัปเดต ${formatDate(now)}</span>
+</header>
+${list.length === 0 ? empty : sections}
+</body>
+</html>
+`
+}
+
+/** The page server's port while it runs; one per module life. */
+let serverPort: Promise<number> | undefined
+
+/**
+ * Starts server.py on listings/ (Range support, so videos seek) and resolves
+ * the port it bound. The child lives as long as the module.
+ */
+function startServer($: Engine, folder: string) {
+  return new Promise<number>((resolve, reject) => {
+    void (async () => {
+      let isReady = false
+      try {
+        const child = $.process.spawn({
+          argv: ['python3', `${$.plugin.root}/server.py`, folder],
+        })
+        let out = ''
+        for await (const { stream, text } of child) {
+          if (isReady || stream !== 'stdout') continue
+          out += text
+          const port = /PORT (\d+)/.exec(out)?.[1]
+          if (port) {
+            isReady = true
+            resolve(Number(port))
+          }
+        }
+      } catch (error) {
+        if (!isReady) reject(error)
+      } finally {
+        serverPort = undefined
+        if (!isReady) reject(new Error('page server stopped before it was ready'))
+      }
+    })()
+  })
+}
+
+/** The app's built-in browser pane, by the name /mcp lists it under. */
+const BROWSER = 'Claude Browser'
+
+const textOf = (result: McpToolResult) =>
+  result.content.map(block => (block.type === 'text' ? String(block.text) : '')).join('\n')
+
+/** The pane's tab already showing a page at this origin, if any. */
+async function tabAt($: Engine, server: string, origin: string) {
+  const result = await $.mcp.call(server, 'tabs_context', {})
+  if (result.isError) return undefined
+  const json = /\{[\s\S]*\}/.exec(textOf(result))?.[0]
+  if (!json) return undefined
+  const context = JSON.parse(json) as {
+    browserOpen?: boolean
+    tabs?: { tabId: string; origin: string }[]
+  }
+  if (!context.browserOpen) return undefined
+  return context.tabs?.find(tab => tab.origin === origin)?.tabId
+}
+
+/**
+ * Opens the URL in the app's built-in browser pane, reloading the tab that
+ * already shows the page rather than opening one more; false if it can't.
+ */
+async function openInPane($: Engine, url: string) {
+  try {
+    const browser = await $.mcp.connect(BROWSER)
+    if (!browser.isConnected) return false
+    const tabId = await tabAt($, browser.server, new URL(url).origin).catch(
+      () => undefined,
+    )
+    if (tabId) {
+      const shown = await $.mcp.call(browser.server, 'navigate', { url, tabId })
+      if (!shown.isError) {
+        await $.mcp.call(browser.server, 'tabs_select', { tabId })
+        return true
+      }
+    }
+    const opened = await $.mcp.call(browser.server, 'preview_start', { url })
+    return !opened.isError
+  } catch {
+    return false
   }
 }
 
-async function openPane($: Engine) {
-  await $.ui.open({ id: PANE, title: TITLE })
-  await scan($)
-}
-
-async function openFile($: Engine, path: string, inFinder: boolean) {
-  const { exitCode, stderr } = await $.process.run(
-    inFinder ? ['open', '-R', path] : ['open', path],
-  )
-  if (exitCode !== 0) $.ui.toast(`เปิดไม่ได้: ${stderr.trim() || path}`)
+/**
+ * Scans, writes listings/videos.html, serves listings/ on localhost and opens
+ * the page in the browser pane beside the chat (the default browser if the
+ * pane is unavailable).
+ */
+async function openPage($: Engine) {
+  try {
+    await scan($)
+    const root = `${await $.session.cwd()}/${ROOT}`
+    await $.fs.write(
+      `${root}/${PAGE}`,
+      buildPage(await read($, videos), await $.clock.now()),
+    )
+    serverPort ??= startServer($, root)
+    const url = `http://localhost:${await serverPort}/${PAGE}`
+    if (await openInPane($, url)) return
+    const { exitCode, stderr } = await $.process.run(['open', url])
+    if (exitCode !== 0) $.ui.toast(`เปิด browser ไม่ได้: ${stderr.trim() || url}`)
+  } catch (error) {
+    serverPort = undefined
+    $.ui.toast(`เปิด browser ไม่ได้: ${String(error)}`)
+  }
 }
 
 export const register: Register = on => {
@@ -120,15 +268,15 @@ export const register: Register = on => {
     const started = await next(e)
     await $.command.register({
       name: 'videos',
-      description: 'Show every finished listing video in a pane',
+      description: 'Open a page of every finished listing video in the browser',
     })
     void scan($)
     return started
   })
 
   on('command.run', { command: 'videos' }, async $ => {
-    await openPane($)
-    return { text: 'เปิดรายการวีดีโอทั้งหมดแล้ว' }
+    await openPage($)
+    return { text: 'เปิดหน้ารวมวีดีโอใน browser แล้ว' }
   })
 
   // A new video usually appears at the end of a turn (the editor's build).
@@ -147,7 +295,7 @@ export const register: Register = on => {
         <Button
           key="open-videos"
           label={`🎬 ${TITLE}`}
-          onPress={() => openPane($)}
+          onPress={() => openPage($)}
         />
       </Box>
     )
@@ -177,61 +325,8 @@ export const register: Register = on => {
           key="open-videos"
           label={`🎬 ${TITLE}`}
           plain
-          onPress={() => openPane($)}
+          onPress={() => openPage($)}
         />
-      </Box>
-    )
-  })
-
-  on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
-    const { Box, Button, Text } = $.ui.resolve(e)
-    const list = await read($, videos)
-    const scanning = await read($, isScanning)
-
-    if (e.props.placement === 'widget') {
-      return <Text>🎬 {list.length} วีดีโอ</Text>
-    }
-
-    const groups = groupByListing(list)
-
-    return (
-      <Box flexDirection="column" gap={1}>
-        <Box flexDirection="row" justifyContent="space-between">
-          <Text dimColor>
-            {scanning ? 'กำลังโหลด…' : `${list.length} วีดีโอ · ${groups.length} ทรัพย์`}
-          </Text>
-          <Button key="refresh" label="↻ โหลดใหม่" onPress={() => scan($)} />
-        </Box>
-        {list.length === 0 && !scanning && (
-          <Text dimColor>ยังไม่มีวีดีโอใน {ROOT}/*/output/</Text>
-        )}
-        {groups.map(([listing, items]) => (
-          <Box flexDirection="column">
-            <Text bold>{listing}</Text>
-            {items.map(video => (
-              <Box flexDirection="column" paddingLeft={2}>
-                <Text>{video.name}</Text>
-                <Box flexDirection="row" gap={1}>
-                  <Text dimColor>
-                    {formatLength(video.seconds)} · {formatSize(video.sizeBytes)} ·{' '}
-                    {formatDate(video.mtimeMs)}
-                  </Text>
-                  <Button
-                    key={`open:${video.path}`}
-                    label="เปิด"
-                    onPress={() => openFile($, video.path, false)}
-                  />
-                  <Button
-                    key={`finder:${video.path}`}
-                    label="Finder"
-                    dimColor
-                    onPress={() => openFile($, video.path, true)}
-                  />
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        ))}
       </Box>
     )
   })

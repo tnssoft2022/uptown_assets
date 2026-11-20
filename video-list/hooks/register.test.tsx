@@ -1,21 +1,7 @@
 import type { On, RenderElement } from 'claude-code'
 import { expect, test } from 'claude-code/testing'
 
-import { formatLength, formatSize, groupByListing } from './register'
-
-const PANE = {
-  plugin: 'video-list',
-  component: 'Pane',
-  requestId: 'video-list',
-  props: {
-    title: 'วีดีโอทั้งหมด',
-    isFocused: false,
-    bodyColumns: 60,
-    placement: 'dock',
-    scroll: { offset: 0, bodyRows: 30 },
-    view: {},
-  },
-} as const
+import { buildPage, formatLength, formatSize, groupByListing } from './register'
 
 const BAND = {
   plugin: 'video-list',
@@ -68,7 +54,6 @@ const project = (on: On) => {
     },
   }))
   on('command.register', () => ({ value: { command: 'videos' } }))
-  on('ui.open', () => ({ value: { isPlaced: true } }))
   on('session.start', (_, e) => ({ cwd: e.cwd }))
 }
 
@@ -85,29 +70,72 @@ test('the band shows the button without a count', async ($, on) => {
   }
 })
 
-test('the pane lists videos grouped by listing, newest first', async ($, on) => {
+test('the button writes the page, serves it and opens it in the browser pane', async ($, on) => {
   project(on)
-  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  const writes: { path: string; text: string }[] = []
+  on('fs.write', (_, e) => {
+    writes.push(e)
+    return { value: undefined }
+  })
+  const spawns: string[][] = []
+  on('process.spawn', async function* (_, e) {
+    spawns.push([...e.argv])
+    yield { stream: 'stdout', text: 'PORT 4321\n' }
+    return { code: 0, signal: null }
+  })
+  on('mcp.connect', () => ({
+    value: { isConnected: true, server: 'Claude Browser' },
+  }))
+  const calls: { server: string; tool: string; args: Record<string, unknown> }[] = []
+  on('mcp.call', (_, e) => {
+    calls.push(e)
+    if (e.tool === 'tabs_context') {
+      const text = JSON.stringify({ browserOpen: false, tabs: [] })
+      return { value: { content: [{ type: 'text', text }], isError: false } }
+    }
+    return { value: { content: [], isError: false } }
+  })
+  on('session.cwd', () => ({ value: '/project' }))
+  await $.session.start({ cwd: '/project', surface: 'desktop', isInteractive: true })
 
-  for (const surface of ['terminal', 'desktop'] as const) {
-    const band = await $.ui.mount({ ...BAND, surface })
-    await band.press({ key: 'open-videos' })
-    await band.unmount()
-    const ui = await $.ui.mount({ ...PANE, surface })
-    expect((await ui.find({ type: 'Text', text: /2 วีดีโอ/ }))?.text).toContain(
-      '2 ทรัพย์',
-    )
-    expect(await ui.find({ type: 'Text', text: 'B02-house' })).toBeTruthy()
-    expect(await ui.find({ type: 'Text', text: 'final.mp4' })).toBeTruthy()
-    expect(await ui.find({ type: 'Text', text: 'build.sh' })).toBeFalsy()
-    expect(
-      await ui.find({
-        type: 'Button',
-        key: 'open:listings/A01-condo/output/final.mp4',
-      }),
-    ).toBeTruthy()
-    await ui.unmount()
-  }
+  const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  await band.press({ key: 'open-videos' })
+  await band.unmount()
+
+  const page = writes.find(w => w.path === '/project/listings/videos.html')
+  expect(page).toBeTruthy()
+  expect(page!.text).toContain('2 วีดีโอ · 2 ทรัพย์')
+  expect(page!.text).toContain('src="A01-condo/output/final.mp4"')
+  expect(page!.text).not.toContain('build.sh')
+  expect(page!.text.indexOf('B02-house')).toBeLessThan(page!.text.indexOf('A01-condo'))
+  expect(spawns[0]?.[0]).toBe('python3')
+  expect(spawns[0]?.[2]).toBe('/project/listings')
+  expect(calls).toContainEqual({
+    server: 'Claude Browser',
+    tool: 'preview_start',
+    args: { url: 'http://localhost:4321/videos.html' },
+  })
+})
+
+test('the page escapes names and links', () => {
+  const html = buildPage(
+    [
+      {
+        listing: 'A&B <x>',
+        name: 'ไฟนอล 1.mp4',
+        path: '',
+        sizeBytes: 0,
+        mtimeMs: 0,
+        seconds: 12,
+      },
+    ],
+    0,
+  )
+  expect(html).toContain('<h2>A&amp;B &lt;x&gt;</h2>')
+  expect(html).toContain(
+    `src="${encodeURIComponent('A&B <x>')}/output/${encodeURIComponent('ไฟนอล 1.mp4')}"`,
+  )
+  expect(buildPage([], 0)).toContain('ยังไม่มีวีดีโอ')
 })
 
 test('formatting helpers', () => {
