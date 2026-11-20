@@ -10,6 +10,7 @@
 | **director** (role) | [.claude/roles/director.md](.claude/roles/director.md) | ผู้กำกับ เป็น role เริ่มต้นของโปรเจกต์ คุยกับเราเป็นภาษาไทย ถามข้อมูลที่ขาด วาง treatment และ shot list เขียน copy กับ caption สั่งงาน agent ด้านล่าง แล้วตรวจผลงานก่อนรายงาน |
 | **brief** (agent) | [.claude/agents/brief.md](.claude/agents/brief.md) | อ่านข้อมูลประกาศ ตรวจรูปและคลิปทุกไฟล์ แยกตามห้อง ดึงข้อเท็จจริงของทรัพย์ แล้วเขียน `brief.md` (ความพร้อม, treatment ร่าง, สคริปต์เสียงพากย์, brief สำหรับ editor) |
 | **voice-kanya** (agent) | [.claude/agents/voice-kanya.md](.claude/agents/voice-kanya.md) | ทำเสียงพากย์ภาษาไทยด้วยเสียง Kanya ของ macOS (`say`) ทำงานบนเครื่องทั้งหมด ฟรี แต่เสียงจะออกแนวหุ่นยนต์ ได้ไฟล์ `voiceover.wav` ที่ตรงกับไทม์ไลน์วิดีโอ |
+| **editor-magnific** (agent) | [.claude/agents/editor-magnific.md](.claude/agents/editor-magnific.md) | เปลี่ยนรูปเป็นคลิปเคลื่อนไหวด้วย AI ของ Magnific (image-to-video เช่น Kling) ประเมินเครดิตก่อนและใช้ไม่เกินงบที่ director ให้ ตรวจทุกคลิปว่าไม่มีของงอก หาย หรือบิดเบี้ยว แล้วดาวน์โหลดมาไว้ให้ editor ตัดต่อ (ไม่ได้ตัดวิดีโอฉบับสุดท้ายเอง) |
 | **editor** (agent) | [.claude/agents/editor.md](.claude/agents/editor.md) | ตัดต่อด้วย ffmpeg ทำเฉพาะวิดีโอ TikTok (1080×1920, 20–30 วินาที, ไม่เกิน 60) ใส่ Ken Burns, caption, เพลง และ end card แล้วตรวจไฟล์ก่อนส่ง |
 
 ## ขั้นตอนการทำวิดีโอ
@@ -20,8 +21,9 @@
 4. **agent `brief` เตรียมบรีฟ**: เขียน `listings/<ทรัพย์>/brief.md` แล้ว director ตรวจข้อเท็จจริงกับประกาศอีกรอบ
 5. **อนุมัติ treatment**: director จะแสดง hook วินาทีแรก ลำดับเรื่อง shot list ข้อความบนจอ สคริปต์เสียงพากย์ และ end card ระบบจะยังไม่ทำงานชิ้นใหญ่จนกว่าเราจะตอบตกลง
 6. **ทำเสียงพากย์** (ถ้าต้องการ): agent `voice-kanya` ทำ `voiceover.wav` แล้ว director ตั้งเวลา caption ตามเสียง
-7. **ตัดต่อ**: agent `editor` สร้างวิดีโอใน `listings/<ทรัพย์>/output/` พร้อม `build.sh` ไว้สร้างซ้ำได้ ถ้าจะใส่เพลงเทรนด์ในแอป TikTok เอง ขอให้ทำ 2 เวอร์ชัน คือมีเพลงกับไม่มีเพลง (`_nomusic.mp4`)
-8. **ตรวจและแก้**: director ตรวจไฟล์ (ความยาว ความละเอียด เสียง ข้อความอ่านออก) แล้วรายงาน ถ้าต้องแก้ก็สั่งตัดใหม่ได้
+7. **คลิป AI จาก Magnific** (ถ้าต้องการ): director เสนอว่าช็อตไหนควรใช้คลิป AI พร้อมราคาเครดิต เมื่อเราตกลงช็อตและงบแล้ว agent `editor-magnific` จะทำคลิปไว้ใน `output/magnific/` ช็อตที่ไม่ผ่านการตรวจจะกลับไปใช้รูปแบบ Ken Burns
+8. **ตัดต่อ**: agent `editor` สร้างวิดีโอใน `listings/<ทรัพย์>/output/` พร้อม `build.sh` ไว้สร้างซ้ำได้ ถ้าจะใส่เพลงเทรนด์ในแอป TikTok เอง ขอให้ทำ 2 เวอร์ชัน คือมีเพลงกับไม่มีเพลง (`_nomusic.mp4`)
+9. **ตรวจและแก้**: director ตรวจไฟล์ (ความยาว ความละเอียด เสียง ข้อความอ่านออก) แล้วรายงาน ถ้าต้องแก้ก็สั่งตัดใหม่ได้
 
 ## โครงสร้างโฟลเดอร์ทรัพย์
 
@@ -49,6 +51,7 @@ listings/
 - Claude Code (แอปเดสก์ท็อปหรือเทอร์มินัล) เวอร์ชัน 2.1.286 ขึ้นไป
 - `ffmpeg` และ `ffprobe`
 - macOS ที่มีเสียง Kanya (สำหรับเสียงพากย์ภาษาไทย)
+- บัญชี Magnific แบบเสียเงินที่เชื่อมกับ Claude เป็น connector (เฉพาะถ้าจะใช้ agent `editor-magnific`)
 
 ---
 

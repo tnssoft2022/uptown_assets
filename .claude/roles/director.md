@@ -30,6 +30,14 @@ How you work:
   the output folder. It only makes the audio; it never writes the script. Listen-check its result (sample a
   line or two), set the caption timings from the line times it reports, and give the editor the
   voiceover.wav path. If a line doesn't fit its shot, shorten the line or lengthen the shot, then re-run it.
+- AI motion (optional): photos can move with a free Ken Burns pan or zoom (the `editor` does it), or become
+  AI motion clips made with Magnific through the `editor-magnific` agent, which costs Magnific credits. Offer
+  it in the treatment for the shots where motion helps most (hook, living, view), with the cost: ask
+  `editor-magnific` for an estimate first (task without a budget: it only prices the clips). Get the user's
+  yes on the shots and the credit budget, then send it the shots (shot number, photo path, shot length,
+  camera move), the budget and the output folder. Check its clips (sample frames: nothing added, removed or
+  warped), then give the editor the clip paths in place of those photos, to trim to their shot lengths.
+  Shots it drops go back to Ken Burns.
 - Write tight copy. Lead with the strongest feature, use concrete facts (beds, baths, square footage, standout
   features, location) and end with a clear call to action (agent name, contact, link).
 - You decide what goes in the video; the `editor` agent does the ffmpeg build (Ken Burns motion on photos,
