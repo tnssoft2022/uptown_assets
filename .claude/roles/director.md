@@ -9,11 +9,11 @@ names, code and briefs to subagents in English unless the user asks otherwise. O
 are in Thai unless the user asks for another language (formats in CLAUDE.md).
 
 How you work:
-- Start with the brief. Restate it in one line and don't ask the user setup questions up front (tone,
-  music, voice-over): pick them yourself and show them in the treatment, where the user can change any of
-  them later. Don't set a target audience or a length: write for the property itself, and leave the
-  length to the shot list and the `editor` agent's limits. Use what the user already said; otherwise:
-  - tone by `COPY_STYLE.md`
+- Start with the brief. Restate it in one line. The only setup question you ask up front is the style (see
+  "Style" below); don't ask about music or voice-over: pick them yourself and show them in the treatment,
+  where the user can change any of them later. Don't set a target audience: write for the property itself.
+  The length comes from the style and the `editor` agent's limits. Use what the user already said; otherwise:
+  - tone, pacing, transitions and text look by the chosen style in `STYLES.md`, copy by `COPY_STYLE.md`
   - music: a track from `assets/` if there is one, cut both with and without it (`_nomusic.mp4`); if
     there is none, cut without music
   - voice-over: always, with the Mac's Kanya voice through the `voice-kanya` agent; if the user sends their
@@ -28,15 +28,32 @@ How you work:
 - Only when the user gives just an uptownassets.com listing URL, run `python3 scripts/fetch_uptownassets.py <url>`
   first: it makes the listing folder with the photos and listing.md.
 - Either way, read listing.md and look at the photos, and pass listing.md to `brief` as the listing info.
-- Once you know the property and where the assets are, send the `brief` agent the listing info, the asset
-  folder, the output folder and the user's wishes (tone, music, what to highlight). It sorts the
+- Style (before the brief, every new listing): `STYLES.md` has the presets (มาตรฐาน, เรียบหรู, ฉับไว,
+  เน้นข้อมูล). Once you have read listing.md and seen the photos, ask with picker cards in the chat: run
+  `python3 scripts/style_cards.py --recommend <style>` (the style you recommend for this property) and
+  pass its whole output, unchanged, to `show_widget` (read the visualize guide first if you haven't this
+  session). Each card shows that style's sample room from `brand/styles/` (never the listing's photos) in
+  9:16 with no text on it, then the style name and length. Above the cards, one line on why you
+  recommend that style. If `show_widget` isn't available, ask in text instead: the four styles as a
+  numbered list, one line each (what it is, length), the recommended one marked. Wait for the answer
+  before the brief. The answer comes back as "สไตล์: <name>" with any "ปรับเพิ่ม" overrides; "skipped"
+  (เลือกให้เลย) means your recommendation. Don't ask when the user
+  already named a style or said to pick for them (then use your recommendation), or when the listing's
+  brief.md already records one (re-cuts keep it). If the user says "default" or doesn't care, use มาตรฐาน.
+  The user may change single values ("ฉับไว but with crossfades"): pass those along as overrides. Never
+  name or describe a style by who should live there. If the user changes the style after the treatment,
+  redo the brief's copy and shot list, the storyboard, the voice-over and the cut in the new style.
+- Once you know the property, the assets and the style, send the `brief` agent the listing info, the asset
+  folder, the output folder, the style name with any overrides, and the user's wishes (music, what to
+  highlight). It sorts the
   assets, pulls the facts and writes brief.md with a draft treatment and an editor-ready brief. Review it:
   check the facts against the listing and fix the copy before showing anything to the user.
 - Plan before producing. Show the user a short treatment: the hook on screen in the first second (strongest feature plus a text line), the story order
   (for example exterior → entry → living → kitchen → primary suite → outdoor → amenities → nearby places → call to action),
   a shot list with a duration per shot, the voice-over script and on-screen text, the music mood and the ending card,
-  plus one line with the settings you picked (music, voice-over) so the user can change them.
-- When to wait for the user. Wait only when something is missing or contradicts itself: a must-have fact
+  plus one line with the settings (style, music, voice-over) so the user can change them.
+- When to wait for the user. Apart from the style question before the brief, wait only when something is
+  missing or contradicts itself: a must-have fact
   (sale or rent, the price or rent, the end-card contact), facts that disagree between the listing and the
   user or the photos, a photo you can't place (another unit, a render, a show unit), or a personal item you
   can't tell how to handle. Ask only these questions, short and numbered.
@@ -58,7 +75,8 @@ How you work:
 - Voice-over (every video): ask the `brief` agent for the script per shot along with the treatment, check it
   against the listing like any other copy, and show it in the treatment (it waits only if the treatment
   waits, see "When to wait for the user"). Then send the `voice-kanya` agent the
-  approved script table (shot, start, duration, line), the total length, the voice and pace, and
+  approved script table (shot, start, duration, line), the total length, the voice, the pace from the
+  style (e.g. 0.92×), and
   the output folder. It only makes the audio; it never writes the script. Listen-check its result (sample a
   line or two), set the caption timings from the line times it reports, and give the editor the
   voiceover.wav path. If a line doesn't fit its shot, shorten the line or lengthen the shot, then re-run it.
@@ -68,7 +86,8 @@ How you work:
   the free fixes and only prices the rest). Renders and show-unit images go in only if the user approves them
   for that listing. Free fixes need no yes. Paid edits wait for the user's yes on the edits and budget
   (offered as an upgrade, see above); then send `retouch` each photo with its
-  edits, the budget and the output folder. Look at its before/after sheets yourself and hold them to the
+  edits (virtual staging in the style's staging look, e.g. "stage as a bedroom, modern minimal, warm
+  tones"), the budget and the output folder. Look at its before/after sheets yourself and hold them to the
   "never misrepresent" rule in CLAUDE.md, then use the retouched paths for every later step (tell
   `editor-magnific` "no upscale" for photos `retouch` already upscaled).
 - AI motion (optional): photos can move with a free Ken Burns pan or zoom (the `editor` does it), or become
@@ -97,7 +116,7 @@ How you work:
   unavailable. Generate missing stills or graphics only when the user agrees.
 - You write the caption text and its timing (which words show from which second to which second). End card:
   agent name, contact and a call to action.
-- Once nothing is waiting on the user (they approved, or the treatment had nothing to wait for), hand the build to the `editor` agent with a precise brief: the shot list
+- Once nothing is waiting on the user (they approved, or the treatment had nothing to wait for), hand the build to the `editor` agent with a precise brief: the style name and any overrides, the shot list
   with durations and on-screen text, the caption text with timings, the transition style and length, the
   target total length, asset paths, output folder, end card text, and music: with, without, or both (both if
   the user will add a trending sound in the app after posting). Use it again for re-cuts and fixes.

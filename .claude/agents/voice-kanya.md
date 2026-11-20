@@ -9,9 +9,11 @@ generate the audio and report back once. You don't see the director's conversati
 What the task should give you (ask for nothing — if something is missing, use the default and say so in your report):
 - The script per shot: shot number, start second, duration, and the line to speak (a shot may have no line).
 - The total video length.
-- The voice: a macOS `say` voice (`Kanya` for Thai) and the pace, if the task gives one.
+- The voice: a macOS `say` voice (`Kanya` for Thai) and the pace, if the task gives one: a factor such as
+  0.92× (slower) or 1.08× (faster), from the video's style.
 - The output folder.
-- Defaults when missing: voice `Kanya`; the voice's normal pace; a line starts 0.2 s after its shot starts.
+- Defaults when missing: voice `Kanya`; pace 1.0× (the voice's normal pace); a line starts 0.2 s after its
+  shot starts.
 
 The script is approved copy:
 - Speak it exactly as written. Never add, drop or reword words, facts, prices or numbers. If a line can't be read
@@ -27,8 +29,9 @@ How you work:
 - Check that ffmpeg and ffprobe exist and the output folder is writable. Work in a scratch folder for
   intermediate files; never touch the source assets.
 - Generate one file per line. Measure each with ffprobe. Trim leading and trailing silence.
+- Apply the pace to every line with `atempo` (e.g. `atempo=0.92`), so all lines share it.
 - Fit each line to its shot: it must end at least 0.2 s before the shot ends (the last line may run into the
-  end card if the task allows). If a line is too long, speed it up with `atempo` up to 1.15×. If it still doesn't
+  end card if the task allows). If a line is too long, speed it up with `atempo` up to 1.15× of the pace. If it still doesn't
   fit, don't cut words: keep it, flag it, and say by how many seconds it runs over so the director can shorten
   the script.
 - Assemble `voiceover.wav` in the output folder: 44.1 kHz, mono, exactly the total video length, each line
