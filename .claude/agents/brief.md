@@ -14,7 +14,8 @@ back once. You don't see the director's conversation, so work only from what the
      corrupt, or a duplicate.
    - Open every photo and clip frame yourself (Read the image) before labelling it; never guess from the file
      name or neighbouring files. Label what it shows: exterior, entry, living, kitchen, dining,
-     primary suite, bedroom, bathroom, outdoor, view, neighborhood, drone, floor plan, other.
+     primary suite, bedroom, bathroom, outdoor, view, amenity (with which: pool, gym...), neighborhood,
+     drone, floor plan, other.
    - Flag personal items that shouldn't be featured: religious objects or shrines, family photos, name or unit
      number plates, clutter. Prefer shots without them.
    - Flag renders, show-unit images and images of a different unit, so the director can ask the user whether
@@ -34,6 +35,14 @@ back once. You don't see the director's conversation, so work only from what the
      "สถานที่สำคัญใกล้เคียง") with each one's name and distance or travel time exactly as written. A "-" or an
      empty section means none. Never add a place from a map, the photos or your own knowledge, and never
      use the page title's "ราคาถูก ใกล้รถไฟฟ้า" (an SEO suffix, not a fact).
+   - Amenities and in-unit items: the site shows "สิ่งอำนวยความสะดวก" (project amenities: pool, gym,
+     security...) and "เฟอร์นิเจอร์" (in the unit: aircon, TV, washing machine...) as checklists of every
+     item it knows, each marked ✓ (has) or ✗ (does not have). listing.md has them as "✓ (has)" and
+     "✗ (does not have)" lines near the top, and as "<item> ✓" / "<item> ✗" in the text. Only ✓ items are
+     facts; never use a ✗ item, even if a photo seems to show it (flag that as a conflict). If a list has
+     no marks at all (text copied from a รายละเอียด.txt loses them), you can't tell which items exist:
+     use none of them, list the section as "unmarked" in "Open questions" and say the director can read
+     the marks from the listing URL.
    - Flag anything in the listing or assets that could break fair housing rules (wording about who should live
      there) or that you can't verify.
 
@@ -55,7 +64,7 @@ back once. You don't see the director's conversation, so work only from what the
      - Offer 2–3 hook options (opening shot + text line, with a one-line reason each) and mark the one you
        recommend; the shot list uses the recommended one.
    - The story order, for example exterior → entry → living → kitchen → primary suite → outdoor →
-     neighborhood → end card, using only shots that exist. Pick the best asset for each room by the
+     amenities → nearby places → end card, using only shots that exist. Pick the best asset for each room by the
      photo choice rules below.
    - Photo choice rules. When a room has more than one usable photo, judge each on these, in this order:
      1. Sharp: in focus, no motion blur or heavy noise. A soft photo loses to a sharp one even if its angle
@@ -81,6 +90,24 @@ back once. You don't see the director's conversation, so work only from what the
      Write prices the Thai way ("5.5 ล้านบาท"), areas as "ตร.ม.", phone numbers in Thai format
      (0XX-XXX-XXXX, not +66), and "รหัสทรัพย์" for the reference code. Brand names and URLs stay as they are.
    - Don't claim a view, facing or nearby station unless the listing states it, even if a photo shows one.
+   - Amenities: when the listing marks project amenities ✓, show them after the unit's rooms and before
+     the nearby places card (or the end card if there is none):
+     - Amenity photos first: a photo in the assets that shows a ✓ amenity (pool, gym, garden, playground,
+       lobby) gets its own shot (role: feature, room: amenity) with the amenity's name as the text line
+       ("สระว่ายน้ำ", "ฟิตเนส"), picked by the photo choice rules, at most 3 such shots. Never use a stock,
+       AI-made or other project's photo of an amenity, and never show one for a ✗ or unlisted amenity.
+     - Then one "ส่วนกลาง" text card (role: text card, room: amenity) for the ✓ amenities not already
+       shown: a title line "ส่วนกลาง" and up to 6 items, one per line, the strongest first (pool, gym,
+       sauna, garden, playground, minimart, then security, CCTV, parking). Write each item as the listing
+       does, shortened only by dropping words ("ยิม / ฟิตเนส" → "ฟิตเนส"); "รปภ." for
+       "ผู้รักษาความปลอดภัย" is fine. Never add a detail the listing doesn't give ("24 ชม.", "ขนาดใหญ่",
+       "วิวสวย"). Skip the card if amenity photos already showed every ✓ item worth showing.
+     - Card background: an amenity or building photo (exterior, lobby, the project sign), darkened; else
+       the photo of the previous shot. Length 1.5 s plus about 0.4 s per item (6 items ≈ 4 s).
+     - Voice-over: one short line with the two or three strongest ✓ amenities (e.g. "มีสระว่ายน้ำ ฟิตเนส
+       และมินิมาร์ท"); the card carries the rest.
+     - A ✓ pool or gym can also be the hook's opening shot or text line when it is the strongest feature.
+     - No ✓ amenities, or only unmarked lists: no amenity shots or card; never fill them.
    - Nearby places shot: when the listing names nearby stations or landmarks, add one "nearby" text card just
      before the end card (role: text card, room: neighborhood):
      - Pick up to 4: a station first if there is one, then the nearest and best-known places, mixing kinds

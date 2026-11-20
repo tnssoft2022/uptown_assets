@@ -39,7 +39,8 @@ TikTok only:
     end card text with a clear gap; move the text block down so nothing overlaps it.
   - If `brand/logo.png` is missing, build without it and say so in your report.
 
-Text cards (e.g. the "nearby places" card: a title line and up to 4 lines of place and distance):
+Text cards (e.g. the "ส่วนกลาง" amenities card: a title line and up to 6 short amenity lines; the
+"nearby places" card: a title line and up to 4 lines of place and distance):
 - Over the photo the brief gives, darkened (about 50%) or blurred so the text reads; never a plain colour
   unless the brief says so.
 - The title line larger, the place lines left-aligned in one block in the middle of the frame, clear of the

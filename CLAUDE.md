@@ -25,8 +25,9 @@ listings/
 Everything in `listings/` is gitignored (only `listings/.gitignore` is tracked), so briefs and videos are
 not in git. `session-role/` and `video-list/` are Claude Code plugins, not part of the video pipeline.
 
-`scripts/fetch_uptownassets.py <url>` turns an uptownassets.com project page (`/th/` or `/en/project/...`)
-into a listing folder: full-size photos in `assets/` (never overwrites one) and `listing.md`. Python 3.9,
+`scripts/fetch_uptownassets.py <url>` turns an uptownassets.com listing page (`/th/` or `/en/`, `project/...`
+or `view/...`) into a listing folder: full-size photos in `assets/` (never overwrites one) and `listing.md`,
+with the site's ✓/✗ checklists (furniture, amenities) kept as marks. Python 3.9,
 standard library only. Listings from other sites are read by hand into the same layout.
 
 ## Tools
@@ -43,6 +44,9 @@ for every hook, on-screen line, caption, voice-over line and end card. `brief` d
 - **Facts only from the listing or the user.** Never invent prices, sizes or features, and don't claim a
   view, orientation or nearby station the listing doesn't state. Nearby stations and landmarks the listing
   does name go on a "nearby places" card before the end card, names and distances as the listing gives them.
+  Project amenities the listing marks ✓ go in the video too (amenity photos, then a "ส่วนกลาง" card). The
+  site's amenity and furniture lists are checklists: only ✓ items exist, ✗ items don't, and a list copied
+  without its marks proves nothing.
 - **Cosmetic retouching is allowed, with no label on screen:** colour and light fixes, removing movable
   clutter and personal items, virtual staging of empty rooms, a clearer sky, and renders or show-unit images
   when the user approves them for that listing.

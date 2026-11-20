@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Fetch one uptownassets.com project page into listings/.
 
-    python3 scripts/fetch_uptownassets.py <project-url> [--name <folder-name>]
+    python3 scripts/fetch_uptownassets.py <project-or-view-url> [--name <folder-name>]
 
 - reads the Thai and English pages (any of /th/ or /en/ in the URL works)
 - saves the full-size photos to listings/<code>-<name>/assets/photo-NN.<ext>
   (the page only links thumbnails; the full size is the same path without "thumbnails/")
 - writes listings/<code>-<name>/listing.md: the listing text as the site shows it, the source
   URLs, the date fetched, the property type and sale/rent as the listing states them
-  ("ถามผู้ใช้" when it doesn't), the contact on the page and which photo came from which URL
+  ("ถามผู้ใช้" when it doesn't), the contact on the page, the ✓/✗ checklists (in-unit furniture and
+  appliances, project amenities) and which photo came from which URL
 
 Reuses an existing listings/<code>-*/ folder. Never overwrites a file in assets/: a photo that
 is already there is skipped, and one that differs from the site is reported, not replaced.
@@ -21,27 +22,57 @@ import datetime
 import html
 import re
 import sys
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LISTINGS = ROOT / "listings"
-URL_RE = re.compile(r"^https?://(?:www\.)?uptownassets\.com/(?:th|en)/project/(\d+)-([^/?#]+)")
+URL_RE = re.compile(r"^https?://(?:www\.)?uptownassets\.com/(?:th|en)/(project|view)/(\d+)-([^/?#]+)")
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X) uptown-assets-video-tool"
 
 
 def get(url: str) -> bytes:
+    # /view/ URLs carry the Thai name; urllib needs it percent-encoded (already-encoded parts stay).
+    url = urllib.parse.quote(url, safe=":/?#[]@!$&'()*+,;=%")
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=30) as r:
         return r.read()
 
 
+HAS, HAS_NOT = "✓", "✗"
+
+
 def text_of(fragment: str) -> str:
     fragment = re.sub(r"<br\s*/?>", "\n", fragment, flags=re.I)
     fragment = re.sub(r"</p\s*>", "\n", fragment, flags=re.I)
+    # The amenities list ("สิ่งอำนวยความสะดวก") is a checklist of every amenity the site knows, each
+    # with a check or a cross icon. Keep the icon as a mark, or the list would claim them all.
+    fragment = re.sub(r'<i[^>]*class="[^"]*\bfa-check\b[^"]*"[^>]*>', f"\n{HAS}\n", fragment)
+    fragment = re.sub(r'<i[^>]*class="[^"]*\bfa-times\b[^"]*"[^>]*>', f"\n{HAS_NOT}\n", fragment)
     t = html.unescape(re.sub(r"<[^>]+>", "", fragment)).replace("\xa0", " ")
-    lines = [re.sub(r"[ \t]+", " ", l).strip() for l in t.splitlines()]
-    return "\n".join(l for l in lines if l)
+    lines = []
+    for l in (re.sub(r"[ \t]+", " ", l).strip() for l in t.splitlines()):
+        if l in (HAS, HAS_NOT) and lines:
+            lines[-1] += f" {l}"  # the mark belongs to the amenity on the line before
+        elif l:
+            lines.append(l)
+    return "\n".join(lines)
+
+
+def checklists_of(details: str) -> dict[str, tuple[list[str], list[str]]]:
+    """Each checklist on the page (e.g. "เฟอร์นิเจอร์" in the unit, "สิ่งอำนวยความสะดวก" of the project),
+    by its heading: the items marked ✓ (there) and ✗ (not there)."""
+    lists: dict[str, tuple[list[str], list[str]]] = {}
+    heading = ""
+    for l in details.splitlines():
+        mark = l[-1:] if l.endswith((f" {HAS}", f" {HAS_NOT}")) else ""
+        if not mark:
+            heading = l
+            continue
+        has, has_not = lists.setdefault(heading, ([], []))
+        (has if mark == HAS else has_not).append(l[:-2])
+    return lists
 
 
 def parse(page: str) -> dict:
@@ -122,10 +153,10 @@ def main() -> int:
 
     m = URL_RE.match(args.url)
     if not m:
-        print("Not an uptownassets.com project URL (…/th|en/project/<code>-<slug>)", file=sys.stderr)
+        print("Not an uptownassets.com listing URL (…/th|en/project|view/<code>-<slug>)", file=sys.stderr)
         return 2
-    code, slug = m.group(1), m.group(2)
-    urls = {lang: re.sub(r"/(?:th|en)/project/", f"/{lang}/project/", args.url, count=1) for lang in ("th", "en")}
+    kind, code, slug = m.group(1), m.group(2), m.group(3)
+    urls = {lang: re.sub(r"/(?:th|en)/(project|view)/", f"/{lang}/{kind}/", args.url, count=1) for lang in ("th", "en")}
 
     pages = {}
     for lang, url in urls.items():
@@ -171,6 +202,7 @@ def main() -> int:
     today = datetime.date.today().isoformat()
     # Only the name and details: page titles carry an SEO suffix, not facts.
     said = "\n".join(p.get(k, "") for p in (th, en) for k in ("name", "details"))
+    checklists = checklists_of(th.get("details", ""))
 
     out = [f"# {th.get('name') or en.get('name') or slug}", ""]
     out += [f"- รหัสทรัพย์ (code in the URL): {code}",
@@ -180,7 +212,12 @@ def main() -> int:
             f"- Source (en): {urls['en']}",
             f"- Fetched: {today}",
             f"- Contact on the page: {thai_phone(phone) if phone else '-'}" + (f", {email}" if email else ""),
-            "- Photos: from the Uptown Assets site (the company's own listing)", ""]
+            "- Photos: from the Uptown Assets site (the company's own listing)"]
+    # Checklists: only ✓ items are facts. ✗ items are things the property does NOT have.
+    for heading, (has, has_not) in checklists.items():
+        out += [f"- {heading or 'Checklist'} ✓ (has): {', '.join(has) or '-'}",
+                f"- {heading or 'Checklist'} ✗ (does not have, never use): {', '.join(has_not) or '-'}"]
+    out += [""]
     for lang, label in (("th", "Thai"), ("en", "English")):
         p = pages.get(lang)
         if not p:

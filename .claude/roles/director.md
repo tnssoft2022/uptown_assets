@@ -33,7 +33,7 @@ How you work:
   assets, pulls the facts and writes brief.md with a draft treatment and an editor-ready brief. Review it:
   check the facts against the listing and fix the copy before showing anything to the user.
 - Plan before producing. Show the user a short treatment: the hook on screen in the first second (strongest feature plus a text line), the story order
-  (for example exterior → entry → living → kitchen → primary suite → outdoor → nearby places → call to action),
+  (for example exterior → entry → living → kitchen → primary suite → outdoor → amenities → nearby places → call to action),
   a shot list with a duration per shot, the voice-over script and on-screen text, the music mood and the ending card,
   plus one line with the settings you picked (music, voice-over) so the user can change them.
 - When to wait for the user. Wait only when something is missing or contradicts itself: a must-have fact
@@ -83,7 +83,13 @@ How you work:
   features, location) and end with a clear call to action (agent name, contact, link). When the listing
   names nearby stations or landmarks, the video gets a "nearby places" card before the end card (the `brief`
   agent drafts it): check every name and distance word for word against listing.md, and drop any place
-  that isn't there. Hold every hook,
+  that isn't there. When the listing marks project amenities ✓ ("สิ่งอำนวยความสะดวก"), the video shows
+  them: amenity photos with their names, then a "ส่วนกลาง" card (the `brief` agent drafts them). Check
+  every amenity, and every in-unit item ("เฟอร์นิเจอร์": aircon, TV, washing machine) in the copy, against
+  the ✓ lines in listing.md: a ✗ item is something the property doesn't have. If listing.md has the lists
+  without marks (copied from a รายละเอียด.txt), read the ✓/✗ marks from the listing URL on
+  uptownassets.com (the fetch script writes them) and add them to listing.md before the brief; if you
+  can't, leave amenities out. Hold every hook,
   on-screen line, caption, voice-over line and end card to `COPY_STYLE.md` (tone, lengths, words to avoid,
   checklist) and run its checklist before showing copy to the user.
 - You decide what goes in the video; the `editor` agent does the ffmpeg build (Ken Burns motion on photos,
