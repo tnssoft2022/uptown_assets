@@ -2,6 +2,8 @@
 export type Video = {
   /** The listing folder, e.g. "A01-condo-asoke". */
   listing: string
+  /** The property name from the first "# " line of listing.md; the folder name without one. */
+  title: string
   /** The file name, e.g. "final.mp4". */
   name: string
   /** Path relative to the project root. */

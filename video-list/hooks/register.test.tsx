@@ -1,7 +1,16 @@
 import type { On, RenderElement } from 'claude-code'
 import { expect, test } from 'claude-code/testing'
 
-import { buildPage, formatLength, formatSize, groupByListing } from './register'
+import {
+  buildPage,
+  codeOf,
+  dayLabel,
+  downloadName,
+  formatLength,
+  formatSize,
+  groupByDay,
+  groupByListing,
+} from './register'
 
 const BAND = {
   plugin: 'video-list',
@@ -43,6 +52,13 @@ const project = (on: On) => {
       return { value: [file('tiktok.mp4', 5000)] }
     }
     return { value: [] }
+  })
+  // B02-house has no listing.md heading: its title falls back to the folder.
+  on('fs.read', (_, e) => {
+    if (e.path === '/project/listings/A01-condo/listing.md') {
+      return { value: '# คอนโด อโศก ห้อง 12/34\n\n- รหัสทรัพย์: A01\n' }
+    }
+    throw new Error(`no file ${e.path}`)
   })
   on('process.run', () => ({
     value: {
@@ -113,6 +129,15 @@ test('the button writes the page, serves it and opens it in the browser pane', a
   expect(page!.text).toContain('2 วีดีโอ · 2 ทรัพย์')
   expect(page!.text).toContain('src="A01-condo/output/final.mp4"')
   expect(page!.text).not.toContain('build.sh')
+  expect(page!.text).toContain('class="title" href="A01-condo/output/final.mp4" target="_blank">คอนโด อโศก ห้อง 12/34</a>')
+  expect(page!.text).toContain('download="คอนโด อโศก ห้อง 12-34.mp4"')
+  expect(page!.text).toContain('รหัสทรัพย์ A01')
+  expect(page!.text).toContain('>B02-house</a>')
+  expect(page!.text).toContain('id="search"')
+  expect(page!.text).toContain('data-view="day"')
+  // Each video shows once per view; the day view starts hidden.
+  expect(page!.text.split('src="A01-condo/output/final.mp4"').length - 1).toBe(2)
+  expect(page!.text).toContain('<div class="view" id="view-day" hidden>')
   expect(page!.text.indexOf('B02-house')).toBeLessThan(page!.text.indexOf('A01-condo'))
   expect(spawns[0]?.[0]).toBe('python3')
   expect(spawns[0]?.[2]).toBe('/project/listings')
@@ -128,6 +153,7 @@ test('the page escapes names and links', () => {
     [
       {
         listing: 'A&B <x>',
+        title: 'บ้าน "สวย" & ใหม่',
         name: 'ไฟนอล 1.mp4',
         path: '',
         sizeBytes: 0,
@@ -137,11 +163,13 @@ test('the page escapes names and links', () => {
     ],
     0,
   )
-  expect(html).toContain('<h2>A&amp;B &lt;x&gt;</h2>')
+  expect(html).toContain('<h2>บ้าน &quot;สวย&quot; &amp; ใหม่</h2>')
+  expect(html).toContain('download="บ้าน -สวย- &amp; ใหม่.mp4"')
   expect(html).toContain(
     `src="${encodeURIComponent('A&B <x>')}/output/${encodeURIComponent('ไฟนอล 1.mp4')}"`,
   )
   expect(buildPage([], 0)).toContain('ยังไม่มีวีดีโอ')
+  expect(buildPage([], 0)).not.toContain('id="search"')
 })
 
 test('formatting helpers', () => {
@@ -151,6 +179,7 @@ test('formatting helpers', () => {
   expect(formatSize(5 * 1024 * 1024)).toBe('5.0 MB')
   const v = (listing: string, mtimeMs: number) => ({
     listing,
+    title: listing,
     name: 'x.mp4',
     path: '',
     sizeBytes: 0,
@@ -161,6 +190,24 @@ test('formatting helpers', () => {
     'B',
     'A',
   ])
+  const at = (y: number, m: number, d: number, h: number) => new Date(y, m - 1, d, h).getTime()
+  expect(
+    groupByDay([v('A', at(2026, 11, 19, 9)), v('B', at(2026, 11, 20, 8)), v('C', at(2026, 11, 20, 18))]).map(
+      ([day, items]) => [day, items.map(i => i.listing)],
+    ),
+  ).toEqual([
+    ['20/11/2026', ['C', 'B']],
+    ['19/11/2026', ['A']],
+  ])
+  const now = at(2026, 11, 20, 12)
+  expect(dayLabel('20/11/2026', now)).toBe('วันนี้ · 20/11/2026')
+  expect(dayLabel('19/11/2026', now)).toBe('เมื่อวาน · 19/11/2026')
+  expect(dayLabel('01/11/2026', now)).toBe('01/11/2026')
+  expect(codeOf('1069-ladprao64-house-131')).toBe('1069')
+  expect(codeOf('nocode')).toBe('')
+  const video = { ...v('A', 1), title: 'ห้อง 888/71', name: 'final.v2.mp4' }
+  expect(downloadName(video, true)).toBe('ห้อง 888-71.mp4')
+  expect(downloadName(video, false)).toBe('ห้อง 888-71 (final.v2).mp4')
 })
 
 test('beside a session-role row, the button joins that line', async ($, on) => {

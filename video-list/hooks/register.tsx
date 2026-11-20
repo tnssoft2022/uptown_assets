@@ -11,7 +11,7 @@ const EXTENSIONS = ['.mp4', '.mov', '.m4v']
 // Change the tag when Video's fields change: it declines what an earlier
 // version stored, which outlives a reload.
 const videos = atom({ plugin: 'video-list', key: 'videos' } as const, [], {
-  shape: 'videos-1',
+  shape: 'videos-2',
 })
 
 const isVideo = (name: string) =>
@@ -66,6 +66,17 @@ async function lengthOf($: Engine, path: string) {
   }
 }
 
+/** The listing's property name: the first "# " heading of its listing.md. */
+async function titleOf($: Engine, folder: string, fallback: string) {
+  try {
+    const text = await $.fs.read(`${folder}/listing.md`)
+    const heading = /^#[ \t]+(.+?)\s*$/m.exec(text)?.[1]
+    return heading || fallback
+  } catch {
+    return fallback
+  }
+}
+
 /**
  * listings/ under the project root. Not the session's cwd: a shell `cd` into
  * a listing's output/ moves the cwd, and listings/ would then not be found.
@@ -83,12 +94,15 @@ async function scan($: Engine) {
       if (listing.kind !== 'dir') continue
       const output = `${root}/${listing.name}/output`
       if (!(await $.fs.exists(output))) continue
+      let title: string | undefined
       for (const file of await $.fs.list(output)) {
         if (file.kind !== 'file' || !isVideo(file.name)) continue
         const path = `${ROOT}/${listing.name}/output/${file.name}`
         const cached = known.get(`${path}:${file.mtimeMs}`)
+        title ??= await titleOf($, `${root}/${listing.name}`, listing.name)
         found.push({
           listing: listing.name,
+          title,
           name: file.name,
           path,
           sizeBytes: file.size,
@@ -112,30 +126,90 @@ const escapeHtml = (text: string) =>
 const hrefOf = (video: Video) =>
   [video.listing, 'output', video.name].map(encodeURIComponent).join('/')
 
-/** A self-contained page that lists and plays every video, grouped by listing. */
-export const buildPage = (list: readonly Video[], now: number) => {
-  const groups = groupByListing(list)
-  const sections = groups
-    .map(
-      ([listing, items]) => `
-<section>
-  <h2>${escapeHtml(listing)}</h2>
-  <div class="grid">${items
-    .map(
-      video => `
-    <figure>
+/** The reference code at the front of a listing folder, e.g. "1069". */
+export const codeOf = (listing: string) => /^([^-]+)-/.exec(listing)?.[1] ?? ''
+
+/**
+ * The name a download saves as: the property name, plus the file's own name
+ * when the listing has more than one video. No "/" (888/71 is a room number).
+ */
+export const downloadName = (video: Video, isOnly: boolean) => {
+  const dot = video.name.lastIndexOf('.')
+  const ext = dot > 0 ? video.name.slice(dot) : ''
+  const stem = dot > 0 ? video.name.slice(0, dot) : video.name
+  const base = isOnly ? video.title : `${video.title} (${stem})`
+  return `${base.replace(/[\\/:*?"<>|]+/g, '-').trim()}${ext}`
+}
+
+/** What the search box matches: property name, code, folder and file name. */
+const searchTextOf = (video: Video) =>
+  [video.title, codeOf(video.listing), video.listing, video.name]
+    .join(' ')
+    .toLowerCase()
+
+/** Groups videos by the local day they were made, newest day and video first. */
+export const groupByDay = (list: readonly Video[]) => {
+  const groups = new Map<string, Video[]>()
+  for (const video of [...list].sort((a, b) => b.mtimeMs - a.mtimeMs)) {
+    const day = formatDate(video.mtimeMs).slice(0, 10)
+    groups.set(day, [...(groups.get(day) ?? []), video])
+  }
+  return [...groups.entries()]
+}
+
+/** A day heading: "วันนี้" or "เมื่อวาน" before the date when it is one. */
+export const dayLabel = (day: string, now: number) => {
+  const today = formatDate(now).slice(0, 10)
+  const yesterday = formatDate(now - 24 * 60 * 60 * 1000).slice(0, 10)
+  if (day === today) return `วันนี้ · ${day}`
+  if (day === yesterday) return `เมื่อวาน · ${day}`
+  return day
+}
+
+/** One video's card: player, property name, file, length, size, date, download. */
+const cardOf = (video: Video, isOnly: boolean) => `
+    <figure data-search="${escapeHtml(searchTextOf(video))}">
       <video src="${hrefOf(video)}" controls preload="metadata" playsinline></video>
       <figcaption>
-        <a href="${hrefOf(video)}" target="_blank">${escapeHtml(video.name)}</a>
+        <a class="title" href="${hrefOf(video)}" target="_blank">${escapeHtml(video.title)}</a>
+        <span>${escapeHtml(video.name)}</span>
         <span>${formatLength(video.seconds)} · ${formatSize(video.sizeBytes)} · ${formatDate(video.mtimeMs)}</span>
+        <a class="download" href="${hrefOf(video)}" download="${escapeHtml(downloadName(video, isOnly))}">⬇ ดาวน์โหลด</a>
       </figcaption>
-    </figure>`,
-    )
-    .join('')}
+    </figure>`
+
+/**
+ * A self-contained page that lists and plays every video, in two views the
+ * user switches between: by listing and by day.
+ */
+export const buildPage = (list: readonly Video[], now: number) => {
+  const groups = groupByListing(list)
+  const days = groupByDay(list)
+  const perListing = new Map(groups.map(([listing, items]) => [listing, items.length]))
+  const card = (video: Video) => cardOf(video, perListing.get(video.listing) === 1)
+  const section = (heading: string, items: Video[]) => `
+<section>
+  <h2>${heading}</h2>
+  <div class="grid">${items.map(card).join('')}
   </div>
-</section>`,
+</section>`
+  const byListing = groups
+    .map(([listing, items]) => {
+      const code = codeOf(listing)
+      const tag = code ? ` <small>รหัสทรัพย์ ${escapeHtml(code)}</small>` : ''
+      return section(`${escapeHtml(items[0]!.title)}${tag}`, items)
+    })
+    .join('')
+  const byDay = days
+    .map(([day, items]) =>
+      section(`${escapeHtml(dayLabel(day, now))} <small>${items.length} วีดีโอ</small>`, items),
     )
     .join('')
+  const sections = `
+<div class="view" id="view-listing">${byListing}
+</div>
+<div class="view" id="view-day" hidden>${byDay}
+</div>`
   const empty = `<p class="empty">ยังไม่มีวีดีโอใน ${ROOT}/*/output/</p>`
   return `<!DOCTYPE html>
 <html lang="th">
@@ -147,14 +221,25 @@ export const buildPage = (list: readonly Video[], now: number) => {
   body { margin: 0; padding: 24px; font-family: -apple-system, "Sukhumvit Set", sans-serif; background: #111; color: #eee; }
   header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px; }
   h1 { margin: 0; font-size: 24px; }
-  .meta, figcaption span, .empty { color: #999; font-size: 13px; }
+  .meta, figcaption span, .empty, h2 small { color: #999; font-size: 13px; font-weight: normal; }
   h2 { font-size: 18px; margin: 32px 0 12px; }
+  #search { width: 100%; max-width: 480px; box-sizing: border-box; margin: 12px 0 0; padding: 10px 14px; font: inherit; font-size: 15px; color: #eee; background: #1c1c1c; border: 1px solid #333; border-radius: 8px; }
+  #search:focus { outline: none; border-color: #666; }
+  [hidden] { display: none !important; }
+  .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
+  .tools #search { margin: 0; }
+  .views { display: inline-flex; background: #1c1c1c; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
+  .views button { font: inherit; font-size: 14px; color: #aaa; background: none; border: 0; padding: 9px 14px; cursor: pointer; }
+  .views button[aria-pressed="true"] { color: #fff; background: #2a6df4; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
   figure { margin: 0; background: #1c1c1c; border-radius: 10px; overflow: hidden; }
   video { width: 100%; aspect-ratio: 9 / 16; background: #000; display: block; }
   figcaption { padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
-  a { color: #eee; text-decoration: none; word-break: break-all; }
+  a { color: #eee; text-decoration: none; word-break: break-word; }
   a:hover { text-decoration: underline; }
+  a.title { font-weight: 600; }
+  a.download { align-self: flex-start; margin-top: 6px; padding: 6px 12px; background: #2a6df4; border-radius: 6px; font-size: 13px; color: #fff; }
+  a.download:hover { background: #1f5ad1; text-decoration: none; }
 </style>
 </head>
 <body>
@@ -162,7 +247,54 @@ export const buildPage = (list: readonly Video[], now: number) => {
   <h1>🎬 ${TITLE}</h1>
   <span class="meta">${list.length} วีดีโอ · ${groups.length} ทรัพย์ · อัปเดต ${formatDate(now)}</span>
 </header>
-${list.length === 0 ? empty : sections}
+${
+  list.length === 0
+    ? empty
+    : `<div class="tools">
+  <input id="search" type="search" placeholder="ค้นหาชื่อทรัพย์ รหัสทรัพย์ หรือชื่อไฟล์" autocomplete="off">
+  <div class="views" role="group" aria-label="แยกวีดีโอ">
+    <button type="button" data-view="listing" aria-pressed="true">ตามทรัพย์</button>
+    <button type="button" data-view="day" aria-pressed="false">ตามวันที่</button>
+  </div>
+</div>
+<p id="none" class="empty" hidden>ไม่พบวีดีโอที่ตรงกับคำค้น</p>
+${sections}
+<script>
+  const box = document.getElementById('search')
+  const buttons = document.querySelectorAll('.views button')
+  const showView = view => {
+    for (const button of buttons) {
+      button.setAttribute('aria-pressed', String(button.dataset.view === view))
+    }
+    for (const el of document.querySelectorAll('.view')) {
+      el.hidden = el.id !== 'view-' + view
+    }
+    try { localStorage.setItem('video-list-view', view) } catch {}
+  }
+  for (const button of buttons) {
+    button.addEventListener('click', () => showView(button.dataset.view))
+  }
+  let saved = null
+  try { saved = localStorage.getItem('video-list-view') } catch {}
+  if (saved === 'day') showView('day')
+  box.addEventListener('input', () => {
+    const words = box.value.toLowerCase().split(/\\s+/).filter(Boolean)
+    let shown = 0
+    for (const section of document.querySelectorAll('section')) {
+      let inSection = 0
+      for (const figure of section.querySelectorAll('figure')) {
+        const text = figure.dataset.search
+        const isMatch = words.every(word => text.includes(word))
+        figure.hidden = !isMatch
+        if (isMatch) inSection++
+      }
+      section.hidden = inSection === 0
+      shown += inSection
+    }
+    document.getElementById('none').hidden = shown > 0
+  })
+</script>`
+}
 </body>
 </html>
 `
