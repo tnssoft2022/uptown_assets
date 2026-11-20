@@ -23,9 +23,12 @@ brand/
                logo_anim_preview.mp4 shows it on the wine colour.
   text_fx/     text effects (text_fx.js helpers and SNIPPETS.md) the editor uses for every on-screen line and
                caption; each style's "ข้อความเคลื่อนไหว" row in STYLES.md picks them.
+  transition_fx/ transitions (transition_fx.js helpers and SNIPPETS.md) the editor uses between shots; each
+               style's "ทรานสิชัน" row in STYLES.md picks them.
   styles/      one sample room per style (standard, calm, walk, card .jpg) for the style picker cards only.
   music/       one instrumental track per style (standard, calm, walk .mp3; card uses walk.mp3 for now), AI music from the
                user's paid Magnific account (Google Lyria 3 Pro). Used when a listing's assets/ has no music.
+               Each has a <track>.beats.json beat grid (scripts/music_beats.py) so cuts land on the beat.
 listings/
   <code>-<name>/
     assets/    originals: photos, clips, logo, music. Never modify or delete.

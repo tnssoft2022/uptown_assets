@@ -94,10 +94,17 @@ How the video is built (HyperFrames for the picture, ffmpeg for the sound):
     tweens `x`, both linear (`ease: "none"`).
     Clips: a muted `<video class="clip full">`, trimmed with `data-media-start`. Don't use CSS filters on
     photos or clips.
-  - White flash (the transition "flash"): the shots meet with a hard cut, no overlap, and a full-frame white
-    `<div class="clip">` above the shots (below the logo and text) runs from 0.15 s before the cut to
-    0.15 s after it (0.3 s, or the length given), its opacity tweened 0 → 1 at the cut → 0. The total
-    length is then the plain sum of shot durations.
+  - Transitions use the helpers in `brand/transition_fx/` (read `SNIPPETS.md`; copy `transition_fx.js` to
+    `assets/transition_fx.js`): crossfade, zoom, whip, warm flash, fade-through, light leak, push and lift,
+    where the style's "ทรานสิชัน" row (or the brief) puts them. Every shot gets an inner `.mv` wrapper; the
+    Ken Burns tween stays on its `<img>`. A whip needs a horizontally blurred copy of both photos
+    (`avgblur=sizeX=60:sizeY=1`, same crop) in `assets/`. The flash ("flash" or "white flash" in a brief)
+    is the warm flash: a hard cut, no overlap, under a full-frame `.flash` clip from 0.15 s before the cut
+    to 0.15 s after it; the fade-through is the same with a 0.6 s `.wash`. Never a transition that bends,
+    warps or breaks the photo, and no CSS or SVG filter on a photo.
+  - Cuts on the beat: with a track from `brand/music/`, move each cut to the nearest beat in its
+    `.beats.json`, by at most 0.15 s, by lengthening or shortening the neighbouring shots (same total
+    length, every text still on screen for its minimum). Report the cuts you moved.
   - No `<audio>` in the composition: the sound is mixed with ffmpeg afterwards.
   - Text moves with the helpers in `brand/text_fx/` (read `SNIPPETS.md`; copy `text_fx.js` to
     `assets/text_fx.js`): the hook with `fx.hook`, every other line with the effect the style's
@@ -160,7 +167,7 @@ How you work:
   `hyperframes/` project to the output folder. Never modify or delete the source assets.
 - `build.sh` holds the commands you ran (the HyperFrames check and render, the ffmpeg mix and mux), so the
   cut can be rebuilt from `output/hyperframes/`.
-- Transitions overlap shots (white flashes and hard cuts don't): with crossfades, the total length is the sum of shot durations minus each
+- Transitions overlap shots (flashes, fade-throughs and hard cuts don't): with crossfades, the total length is the sum of shot durations minus each
   overlap. Plan the timeline so the total hits the target length; don't stretch shots to make up the overlap.
 - If `output/hyperframes/index.html` exists for the same shot list (from the storyboard), render that file
   for the cut, and report any shot where you had to differ from the approved storyboard.
