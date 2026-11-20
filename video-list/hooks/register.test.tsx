@@ -55,6 +55,11 @@ const project = (on: On) => {
   }))
   on('command.register', () => ({ value: { command: 'videos' } }))
   on('session.start', (_, e) => ({ cwd: e.cwd }))
+  on('session.root', () => ({ value: '/project' }))
+  on('clock.now', () => ({ value: Date.UTC(2026, 10, 20, 11, 0) }))
+  on('ui.toast', (_, e) => {
+    throw new Error(`unexpected toast: ${JSON.stringify(e)}`)
+  })
 }
 
 test('the band shows the button without a count', async ($, on) => {
@@ -81,7 +86,7 @@ test('the button writes the page, serves it and opens it in the browser pane', a
   on('process.spawn', async function* (_, e) {
     spawns.push([...e.argv])
     yield { stream: 'stdout', text: 'PORT 4321\n' }
-    return { code: 0, signal: null }
+    return { value: { code: 0, signal: null } }
   })
   on('mcp.connect', () => ({
     value: { isConnected: true, server: 'Claude Browser' },
@@ -95,7 +100,8 @@ test('the button writes the page, serves it and opens it in the browser pane', a
     }
     return { value: { content: [], isError: false } }
   })
-  on('session.cwd', () => ({ value: '/project' }))
+  // A shell cd moved the cwd into a listing's output/; the root stays put.
+  on('session.cwd', () => ({ value: '/project/listings/A01-condo/output' }))
   await $.session.start({ cwd: '/project', surface: 'desktop', isInteractive: true })
 
   const band = await $.ui.mount({ ...BAND, surface: 'desktop' })

@@ -66,19 +66,26 @@ async function lengthOf($: Engine, path: string) {
   }
 }
 
+/**
+ * listings/ under the project root. Not the session's cwd: a shell `cd` into
+ * a listing's output/ moves the cwd, and listings/ would then not be found.
+ */
+const listingsDir = async ($: Engine) => `${await $.session.root()}/${ROOT}`
+
 async function scan($: Engine) {
+  const root = await listingsDir($)
   const known = new Map(
     (await read($, videos)).map(v => [`${v.path}:${v.mtimeMs}`, v]),
   )
   const found: Video[] = []
-  if (await $.fs.exists(ROOT)) {
-    for (const listing of await $.fs.list(ROOT)) {
+  if (await $.fs.exists(root)) {
+    for (const listing of await $.fs.list(root)) {
       if (listing.kind !== 'dir') continue
-      const output = `${ROOT}/${listing.name}/output`
+      const output = `${root}/${listing.name}/output`
       if (!(await $.fs.exists(output))) continue
       for (const file of await $.fs.list(output)) {
         if (file.kind !== 'file' || !isVideo(file.name)) continue
-        const path = `${output}/${file.name}`
+        const path = `${ROOT}/${listing.name}/output/${file.name}`
         const cached = known.get(`${path}:${file.mtimeMs}`)
         found.push({
           listing: listing.name,
@@ -86,7 +93,9 @@ async function scan($: Engine) {
           path,
           sizeBytes: file.size,
           mtimeMs: file.mtimeMs,
-          seconds: cached ? cached.seconds : await lengthOf($, path),
+          seconds: cached
+            ? cached.seconds
+            : await lengthOf($, `${output}/${file.name}`),
         })
       }
     }
@@ -247,7 +256,7 @@ async function openInPane($: Engine, url: string) {
 async function openPage($: Engine) {
   try {
     await scan($)
-    const root = `${await $.session.cwd()}/${ROOT}`
+    const root = await listingsDir($)
     await $.fs.write(
       `${root}/${PAGE}`,
       buildPage(await read($, videos), await $.clock.now()),
