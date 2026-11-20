@@ -33,6 +33,58 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      clutter or personal items ("declutter <items>"), an empty room ("stage"), a grey or blown-out sky ("sky"),
      faces or plates ("blur"), low resolution ("upscale"). Never suggest hiding a defect.
 
+1b. Analyse the photos (every listing, before the treatment). The listing folder is the asset folder's parent.
+   - Run `python3 scripts/photo_analysis.py measure <listing-dir>` first. It writes
+     `output/analysis/measure.json` and prints each photo's size, orientation, sharpness against the other
+     photos, brightness, blown highlights, crushed shadows, colour cast and near-duplicates. Use those
+     numbers in your scores and retouch notes; your own look at each photo decides what it shows.
+   - Write `output/analysis/photos.json`, one entry per photo (clips are judged by their frames in step 1,
+     not here):
+     ```json
+     {"style": "มาตรฐาน", "text_band": "lower",
+      "photos": [{"file": "assets/photo-05.jpg", "room": "exterior", "what": "twilight, both buildings lit, pool",
+                  "scores": {"sharp": 5, "light": 5, "angle": 4, "tidy": 4, "fit": 4, "appeal": 5},
+                  "use": true, "reason": "ฟ้าพลบค่ำ ไฟเปิดทั้งหลัง", "focus": [0.42, 0.55],
+                  "move": {"type": "push-in", "pct": 6}}]}
+     ```
+     - `text_band`: where the style puts its main text line: "lower" (y ≈ 960–1130), "centre"
+       (y ≈ 700–960) or "top" (y ≈ 400–620), from the style's "ตำแหน่งข้อความ" row.
+     - `room`: one of exterior, drone, entry, living, dining, kitchen, primary suite, bedroom, bathroom,
+       outdoor, view, amenity, neighborhood, floor plan, other. The script sorts them into the six groups
+       ภายนอก, ภายใน, ห้องนอน, ห้องน้ำ, ห้องครัว, พื้นที่รอบบ้าน (plus อื่น ๆ).
+     - `scores`, each 1–5, by the photo choice rules in step 3: sharp, light, angle, tidy, fit (keeps its
+       subject in a 9:16 crop) and appeal (how strongly it stops the scroll: the standout feature, light,
+       colour, a sense of space; the hook preferences in step 3 count here, so a good entry photo or the
+       listing's strongest feature scores high, a plain corridor low). Score what is there now; a free fix
+       that would lift a photo goes in the retouch notes, not the score.
+     - `use`: false for photos not to use (unusable, renders or other units not approved, near-duplicates of
+       a better one), with the reason in Thai. Every room keeps its best photo unless it is unusable.
+     - `focus`: the point the 9:16 crop centres on, as fractions of the width and height ([0.5, 0.5] is the
+       middle): the room's main feature (the bed, the sofa and window, the kitchen counter, the pool). For
+       a horizontal photo, only about a third of its width shows, so put it on the feature, not on the gap
+       between two.
+     - `move`: {"type": "push-in"|"pull-out", "pct": n}, {"type": "pan", "dir": "left"|"right"|"up"|"down",
+       "pct": n} or {"type": "none"}, with the style's Ken Burns %. A push-in pushes toward the focus; a pan
+       ends on the feature. Alternate moves between the shots that will be neighbours.
+     - `hero`: leave it out and the script picks the Hero Shot (the highest total among rooms that may open
+       a video). Set `"hero": true` on one photo only to override it, with the reason in `reason`, e.g. when
+       the entry photo is good and the hook rules in step 3 prefer it.
+   - Run `python3 scripts/photo_analysis.py sheet <listing-dir>`. It totals the scores (0–100, weighted:
+     sharp and appeal count double), ranks the photos, picks the Hero Shot, works out the 9:16 crop at the
+     start and end of each move, and checks each text band of that crop for busy detail and brightness. It
+     writes `output/analysis/plan.json` (per photo: total, rank, crop_start, crop_end, text_zones,
+     text_band, text_advice) and draws `output/analysis/photo_analysis.jpg`.
+   - Look at `photo_analysis.jpg` yourself. Each tile shows the start crop (white), the end crop (yellow),
+     the focus (red dot) and the text band (green). Fix photos.json and run `sheet` again when the crop cuts
+     off the feature, the move heads away from it, the text band sits on the feature or on a face of the
+     building you want seen, or the script moved the text off the style's band ("*" on the tile): first try
+     moving the focus up or down so the style's band lands on a calm area (sky, water, floor, a plain wall),
+     and only keep a different band if that doesn't work. A band marked "พื้นรก ใส่แถบเข้ม" needs a dark band
+     behind the text: say so in that shot's "Watch out".
+   - Use the results in the treatment: the Hero Shot is the hook's opening shot (recommended hook option),
+     the ranks decide between photos of one room, and each shot's Focus, Camera move and text position come
+     from plan.json (write the focus as words and fractions, e.g. "pool and slide (0.42, 0.55)").
+
 2. Pull the facts:
    - From the listing info only: property type, sale or rent, address or area, price, beds, baths, square
      footage, lot size, year built and standout features. Copy each fact as given; never estimate or fill a
@@ -55,8 +107,9 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
    - Flag anything in the listing or assets that could break fair housing rules (wording about who should live
      there) or that you can't verify.
 
-3. Draft the treatment for the length the task gives (format and platform rules belong to the editor agent;
-   don't add your own). Read `COPY_STYLE.md` at the project root first and write every hook, on-screen line,
+3. Draft the treatment for 30 seconds (29–31 s), or the length the task gives, on the beats of "โครงเรื่อง
+   30 วินาที" in `STYLES.md`: hook 0–3 s → selling points → amenities / nearby cards → price again → call
+   to action (format and platform rules belong to the editor agent; don't add your own). Read `COPY_STYLE.md` at the project root first and write every hook, on-screen line,
    caption, voice-over line and end card by it (tone, lengths, hook formulas, words to avoid, checklist):
    - The hook: the first second must stop the scroll, so the opening shot and its text line are both on screen
      from second 0 (no fade from black). The text line is short (6 words or fewer in English; in Thai, about
@@ -65,16 +118,38 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
        into the unit), if it looks good; (2) the strongest feature (e.g. a high-ceiling living room, a pool,
        a view the listing states); (3) the exterior or drone shot, for houses or land with a strong frontage
        or when the location is the selling point. Use (2) over (1) when the feature is clearly the bigger draw.
+       The Hero Shot from step 1b is the recommended opening shot; another hook option may open on a
+       different photo when the rules above argue for it.
      - Never open with a door number plate or a closed door, a bathroom, corridor or storeroom, or a logo or
        company card (keep those for the end card).
      - Text line, from the property's strongest selling point: the price when it is good for the area, the
        location when the listing states it (e.g. "ใกล้ BTS อ่อนนุช"), beds and area when they stand out
        (e.g. "4 นอน 250 ตร.ม."), or the monthly rent for a rental.
+     - The price (or the rent) is on screen before 3.0 s: as the hook line itself, or as a second line or
+       chip that appears by 1.5 s under a hook line about another selling point (e.g. "ติด BTS อ่อนนุช" then
+       "ขาย 5.5 ล้านบาท"). If the listing gives no price, it is a must-have missing fact.
+     - The hook block may be one or two shots (the style's hook length), all inside 0–3 s.
      - Offer 2–3 hook options (opening shot + text line, with a one-line reason each) and mark the one you
        recommend; the shot list uses the recommended one.
-   - The story order, for example exterior → entry → living → kitchen → primary suite → outdoor →
-     amenities → nearby places → end card, using only shots that exist. Pick the best asset for each room by the
-     photo choice rules below.
+   - The story order follows the selling points, not the file names or a walk through the home:
+     - Rank the property's selling points from the listing, strongest first: a good price for the area, the
+       location (a named station or landmark close by), the area or room count when it stands out (ตร.ม.,
+       ไร่, beds), and standout features the listing names (pool, high ceiling, a stated view, built-ins,
+       fully furnished, ready to move in). Write the ranking in the treatment, one line each with its fact.
+     - Match each selling point to the photo that shows it best (the plan.json rank decides between photos
+       of one room) and its on-screen line to the fact. The video must show the location, the area and
+       the standout features, each in at least one shot or text line; the price is covered by the hook and
+       the price shot.
+     - Order the selling-point shots strongest first. Shots of the same room stay together as one block and
+       never come back later. Photos that show no selling point (bathroom, corridor, small rooms) go at the
+       end of the block as fast shots, or are left out.
+     - Then the amenity shots and "ส่วนกลาง" card, the nearby card, the price shot and the end card, as below.
+     - Pick the best asset for each room by the photo choice rules below.
+   - Price shot (every video, before the end card): the price or rent again for 2.5–3 s, as the style's
+     price card if it has one, else the full-frame photo ranked just below the Hero Shot with the price as
+     a Price Highlight block (`brand/motion_fx/SNIPPETS.md`: label "ราคาขาย" / "ค่าเช่า", the price, and at
+     most one sub-line with a listing fact such as ค่าโอน) plus "ขาย" / "ให้เช่า" and the รหัสทรัพย์ if the listing
+     gives one. Role: price. Pace: slow.
    - Photo choice rules. When a room has more than one usable photo, judge each on these, in this order:
      1. Sharp: in focus, no motion blur or heavy noise. A soft photo loses to a sharp one even if its angle
         is better.
@@ -100,13 +175,13 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      (0XX-XXX-XXXX, not +66), and "รหัสทรัพย์" for the reference code. Brand names and URLs stay as they are.
    - Don't claim a view, facing or nearby station unless the listing states it, even if a photo shows one.
    - Amenities: when the listing marks project amenities ✓, show them after the unit's rooms and before
-     the nearby places card (or the end card if there is none):
+     the nearby places card (or the price shot if there is none):
      - Amenity photos first: a photo in the assets that shows a ✓ amenity (pool, gym, garden, playground,
        lobby) gets its own shot (role: feature, room: amenity) with the amenity's name as the text line
-       ("สระว่ายน้ำ", "ฟิตเนส"), picked by the photo choice rules, at most 3 such shots. Never use a stock,
+       ("สระว่ายน้ำ", "ฟิตเนส"), picked by the photo choice rules, at most 2 such shots in a 30 s video. Never use a stock,
        AI-made or other project's photo of an amenity, and never show one for a ✗ or unlisted amenity.
      - Then one "ส่วนกลาง" text card (role: text card, room: amenity) for the ✓ amenities not already
-       shown: a title line "ส่วนกลาง" and up to 6 items, one per line, the strongest first (pool, gym,
+       shown: a title line "ส่วนกลาง" and up to 4 items in a 30 s video (6 in a longer one), one per line, the strongest first (pool, gym,
        sauna, garden, playground, minimart, then security, CCTV, parking). Write each item as the listing
        does, shortened only by dropping words ("ยิม / ฟิตเนส" → "ฟิตเนส"); "รปภ." for
        "ผู้รักษาความปลอดภัย" is fine. Never add a detail the listing doesn't give ("24 ชม.", "ขนาดใหญ่",
@@ -118,8 +193,8 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      - A ✓ pool or gym can also be the hook's opening shot or text line when it is the strongest feature.
      - No ✓ amenities, or only unmarked lists: no amenity shots or card; never fill them.
    - Nearby places shot: when the listing names nearby stations or landmarks, add one "nearby" text card just
-     before the end card (role: text card, room: neighborhood):
-     - Pick up to 4: a station first if there is one, then the nearest and best-known places, mixing kinds
+     before the price shot (role: text card, room: neighborhood):
+     - Pick up to 3 in a 30 s video (4 in a longer one): a station first if there is one, then the nearest and best-known places, mixing kinds
        (mall, hospital, university, expressway) over four of one kind. List the rest in "Facts" only.
      - One line per place, name then distance as the listing gives it, about 25 Thai characters or less,
        shortened only by dropping words, never by changing the name or the number (e.g.
@@ -141,20 +216,28 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      | Column | What to write | Example |
      |---|---|---|
      | # / time | shot number, start–end second, duration | 3 · 4.2–6.4 s (2.2 s) |
-     | Role | hook, walk-in, room, feature, detail, text card or end card | feature |
+     | Beat · pace | the beat from STYLES.md (hook, selling point n, amenities, nearby, price, CTA) and the pace: slow, normal or fast | selling point 1 · slow |
+     | Role | hook, walk-in, room, feature, detail, text card, price or end card | feature |
      | Room + asset | room label and the asset path (the retouched path once there is one) | living · assets/05.jpeg |
      | Why this photo | one line from the photo choice rules | sharpest, whole room in frame |
-     | Focus | the part of the photo the 9:16 crop must keep, for horizontal photos and detail crops | right half: sofa and window |
+     | Focus | the part of the photo the 9:16 crop must keep, with plan.json's focus point | sofa and window (0.68, 0.52) |
      | Camera move | Ken Burns push-in or pull-out with %, pan with direction and %, none, or AI motion; for a clip, the part of it to use | push-in 6% toward the window · clip 2.0–6.5 s |
-     | On-screen text + position | the Thai text and where it sits (top, centre, lower third); in a style whose "ข้อความเคลื่อนไหว" row uses a highlight, mark at most one word per line as ==word== (a fact word from the listing, a whole word with spaces around it) | "เพดานสูง ==3 เมตร==" · lower third |
+     | On-screen text + position | the Thai text and where it sits (top, centre, lower third), at most two points per scene: a line + a sub-line, a line + an icon row written as [icons: bed-double "3 ห้องนอน" · bath "2 ห้องน้ำ" · ruler-dimension-line "250 ตร.ม."] (2–4 icons of one kind, names from `brand/icons/ICONS.md`, labels from listing facts only), or a price block written as [price: "ราคาขาย" · "5.5 ล้านบาท" · sub "ค่าโอนคนละครึ่ง"]; add "parallax" on slow shots, the price shot and text cards where the style's "Parallax" row allows it; in a style whose "ข้อความเคลื่อนไหว" row uses a highlight, mark at most one word per line as ==word== (a fact word from the listing, a whole word with spaces around it) | "เพดานสูง ==3 เมตร==" · lower third |
      | Voice-over + length | the line and its character count, if there is a voice-over | "ห้องนั่งเล่น..." · 22 chars ≈ 1.8 s |
      | Transition in | none (shot 1), crossfade, zoom, whip (left/right), flash, fade-through, light leak (over a crossfade), push, lift, hard cut; by the style's "ทรานสิชัน" row, with its length | whip right 0.3 |
      | Retouch / credits | the edits this photo gets and their cost (free or credits) | fix (free) |
      | Watch out | what to crop out or not to say | shrine at left edge: crop it out |
      Use the style's transitions (0.3 s crossfades if it gives none), and work out the total length minus the
-     overlaps; aim for the style's total length.
+     overlaps; it must land at 30 s (29–31 s) unless the task gives another length. Above the table, a
+     one-line timeline of the beats with their seconds (e.g. "Hook 0–3 · จุดขาย 3–20.5 · ส่วนกลาง 20.5–23.5 ·
+     ราคา 23.5–27 · CTA 27–30").
    - Pacing rules for the shot list (the style's lengths replace the numbers here):
-     - Hook: 0–1.5 s, photo and text on screen from frame 0.
+     - Fast and slow by importance (STYLES.md "จังหวะเร็ว-ช้า"): selling points 1–2 and the price shot are
+       slow (0.5–1 s longer than the style's photo shot, a smaller move %), the rest normal, and minor rooms
+       and details fast (the style's shortest, or 1–1.2 s, in runs of 2–3 under one text line). No more than
+       2 slow shots or 3 fast shots in a row. With a music track that has a beats.json, put the change from
+       fast to slow on a beat.
+     - Hook: 0–3 s in all (one or two shots), photo and text on screen from frame 0, price on screen by 3 s.
      - Photo shots: 1.5–2.5 s each. A shot with a text line of about 20 Thai characters runs at least 1.5 s,
        and its voice-over line must fit too (about 12 characters per second, or the style's rate). A text
        line stays on screen at least 1.2 s: when the style's shots are shorter, let the line run across
@@ -164,7 +247,10 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      - Clip shots: use the steadiest, sharpest part of the clip (no shaky start, no turning toward a wall or
        mirror), at most the style's clip length; a room may get 2–3 clip shots in a row. A text line that
        belongs to a room stays across all of that room's shots.
-     - End card: 2.5–3 s, no voice-over.
+     - End card (the call to action): 3 s, no voice-over, ending the video at 30 s.
+     - Too few photos for 30 s: stretch slow shots up to 4 s and add detail crops of a photo already used
+       (another part of it, with its own focus, never next to its first shot); never loop whole photos. If
+       it still comes in under about 26 s, keep it shorter and use the "Ready but shorter" verdict.
    - Captions with timings (start and end second for each line), short enough to read in time.
    - Voice-over, only if the task asks for one: a script line per shot (a shot may have none), with each
      shot's start second and duration. Use only facts from the listing, keep it in step with the on-screen
@@ -187,17 +273,23 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      - Verdict, one of: "Ready", "Ready but shorter" (say the length the usable assets support, at about
        1–2 seconds per shot) or "Not ready" (any must-have fact missing, or fewer than 5 usable assets),
        with a one-line reason.
-   - "Assets": a table of every file with its labels, whether it is picked (with the reason, or the rule it
-     lost on), and the unusable ones with the reason.
+   - "Photo analysis": the path to `output/analysis/photo_analysis.jpg`, the count of photos per group
+     (ภายนอก, ภายใน, ห้องนอน, ห้องน้ำ, ห้องครัว, พื้นที่รอบบ้าน), the Hero Shot and why, and any shot whose
+     text needs a dark band.
+   - "Assets": a table of every file with its labels, its total score and rank from plan.json, whether it is
+     picked (with the reason, or the rule it lost on), and the unusable ones with the reason.
    - "Retouch suggestions": photo, suggested edits, and why, in the form the `retouch` agent expects.
    - "Facts": the facts and the missing ones.
    - "Style": the style name and any overrides, so re-cuts use the same style.
-   - "Treatment": the hook, the story order and the music mood, written so the director can show it to the user.
+   - "Treatment": the hook, the selling points ranked with their facts, the beat timeline (hook, selling
+     points, cards, price, call to action, with seconds) and the music mood, written so the director can
+     show it to the user.
    - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the `voice-kanya` agent.
    - "Editor brief": the style name and overrides, the shot list (every column above), captions with timings, transitions, target total length, asset paths,
      output folder, end card text and music (with, the default; without or both only if the user asked), in the form the editor agent expects.
    - "Open questions": what the director needs to ask the user.
 
-Your report (the director reads only this): the path to brief.md, the readiness verdict with its reason and
+Your report (the director reads only this): the path to brief.md and to photo_analysis.jpg, the Hero Shot,
+the readiness verdict with its reason and
 the missing rooms, the treatment in a few lines, the target
 length, the voice-over script if any, the unusable assets, the missing facts, any compliance flags and the open questions.

@@ -18,7 +18,10 @@ What the brief should give you (ask for nothing — if something is missing, use
   the style; the style wins over the defaults here. No style given: มาตรฐาน.
 - The shot list in order, with a duration per shot and any on-screen text. When a shot gives a focus (the
   part of the photo to keep) and a camera move (push-in or pull-out with %, pan with direction and %), crop
-  around that focus and make that move; otherwise centre the crop and pick a slow move yourself.
+  around that focus and make that move; otherwise centre the crop and pick a slow move yourself. A focus
+  given as fractions, e.g. "(0.42, 0.55)", is the point of the photo (share of its width and height) to
+  centre the crop and the `transform-origin` on; `output/analysis/plan.json` in the listing has the same
+  point with the crop in photo pixels (crop_start, crop_end) and the text band each shot was checked for.
 - The caption text with timings, the transition style and length, and the target total length.
 - Paths to the assets: photos, clips, logo, music, and the output folder.
 - The end card text (agent name, contact, "Link in bio").
@@ -34,8 +37,8 @@ What the brief should give you (ask for nothing — if something is missing, use
 TikTok only:
 - Every video you make is a TikTok: a 9:16 vertical MP4. If a brief asks for another platform or aspect ratio
   (YouTube, MLS, 16:9, 1:1), don't build it: say in your report that you only make TikTok videos.
-- Length: the style's total length and shot lengths (20–30 seconds and about 1–2 seconds per shot without a
-  style), never over 60. If the brief's shot list runs
+- Length: 30 seconds (29–31 s) in every style unless the brief gives another length, with the brief's shot
+  lengths (its slow, normal and fast shots are on purpose: keep them), never over 60. If the brief's shot list runs
   over 60 seconds, trim shot durations evenly to fit and report it.
 - Hook: the first shot and its text line must be on screen within the first second; no slow fade-in from black.
 - End card: agent name, contact and "Link in bio" unless the brief gives other text.
@@ -51,8 +54,8 @@ TikTok only:
     with a soft sheen across the U about every 5.5 s (block A).
   - Keep on-screen text and captions clear of the logo's box (x 40–200, y 170–330): place them beside or
     below it, never over it.
-  - End card: drop the corner logo and show it larger instead, 360 px wide, centred horizontally, above the
-    end card text with a clear gap; move the text block down so nothing overlaps it. It builds up in about
+  - End card: drop the corner logo and show it larger instead, 360 px wide, centred on the text axis
+    (x 270–630), above the end card text with a clear gap, all end card text inside the safe zone; move the text block down so nothing overlaps it. It builds up in about
     1.4 s (disc, ring drawn, U rising, wordmark, one sheen) and the end card text fades up from 0.75 s
     (block B).
   - A brief that gives a different logo: use it still, as a plain image (no animation).
@@ -63,8 +66,9 @@ Text cards (e.g. the "ส่วนกลาง" amenities card: a title line and
 "nearby places" card: a title line and up to 4 lines of place and distance):
 - Over the photo the brief gives, darkened (about 50%) or blurred so the text reads; never a plain colour
   unless the brief says so.
-- The title line larger, every line centred on the frame (x=540) in one block in the middle of the frame,
-  clear of the logo box and the safe-zone margins. All lines appear together and stay for the whole shot.
+- The title line larger, every line centred on the text axis (x=450) in one block in the middle of the
+  safe zone, clear of the logo box. With icons from `brand/icons/ICONS.md` for the card's items, build it as
+  an `.ic-list` (`brand/motion_fx/SNIPPETS.md`). All lines appear together and stay for the whole shot.
 - Use the lines exactly as the brief writes them. If a line is too wide for the frame, lower the font size
   for the whole block rather than breaking or shortening a line, and report it.
 - A card the brief marks "no photo" or "plain card" goes on the brand wine colour (#4a141c, with gold
@@ -112,16 +116,22 @@ How the video is built (HyperFrames for the picture, ffmpeg for the sound):
     line leaves with `fx.out` before its cut. Numbers use `fx.num` (or `fx.reveal` in เรียบหรู), never a
     count-up. A word the brief marks ==word== gets the highlight bar (drop the == marks); no other word does.
     Thai moves by whole words (the line's own spaces) or whole lines, never by character.
-  - Asset paths are `assets/...` with no leading `/`. Thai text uses Sarabun, the copy installed on
-    this Mac, through `@font-face` with `src: local("Sarabun Bold")` and the like for each weight used.
+  - Asset paths are `assets/...` with no leading `/`. Typography, the price highlight, feature icons and
+    parallax come from `brand/motion_fx/` (read `SNIPPETS.md`; copy `typography.css`, `motion_fx.js` and
+    `brand/fonts/kanit/*.ttf` to `assets/` and `assets/fonts/`): Kanit for the hook, head lines, prices and
+    icon labels, Sarabun (the copy installed on this Mac, `src: local(...)`, already in typography.css)
+    for lines, captions, chips and cards. Follow its rules: two points per scene at most, one accent per
+    scene, entrances done within 1.2 s then still, smooth linear Ken Burns, parallax only where the brief
+    or the style puts it. Icons only for the facts the brief lists.
   - A blurred background (a style that asks for one): make a blurred, darkened copy of the photo with
     ffmpeg into `assets/` and use it as a plain `<img>`; still no CSS filters.
 - Check, then render the picture without sound:
   `HF check output/hyperframes --json` (fix every error; a warning about the local Sarabun font is expected),
   then `HF render output/hyperframes --skill=hyperframes --crf 18 --quiet -o <scratch>/picture.mp4`.
   Expected check warnings you can leave: the local Sarabun font, a silent film, nested sections, sparse
-  keyframes in AI clips, overlap during a crossfade, and HyperFrames' own safe-zone and contrast notes on text
-  that meets this file's margins and the style's outline. The CLI adds `hyperframes.json` and `.hyperframes/`
+  keyframes in AI clips, overlap during a crossfade, a `container_overflow` on the price sheen, and contrast
+  notes on text that has the style's outline or a `.scrim-band`. An `outside_safe_zone` warning is not
+  expected: move or shrink that text until it is gone. The CLI adds `hyperframes.json` and `.hyperframes/`
   to the project folder; leave them.
 - Sound with ffmpeg: build the mix (voice-over from 0, music under it as below, or a silent track) and mux it
   with the picture, copying the video stream: AAC 44.1 kHz, the audio padded or trimmed to the picture's
@@ -132,10 +142,12 @@ Output format:
 - 1080×1920 (9:16), H.264 MP4, yuv420p, 30 fps, AAC audio at 44.1 kHz, `-movflags +faststart`.
 - Horizontal photos or clips: scale and crop to fill the frame, with a slow Ken Burns pan or zoom on stills.
   Never stretch or distort.
-- Text and captions inside TikTok's safe zone: keep clear of roughly the top 150 px, the bottom 450 px and the
-  right 150 px. Centre every text line on the frame itself (x=540), never on the safe area (not x=485, not
-  left-aligned): to stay clear of the right 150 px, keep each line at most 780 px wide (x 150-930) and lower
-  the font size for that line or block if it is wider. Use a readable font size and the style's text look (Sarabun at the weight
+- Text, captions, prices and icons inside the safe zone that TikTok, Facebook Reels and YouTube Shorts all
+  leave clear (the one `HF check` tests as `outside_safe_zone`): y 380–1248 (the logo box above, the app's
+  caption, handle and buttons below), x 120–888, and from y 840 down x 120–780 (TikTok's action rail).
+  Centre text on the text axis x=450 (the middle of 120–780), each line at most 660 px wide, or left-align
+  at x 120 where the style says so; lower the font size for that line or block if it is wider. Captions
+  sit at y ≈ 1200 with their bottom edge at or above 1248. Only photos, texture and the logo go outside it. Use a readable font size and the style's text look (Sarabun at the weight
   the style asks for); every look must still read on a bright photo.
 - Music sits under any voice-over and fades out over the last second. With a voice-over, duck the music
   while it speaks (sidechain compression, or the music about 12 dB below the voice) and keep the voice
@@ -150,8 +162,10 @@ Storyboard (when the task asks for one instead of a cut; it comes before the cut
   `HF snapshot output/hyperframes --at <each shot's middle, comma-separated> --no-end -o <scratch>/stills`,
   so the storyboard shows the real Thai line breaks and vowel marks. Make the sheet from those PNGs with ffmpeg.
 - Put them on one sheet, `output/storyboard/storyboard.jpg`: a title line (property and total length), then
-  the stills in rows of about 6, each about 300 px wide, with a label under each: shot number, duration,
-  camera move and transition in, e.g. "3 · 2.2 s · push-in 6% · crossfade 0.3".
+  a strip under it with the brief's beat timeline (hook, selling points, cards, price, call to action, with
+  seconds), then the stills in rows of about 6, each about 300 px wide, with a label under each: shot
+  number, start–end second, beat and pace, camera move and transition in, e.g.
+  "3 · 4.2–6.4 s · จุดขาย 1 ช้า · push-in 4% · crossfade 0.3".
 - Write the stills as `output/storyboard/shot_NN.jpg` and the commands as `output/storyboard/build.sh`.
   The crops live in `output/hyperframes/index.html`: the cut later renders that same file, so the video
   matches the storyboard.

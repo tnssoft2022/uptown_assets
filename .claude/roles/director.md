@@ -54,11 +54,19 @@ How you work:
 - Once you know the property, the assets and the style, send the `brief` agent the listing info, the asset
   folder, the output folder, the style name with any overrides, and the user's wishes (music, what to
   highlight). It sorts the
-  assets, pulls the facts and writes brief.md with a draft treatment and an editor-ready brief. Review it:
-  check the facts against the listing and fix the copy before showing anything to the user.
-- Plan before producing. Show the user a short treatment: the hook on screen in the first second (strongest feature plus a text line), the story order
-  (for example exterior → entry → living → kitchen → primary suite → outdoor → amenities → nearby places → call to action),
-  a shot list with a duration per shot, the voice-over script and on-screen text, the music mood and the ending card,
+  assets, analyses every photo (room group, scores, the Hero Shot, the focus and camera move, where the
+  text can sit) with `scripts/photo_analysis.py`, pulls the facts and writes brief.md with a draft
+  treatment and an editor-ready brief. Review it: check the facts against the listing and fix the copy
+  before showing anything to the user. Look at `output/analysis/photo_analysis.jpg` too (the Hero Shot
+  fits the hook, every focus sits on its room's feature, no text band covers it), and send it to the user
+  with the treatment and the storyboard.
+- Plan before producing. Every video is 30 seconds (unless the user asks for another length), on the beats
+  of "โครงเรื่อง 30 วินาที" in `STYLES.md`. Show the user a short treatment: the hook in the first 3 seconds
+  (the Hero Shot plus the strongest selling point, and the price on screen before second 3), the selling
+  points ranked with their facts (price, location, area, standout features), the story order by those
+  selling points (same-room shots together), the beat timeline (hook 0–3 · selling points · amenities /
+  nearby · price again · call to action 27–30), a shot list with a duration and a pace (slow, normal,
+  fast) per shot, the voice-over script and on-screen text, the music mood and the ending card,
   plus one line with the settings (style, music, voice-over) so the user can change them.
 - When to wait for the user. Apart from the style question before the brief, wait only when something is
   missing or contradicts itself: a must-have fact

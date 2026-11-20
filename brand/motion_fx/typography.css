@@ -1,0 +1,114 @@
+/* Uptown Assets typography for HyperFrames cuts (see brand/motion_fx/SNIPPETS.md).
+   Copy this file into the cut as assets/typography.css and brand/fonts/kanit/*.ttf into assets/fonts/.
+   Kanit (headings, hook, price, icon labels) from brand/fonts/kanit/ (SIL Open Font License, OFL.txt);
+   Sarabun (lines, captions, chips, cards) is the copy installed on this Mac.
+   Sizes are px on the 1080x1920 frame. A style's own row in STYLES.md may change a weight, size or colour;
+   the rules in the comments hold in every style. */
+
+@font-face { font-family: "Kanit"; src: url("fonts/Kanit-Light.ttf"); font-weight: 300; }
+@font-face { font-family: "Kanit"; src: url("fonts/Kanit-Regular.ttf"); font-weight: 400; }
+@font-face { font-family: "Kanit"; src: url("fonts/Kanit-Medium.ttf"); font-weight: 500; }
+@font-face { font-family: "Kanit"; src: url("fonts/Kanit-SemiBold.ttf"); font-weight: 600; }
+@font-face { font-family: "Kanit"; src: url("fonts/Kanit-Bold.ttf"); font-weight: 700; }
+@font-face { font-family: "Kanit"; src: url("fonts/Kanit-ExtraBold.ttf"); font-weight: 800; }
+@font-face { font-family: "Sarabun"; src: local("Sarabun Light"), local("Sarabun-Light"); font-weight: 300; }
+@font-face { font-family: "Sarabun"; src: local("Sarabun Regular"), local("Sarabun-Regular"); font-weight: 400; }
+@font-face { font-family: "Sarabun"; src: local("Sarabun Medium"), local("Sarabun-Medium"); font-weight: 500; }
+@font-face { font-family: "Sarabun"; src: local("Sarabun SemiBold"), local("Sarabun-SemiBold"); font-weight: 600; }
+@font-face { font-family: "Sarabun"; src: local("Sarabun Bold"), local("Sarabun-Bold"); font-weight: 700; }
+@font-face { font-family: "Sarabun"; src: local("Sarabun ExtraBold"), local("Sarabun-ExtraBold"); font-weight: 800; }
+
+:root {
+  --gold: #c9a063;
+  --gold-hi: #e6c48a;
+  --wine: #4a141c;
+  --ink: #1d1a16;
+  --yellow: #ffd400;
+  --red: #c62a3a;
+  /* 3 px dark outline built from text-shadows (no -webkit-text-stroke: it eats Thai vowel marks), plus a soft drop */
+  --outline: 3px 0 0 #000, -3px 0 0 #000, 0 3px 0 #000, 0 -3px 0 #000, 2.1px 2.1px 0 #000, -2.1px 2.1px 0 #000,
+    2.1px -2.1px 0 #000, -2.1px -2.1px 0 #000, 2.8px 1.2px 0 #000, -2.8px 1.2px 0 #000, 2.8px -1.2px 0 #000,
+    -2.8px -1.2px 0 #000, 1.2px 2.8px 0 #000, -1.2px 2.8px 0 #000, 1.2px -2.8px 0 #000, -1.2px -2.8px 0 #000,
+    0 4px 12px rgba(0,0,0,0.5);
+  --soft: 0 2px 4px rgba(0,0,0,0.55), 0 6px 22px rgba(0,0,0,0.45);
+}
+
+/* Thai rules for every text class:
+   - one line per element, broken only where the brief breaks it (white-space: nowrap); never let the browser
+     wrap Thai, it has no spaces to break at and splits words;
+   - no letter-spacing on Thai (it pulls vowels and tone marks off their letters); Latin-only labels may track;
+   - line-height at least 1.25 so upper vowels and tone marks are never clipped by a box above;
+   - nothing under 34 px (it can't be read on a phone at feed size). */
+.t-hook, .t-head, .t-line, .t-sub, .t-price, .t-label, .t-cap, .t-chip, .t-icon {
+  white-space: nowrap; letter-spacing: 0; font-kerning: normal; font-synthesis: none;
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+}
+
+/* Scale (1080x1920). One hook, at most one head + one sub per scene (see SNIPPETS.md, "two points"). */
+.t-hook  { font-family: "Kanit", sans-serif; font-weight: 700; font-size: 96px;  line-height: 1.25; }
+.t-head  { font-family: "Kanit", sans-serif; font-weight: 600; font-size: 72px;  line-height: 1.3; }
+.t-line  { font-family: "Sarabun", sans-serif; font-weight: 700; font-size: 66px; line-height: 1.35; }
+.t-sub   { font-family: "Sarabun", sans-serif; font-weight: 600; font-size: 50px; line-height: 1.4; }
+.t-price { font-family: "Kanit", sans-serif; font-weight: 700; font-size: 112px; line-height: 1.15;
+           font-variant-numeric: tabular-nums lining-nums; }
+.t-label { font-family: "Kanit", sans-serif; font-weight: 500; font-size: 42px;  line-height: 1.3; }
+.t-cap   { font-family: "Sarabun", sans-serif; font-weight: 700; font-size: 48px; line-height: 1.4; }
+.t-chip  { font-family: "Sarabun", sans-serif; font-weight: 700; font-size: 34px; line-height: 1.3; }
+.t-icon  { font-family: "Kanit", sans-serif; font-weight: 500; font-size: 40px;  line-height: 1.25; }
+
+/* Looks: text on a photo always gets one of these so it reads on a bright frame. */
+.on-photo { color: #fff; text-shadow: var(--outline); }   /* มาตรฐาน, เดินชมห้อง */
+.on-photo-soft { color: #fff; text-shadow: var(--soft); } /* เรียบหรู, การ์ดข้อมูล */
+.num-gold { color: var(--gold-hi); }
+.num-yellow { color: var(--yellow); }
+
+/* เรียบหรู: lighter weights, the same sizes a step down */
+.lux .t-hook { font-weight: 300; font-size: 84px; }
+.lux .t-head { font-weight: 300; font-size: 64px; }
+.lux .t-price { font-weight: 400; font-size: 96px; }
+
+/* Blocks below are 900 px wide from x 0, so they centre on the text axis x=450 of the safe zone
+   (x 120-780 from y 840 down; STYLES.md "เขตปลอดภัย"). */
+
+/* ---------- price highlight (mfx.price) ---------- */
+.pr { position: absolute; left: 0; width: 900px; z-index: 0; display: flex; flex-direction: column; align-items: center; }
+.pr::before { content: ""; position: absolute; left: 90px; right: 90px; top: -70px; bottom: -70px; z-index: -1;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.32) 55%, rgba(0,0,0,0) 100%); }
+.pr-lbl { color: #fff; }
+.pr-plate { position: relative; display: inline-block; padding: 6px 44px 14px; margin-top: 10px; }
+.pr-bg { position: absolute; inset: 0; border-radius: 28px; background: var(--gold);
+         box-shadow: 0 10px 34px rgba(0,0,0,0.4); transform-origin: 0 50%; }
+.pr-num { position: relative; display: inline-block; color: var(--ink); transform-origin: 50% 60%; }
+.pr-sheen { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; }
+.pr-band { position: absolute; top: -20%; left: 0; width: 34%; height: 140%;
+           background: linear-gradient(100deg, rgba(255,250,235,0) 0%, rgba(255,250,235,0.75) 50%, rgba(255,250,235,0) 100%); }
+.pr-sub { margin-top: 18px; color: #fff; }
+/* เดินชมห้อง: yellow plate; เรียบหรู: no plate, gold number over a thin rule (leave out .pr-bg and .pr-sheen) */
+.pr--yellow .pr-bg { background: var(--yellow); }
+.pr--quiet .pr-plate { padding: 0 0 18px; }
+.pr--quiet .pr-num { color: #fff; text-shadow: var(--soft); }
+.pr--quiet .pr-rule { position: absolute; left: 50%; bottom: 0; width: 160px; height: 2px; margin-left: -80px;
+                      background: var(--gold); transform-origin: 50% 50%; }
+
+/* ---------- feature icons (mfx.icons) ---------- */
+.ic-row { position: absolute; left: 0; width: 900px; display: flex; justify-content: center; gap: 20px; }
+.ic-list { position: absolute; left: 0; width: 900px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.ic { display: flex; align-items: center; gap: 16px; }
+.ic-row .ic { flex-direction: column; gap: 12px; width: 180px; }
+.ic-list .ic { width: 640px; justify-content: flex-start; }
+.ic-badge { position: relative; width: 104px; height: 104px; flex: none; }
+.ic-ring { position: absolute; inset: 0; border-radius: 50%; background: rgba(20,16,12,0.55);
+           border: 3px solid var(--gold); transform-origin: 50% 50%; }
+.ic-badge svg { position: absolute; left: 24px; top: 24px; width: 56px; height: 56px; color: #fff; stroke-width: 1.75; }
+.ic-lbl { color: #fff; text-shadow: var(--soft); }
+.ic-lbl .v { color: var(--gold-hi); }
+.ic-list .ic-badge { width: 84px; height: 84px; }
+.ic-list .ic-badge svg { left: 19px; top: 19px; width: 46px; height: 46px; }
+
+/* ---------- parallax (mfx.parallax): the layers it moves ---------- */
+.px { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+
+/* A soft dark band behind a text block on a bright or busy part of the photo (plan.json text_advice
+   "พอใช้ ใส่เงา" / "พื้นรก ใส่แถบเข้ม"): place it at the block's y, about 120 px taller than the block. */
+.scrim-band { position: absolute; left: 0; width: 1080px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.42) 28%, rgba(0,0,0,0.42) 72%, rgba(0,0,0,0) 100%); }

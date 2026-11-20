@@ -21,6 +21,10 @@ brand/
                editor pastes into every cut.
   logo_anim.mov  the sting rendered with alpha (900x900, ProRes 4444, 2.4 s) for other editors;
                logo_anim_preview.mp4 shows it on the wine colour.
+  fonts/kanit/ Kanit (SIL OFL, OFL.txt), the heading font; Sarabun comes with macOS.
+  icons/       Lucide line icons (ISC, LICENSE) and ICONS.md: which icon goes with which listing fact.
+  motion_fx/   motion graphics (SNIPPETS.md, typography.css, motion_fx.js): type scale, price highlight,
+               animated feature icons, parallax, the safe zone and the restraint rules; motion_fx_preview.mp4.
   text_fx/     text effects (text_fx.js helpers and SNIPPETS.md) the editor uses for every on-screen line and
                caption; each style's "ข้อความเคลื่อนไหว" row in STYLES.md picks them.
   transition_fx/ transitions (transition_fx.js helpers and SNIPPETS.md) the editor uses between shots; each
@@ -34,7 +38,8 @@ listings/
     listing.md listing text as the site shows it, source URLs, photo sources (from the fetch script)
     brief.md   written by the brief agent
     output/    finished videos, build.sh, hyperframes/ (the cut's HTML project), voiceover.wav, voice/,
-               magnific/, retouched/
+               magnific/, retouched/, analysis/ (photo analysis: measure.json, photos.json, plan.json,
+               photo_analysis.jpg)
 ```
 
 Everything in `listings/` is gitignored (only `listings/.gitignore` is tracked), so briefs and videos are
@@ -44,6 +49,12 @@ not in git. `session-role/` and `video-list/` are Claude Code plugins, not part 
 or `view/...`) into a listing folder: full-size photos in `assets/` (never overwrites one) and `listing.md`,
 with the site's ✓/✗ checklists (furniture, amenities) kept as marks. Python 3.9,
 standard library only. Listings from other sites are read by hand into the same layout.
+
+`scripts/photo_analysis.py measure|sheet <listing-dir>` is the photo analysis the `brief` agent runs before
+every treatment: `measure` measures each photo (size, sharpness, light, colour cast, near-duplicates);
+`brief` then writes `output/analysis/photos.json` (room, 1–5 scores, focus point, camera move) and `sheet`
+totals the scores, picks the Hero Shot, works out the 9:16 crops of each move, checks where the text can
+sit and draws `output/analysis/photo_analysis.jpg`. Python 3.9 standard library plus ffmpeg.
 
 ## Tools
 
