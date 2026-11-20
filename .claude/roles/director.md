@@ -87,7 +87,7 @@ How you work:
   for that listing. Free fixes need no yes. Paid edits wait for the user's yes on the edits and budget
   (offered as an upgrade, see above); then send `retouch` each photo with its
   edits (virtual staging in the style's staging look, e.g. "stage as a bedroom, modern minimal, warm
-  tones"), the budget and the output folder. Look at its before/after sheets yourself and hold them to the
+  tones"), the budget and the output folder. Look at each retouched photo yourself next to its original and hold it to the
   "never misrepresent" rule in CLAUDE.md, then use the retouched paths for every later step (tell
   `editor-magnific` "no upscale" for photos `retouch` already upscaled).
 - AI motion (optional): photos can move with a free Ken Burns pan or zoom (the `editor` does it), or become
