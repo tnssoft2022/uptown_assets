@@ -65,14 +65,12 @@ listings/
 | ปลั๊กอิน | หน้าที่ |
 |---|---|
 | **session-role** | ให้แต่ละเซสชันมี Role (หน้าที่ของ Claude) เลือกได้จาก dropdown เหนือช่องแชท หรือพิมพ์ `/role <ชื่อ>` แสดงสถานะการทำงานและ subagent ที่กำลังทำงาน |
-| **usage-band** | แถบเหนือช่องแชท แสดงว่า context และโควตาการใช้งานของรอบนี้และของสัปดาห์เหลือเท่าไร |
 
 ติดตั้ง:
 
 ```bash
 claude plugin marketplace add MrLudy-BxB/shanti-roles
 claude plugin install session-role@shanti-roles
-claude plugin install usage-band@shanti-roles
 ```
 
 รายละเอียดเพิ่มเติมอยู่ใน [session-role/README.md](session-role/README.md) และ [session-role/ARCHITECTURE.md](session-role/ARCHITECTURE.md)
@@ -80,6 +78,5 @@ claude plugin install usage-band@shanti-roles
 ```
 .claude-plugin/marketplace.json   แคตตาล็อกปลั๊กอิน (marketplace "shanti-roles")
 session-role/                     ปลั๊กอิน role, ตัวเลือก role, ขอบเขตการแก้ไฟล์, ตัวแสดง subagent
-usage-band/                       ปลั๊กอินแถบแสดงการใช้งาน
 export.py                         เครื่องมือสำหรับ export ปลั๊กอินจากโฟลเดอร์ dev
 ```
