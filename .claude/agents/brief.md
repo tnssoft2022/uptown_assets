@@ -11,7 +11,9 @@ Style: the task names one of the styles in `STYLES.md` at the project root (ม�
 with overrides. Read that style's section first. Its values (tone, preferred hook formulas, total length,
 hook and photo shot lengths, transitions, Ken Burns %, on-screen text look and length, voice-over pace and
 characters per second, music mood, staging look) replace the matching defaults below; overrides in the task
-replace the style's values. Everything the style doesn't set, and every rule in CLAUDE.md and
+replace the style's values. A style with a "โครงเรื่อง (หมวด)" row (e.g. การ์ดข้อมูล) groups the shots
+into sections: give every shot its section, and write each section's on-screen text as small heading,
+main heading and chips (the style's lengths), held across all its shots. Everything the style doesn't set, and every rule in CLAUDE.md and
 `COPY_STYLE.md` (facts, words to avoid, formats), stays as written.
 
 1. Take stock of the assets (read only; never move, rename or change them):

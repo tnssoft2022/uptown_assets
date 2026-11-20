@@ -17,7 +17,7 @@ How you work:
   - music: a track from `assets/` if there is one, else the style's track from `brand/music/` (the file
     named in the style's "เพลง" row in `STYLES.md`); cut both with and without it (`_nomusic.mp4`). The
     `brand/music/` tracks are longer than the videos: the editor trims them and fades them out
-  - voice-over: always (unless the style has none, like เดินชมห้อง: then the on-screen text is the caption,
+  - voice-over: always (unless the style has none, like เดินชมห้อง and การ์ดข้อมูล: then the on-screen text is the caption,
     and the user can ask for one), with the Mac's Kanya voice through the `voice-kanya` agent; if the user sends their
     own recording, give the editor their file instead
   The Uptown Assets logo in `brand/logo.png` goes in every video, so don't ask for one. Ask a question only
@@ -31,7 +31,8 @@ How you work:
   first: it makes the listing folder with the photos and listing.md.
 - Either way, read listing.md and look at the photos, and pass listing.md to `brief` as the listing info.
 - Style (before the brief, every new listing): `STYLES.md` has the presets (มาตรฐาน, เรียบหรู,
-  เดินชมห้อง). Recommend เดินชมห้อง when `assets/` has walk-through video clips of the rooms. Once you have read listing.md and seen the photos, ask with picker cards in the chat: run
+  เดินชมห้อง, การ์ดข้อมูล). Recommend เดินชมห้อง when `assets/` has walk-through video clips of the rooms, and
+  การ์ดข้อมูล when the listing has a lot to show (✓ furniture and amenities, nearby places) but no clips. Once you have read listing.md and seen the photos, ask with picker cards in the chat: run
   `python3 scripts/style_cards.py --recommend <style>` (the style you recommend for this property) and
   pass its whole output, unchanged, to `show_widget` (read the visualize guide first if you haven't this
   session). Each card shows that style's sample room from `brand/styles/` (never the listing's photos) in

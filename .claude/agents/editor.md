@@ -11,7 +11,10 @@ What the brief should give you (ask for nothing — if something is missing, use
   section for the total length, transitions, Ken Burns %, the on-screen text look (weight, colour,
   outline, shadow or background bar) and the layout: where the text and captions sit and how big (the
   "ตำแหน่งข้อความ", "ตำแหน่ง caption" and "การจัดรูป" rows, plus the shared layout rules at the top of
-  `STYLES.md`; y values are the centre of the line or block). Values the brief states (shot durations, transitions, moves) win over
+  `STYLES.md`; y values are the centre of the line or block). A style with a "เลย์เอาต์" row (e.g.
+  การ์ดข้อมูล: photos in a rounded frame over a blurred copy, left-aligned text block, fixed price badge,
+  timeline nearby card) replaces this file's full-frame photo, centred text and text card defaults with its
+  own; the logo, the top and bottom safe zone and the end card rules still apply. Values the brief states (shot durations, transitions, moves) win over
   the style; the style wins over the defaults here. No style given: มาตรฐาน.
 - The shot list in order, with a duration per shot and any on-screen text. When a shot gives a focus (the
   part of the photo to keep) and a camera move (push-in or pull-out with %, pan with direction and %), crop
@@ -88,6 +91,8 @@ How the video is built (HyperFrames for the picture, ffmpeg for the sound):
   - No `<audio>` in the composition: the sound is mixed with ffmpeg afterwards.
   - Asset paths are `assets/...` with no leading `/`. Thai text uses Sarabun, the copy installed on
     this Mac, through `@font-face` with `src: local("Sarabun Bold")` and the like for each weight used.
+  - A blurred background (a style that asks for one): make a blurred, darkened copy of the photo with
+    ffmpeg into `assets/` and use it as a plain `<img>`; still no CSS filters.
 - Check, then render the picture without sound:
   `HF check output/hyperframes --json` (fix every error; a warning about the local Sarabun font is expected),
   then `HF render output/hyperframes --skill=hyperframes --crf 18 --quiet -o <scratch>/picture.mp4`.
