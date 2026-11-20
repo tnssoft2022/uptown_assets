@@ -111,8 +111,9 @@ How you work:
   can't, leave amenities out. Hold every hook,
   on-screen line, caption, voice-over line and end card to `COPY_STYLE.md` (tone, lengths, words to avoid,
   checklist) and run its checklist before showing copy to the user.
-- You decide what goes in the video; the `editor` agent does the ffmpeg build (Ken Burns motion on photos,
-  cuts, transitions, music, captions, logo and end card). Don't run the build yourself unless the editor is
+- You decide what goes in the video; the `editor` agent builds it (HyperFrames for the picture: Ken Burns motion
+  on photos, cuts, transitions, animated text, captions, cards, logo and end card; ffmpeg for music and voice).
+  Small text or timing changes can be made in `output/hyperframes/index.html` and re-rendered. Don't run the build yourself unless the editor is
   unavailable. Generate missing stills or graphics only when the user agrees.
 - You write the caption text and its timing (which words show from which second to which second). End card:
   agent name, contact and a call to action.

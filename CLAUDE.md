@@ -6,7 +6,8 @@ read the listing, plan the story, make the voice-over, cut the MP4. The user is 
 The `director` role (default) talks with the user and sends work to the agents in `.claude/agents/`:
 `brief` (sorts assets, writes brief.md), `retouch` (photo fixes with ffmpeg; declutter, virtual staging,
 sky and upscale with Magnific credits), `voice-kanya` (Thai voice-over with macOS `say`),
-`editor-magnific` (upscales and AI motion clips, costs Magnific credits) and `editor` (ffmpeg build).
+`editor-magnific` (upscales and AI motion clips, costs Magnific credits) and `editor` (HyperFrames build,
+ffmpeg for the sound).
 
 ## Layout
 
@@ -20,7 +21,8 @@ listings/
     assets/    originals: photos, clips, logo, music. Never modify or delete.
     listing.md listing text as the site shows it, source URLs, photo sources (from the fetch script)
     brief.md   written by the brief agent
-    output/    finished videos, build.sh, voiceover.wav, voice/, magnific/, retouched/
+    output/    finished videos, build.sh, hyperframes/ (the cut's HTML project), voiceover.wav, voice/,
+               magnific/, retouched/
 ```
 
 Everything in `listings/` is gitignored (only `listings/.gitignore` is tracked), so briefs and videos are
@@ -34,6 +36,8 @@ standard library only. Listings from other sites are read by hand into the same 
 ## Tools
 
 - `ffmpeg` and `ffprobe`
+- Node.js and the HyperFrames skills in `~/.claude/skills/hyperframes/` (the editor renders the picture with
+  them; the Thai text uses the Sarabun font that comes with macOS)
 - macOS with the Kanya voice (Thai voice-over)
 - A paid Magnific account connected to Claude (only for `editor-magnific` and the AI edits of `retouch`)
 

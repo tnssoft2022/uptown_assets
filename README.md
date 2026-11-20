@@ -12,7 +12,7 @@
 | **retouch** (agent) | [.claude/agents/retouch.md](.claude/agents/retouch.md) | แต่งรูปก่อนทำวิดีโอ แบบฟรีด้วย ffmpeg (ดัดภาพเอียง ปรับแสงและสี ปรับโทนให้เข้ากัน ลดนอยส์ เบลอหน้าคนและป้ายทะเบียน) และแบบใช้เครดิต Magnific (ลบของรก จัดเฟอร์นิเจอร์เสมือน เปลี่ยนท้องฟ้า ขยายภาพ) ตรวจทุกรูปเทียบกับต้นฉบับ แล้วบันทึกไว้ใน `output/retouched/` |
 | **voice-kanya** (agent) | [.claude/agents/voice-kanya.md](.claude/agents/voice-kanya.md) | ทำเสียงพากย์ภาษาไทยด้วยเสียง Kanya ของ macOS (`say`) ทำงานบนเครื่องทั้งหมด ฟรี แต่เสียงจะออกแนวหุ่นยนต์ ได้ไฟล์ `voiceover.wav` ที่ตรงกับไทม์ไลน์วิดีโอ |
 | **editor-magnific** (agent) | [.claude/agents/editor-magnific.md](.claude/agents/editor-magnific.md) | ขยายภาพให้คมขึ้น (Magnific Precision) แล้วเปลี่ยนรูปเป็นคลิปเคลื่อนไหวด้วย AI ของ Magnific (image-to-video เช่น Kling) ประเมินเครดิตก่อนและใช้ไม่เกินงบที่ director ให้ ตรวจภาพที่ขยายและทุกคลิปเทียบกับรูปต้นฉบับว่าไม่มีของงอก หาย หรือบิดเบี้ยว แล้วดาวน์โหลดมาไว้ให้ editor ตัดต่อ (ไม่ได้ตัดวิดีโอฉบับสุดท้ายเอง) |
-| **editor** (agent) | [.claude/agents/editor.md](.claude/agents/editor.md) | ตัดต่อด้วย ffmpeg ทำเฉพาะวิดีโอ TikTok (1080×1920, ความยาวตามสไตล์ ไม่เกิน 60 วินาที) ใส่ Ken Burns, caption, เพลง และ end card แล้วตรวจไฟล์ก่อนส่ง |
+| **editor** (agent) | [.claude/agents/editor.md](.claude/agents/editor.md) | ตัดต่อด้วย HyperFrames (เขียนวิดีโอเป็น HTML แล้วเรนเดอร์) ทำเฉพาะวิดีโอ TikTok (1080×1920, ความยาวตามสไตล์ ไม่เกิน 60 วินาที) ใส่ Ken Burns, ตัวหนังสือเคลื่อนไหว, caption, การ์ด, โลโก้ และ end card แล้วใช้ ffmpeg ใส่เสียงพากย์กับเพลง ตรวจไฟล์ก่อนส่ง |
 
 ## ขั้นตอนการทำวิดีโอ
 
@@ -27,7 +27,7 @@
 5. **แต่งรูป** (ถ้าต้องการ): director เสนอว่ารูปไหนควรแต่งอะไร พร้อมราคาเครดิตสำหรับงาน AI เมื่อเราตกลงแล้ว agent `retouch` จะแต่งรูปไว้ใน `output/retouched/` แล้ว director ตรวจทุกรูปเทียบกับต้นฉบับ
 6. **ทำเสียงพากย์** (ทุกวิดีโอ): agent `voice-kanya` ทำ `voiceover.wav` แล้ว director ตั้งเวลา caption ตามเสียง
 7. **คลิป AI จาก Magnific** (ถ้าต้องการ): director เสนอว่าช็อตไหนควรใช้คลิป AI พร้อมราคาเครดิต เมื่อเราตกลงช็อตและงบแล้ว agent `editor-magnific` จะทำคลิปไว้ใน `output/magnific/` ช็อตที่ไม่ผ่านการตรวจจะกลับไปใช้รูปแบบ Ken Burns
-8. **ตัดต่อ**: agent `editor` สร้างวิดีโอใน `listings/<ทรัพย์>/output/` พร้อม `build.sh` ไว้สร้างซ้ำได้ ถ้ามีเพลงจะได้ 2 เวอร์ชัน คือมีเพลงกับไม่มีเพลง (`_nomusic.mp4`) ไว้ใส่เพลงเทรนด์ในแอป TikTok เอง
+8. **ตัดต่อ**: agent `editor` สร้างวิดีโอใน `listings/<ทรัพย์>/output/` พร้อม `build.sh` ไว้สร้างซ้ำได้ และโปรเจกต์ HyperFrames ใน `output/hyperframes/index.html` ที่เปิดแก้ข้อความหรือจังหวะเองได้ในแอป HyperFrames ถ้ามีเพลงจะได้ 2 เวอร์ชัน คือมีเพลงกับไม่มีเพลง (`_nomusic.mp4`) ไว้ใส่เพลงเทรนด์ในแอป TikTok เอง
 9. **ตรวจและแก้**: director ตรวจไฟล์ (ความยาว ความละเอียด เสียง ข้อความอ่านออก) แล้วรายงาน ถ้าต้องแก้ก็สั่งตัดใหม่ได้
 
 ## โครงสร้างโฟลเดอร์ทรัพย์
@@ -58,6 +58,7 @@ listings/
 
 - Claude Code (แอปเดสก์ท็อปหรือเทอร์มินัล) เวอร์ชัน 2.1.286 ขึ้นไป
 - `ffmpeg` และ `ffprobe`
+- Node.js และ skill ของ HyperFrames ใน `~/.claude/skills/hyperframes/` (editor ใช้เรนเดอร์ภาพวิดีโอ ตัวหนังสือไทยใช้ฟอนต์ Sarabun ที่มากับ macOS)
 - macOS ที่มีเสียง Kanya (สำหรับเสียงพากย์ภาษาไทย)
 - บัญชี Magnific แบบเสียเงินที่เชื่อมกับ Claude เป็น connector (เฉพาะถ้าจะใช้ agent `editor-magnific` หรืองาน AI ของ `retouch`)
 
