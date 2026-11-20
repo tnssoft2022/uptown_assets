@@ -58,43 +58,40 @@ listings/
 
 ---
 
-## ปลั๊กอินพื้นฐาน: shanti-roles
+## ปลั๊กอินของโปรเจกต์
 
-ระบบ role ข้างบนทำงานด้วยปลั๊กอินที่ก๊อปมาจาก [MrLudy-BxB/shanti-roles](https://github.com/MrLudy-BxB/shanti-roles)
-
-| ปลั๊กอิน | หน้าที่ |
-|---|---|
-| **session-role** | ให้แต่ละเซสชันมี Role (หน้าที่ของ Claude) เลือกได้จาก dropdown เหนือช่องแชท หรือพิมพ์ `/role <ชื่อ>` แสดงสถานะการทำงานและ subagent ที่กำลังทำงาน |
-
-ติดตั้ง:
-
-```bash
-claude plugin marketplace add MrLudy-BxB/shanti-roles
-claude plugin install session-role@shanti-roles
-```
-
-รายละเอียดเพิ่มเติมอยู่ใน [session-role/README.md](session-role/README.md) และ [session-role/ARCHITECTURE.md](session-role/ARCHITECTURE.md)
-
-## ปลั๊กอินของโปรเจกต์: video-list
+โปรเจกต์มี marketplace ของตัวเองชื่อ `uptown-assets` อยู่ใน `.claude-plugin/marketplace.json` มีปลั๊กอิน 2 ตัว
 
 | ปลั๊กอิน | หน้าที่ |
 |---|---|
-| **video-list** | ปุ่ม **🎬 วีดีโอทั้งหมด** บนบรรทัด Role ต่อจาก ↻ (ถ้าไม่มี session-role จะขึ้นเป็นบรรทัดของตัวเอง) กดแล้วเปิดแผงด้านข้าง แสดงวิดีโอใน `listings/*/output/` แยกตามทรัพย์ พร้อมความยาว ขนาด วันที่ และปุ่ม **เปิด** / **Finder** พิมพ์ `/videos` ก็เปิดได้ |
+| **session-role** | ให้แต่ละเซสชันมี Role (หน้าที่ของ Claude) เลือกได้จาก dropdown เหนือช่องแชท หรือพิมพ์ `/role <ชื่อ>` แสดงสถานะการทำงานและ subagent ที่กำลังทำงาน ปุ่ม **↻** หน้าคำว่า Role ใช้โหลดรายการ role และ subagent ใหม่ |
+| **video-list** | ปุ่ม **🎬 วีดีโอทั้งหมด** ท้ายบรรทัด Role (ถ้าไม่มี session-role จะขึ้นเป็นบรรทัดของตัวเอง) กดแล้วเปิดแผงด้านข้าง แสดงวิดีโอใน `listings/*/output/` แยกตามทรัพย์ พร้อมความยาว ขนาด วันที่ และปุ่ม **เปิด** / **Finder** พิมพ์ `/videos` ก็เปิดได้ |
+
+`session-role` ก๊อปมาจาก [MrLudy-BxB/shanti-roles](https://github.com/MrLudy-BxB/shanti-roles) (เวอร์ชัน 0.7.0) แล้วแก้เป็น 0.7.1: ย้ายปุ่ม ↻ จากท้ายบรรทัดมาไว้หน้าคำว่า Role ถ้าจะอัปเดตจากต้นฉบับ ให้ก๊อปมาทับแล้วย้าย ↻ อีกครั้ง
 
 ติดตั้ง (ทำครั้งเดียวต่อเครื่อง หลัง clone โปรเจกต์แล้ว) ให้รันในโฟลเดอร์โปรเจกต์:
 
 ```bash
 cd uptown_assets
 claude plugin marketplace add "$PWD" --scope local
+claude plugin install session-role@uptown-assets --scope local
 claude plugin install video-list@uptown-assets --scope local
 ```
 
-แล้วเปิดเซสชันใหม่ในโปรเจกต์นี้ ปุ่มจะขึ้นเหนือช่องแชท
+ถ้าเครื่องนั้นเคยติดตั้ง `session-role@shanti-roles` จากต้นฉบับไว้แล้ว ให้ปิดตัวนั้นเฉพาะในโปรเจกต์นี้ด้วย ไม่งั้นจะมีแถบ Role ซ้อนกัน 2 แถว (โปรเจกต์อื่นยังใช้ตัวต้นฉบับได้ตามเดิม):
+
+```bash
+claude plugin disable session-role@shanti-roles --scope local
+```
+
+แล้วเปิดเซสชันใหม่ในโปรเจกต์นี้ แถบ Role และปุ่มจะขึ้นเหนือช่องแชท
 
 - ติดตั้งแบบ `local` คือใช้เฉพาะโปรเจกต์นี้บนเครื่องนั้น ค่าตั้งอยู่ใน `.claude/settings.local.json` ซึ่งไม่ขึ้น git
-- ปลั๊กอินอ่านไฟล์จากโฟลเดอร์ `video-list/` ของโปรเจกต์โดยตรง หลัง `git pull` ได้เวอร์ชันใหม่ ให้เปิดเซสชันใหม่ก็พอ
-- ต้องใช้ macOS (คำสั่ง `open`) และ `ffprobe` สำหรับอ่านความยาววิดีโอ
+- ปลั๊กอินอ่านไฟล์จากโฟลเดอร์ `session-role/` และ `video-list/` ของโปรเจกต์โดยตรง หลัง `git pull` ได้เวอร์ชันใหม่ ให้เปิดเซสชันใหม่ก็พอ
+- video-list ต้องใช้ macOS (คำสั่ง `open`) และ `ffprobe` สำหรับอ่านความยาววิดีโอ
 - ต้องมีคำสั่ง `claude` ในเทอร์มินัล ถ้าใช้แต่แอปเดสก์ท็อป ให้ติดตั้ง Claude Code CLI ก่อน
+
+รายละเอียดของ session-role อยู่ใน [session-role/README.md](session-role/README.md) และ [session-role/ARCHITECTURE.md](session-role/ARCHITECTURE.md)
 
 ```
 .claude-plugin/marketplace.json   แคตตาล็อกปลั๊กอิน (marketplace "uptown-assets")

@@ -154,7 +154,7 @@ export const register: Register = on => {
     )
   })
 
-  // Same line as session-role's band, right after its ↻: take our own row out
+  // Same line as session-role's band, at its end: take our own row out
   // of the stack and draw the button beside the rest. Without a session-role
   // row, our own row (above) stands alone.
   on('ui.render', { component: 'AbovePromptList' }, async ($, e, next) => {

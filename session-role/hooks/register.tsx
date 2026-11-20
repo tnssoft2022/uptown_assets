@@ -509,6 +509,7 @@ export const register: Register = on => {
         <Box flexDirection="row" alignItems="center" justifyContent="space-between" columnGap={3} paddingX={1} flexWrap="wrap">
           <Box flexDirection="row" alignItems="center" columnGap={2}>
             <Box flexDirection="row" alignItems="center" gap={1}>
+              {Button ? <Button key="refresh" label="↻" plain dimColor onPress={refresh} /> : null}
               <Text dimColor>Role</Text>
               {Select ? (
                 <Select key="role-pick" options={options} value={value} onSelect={pick} />
@@ -529,7 +530,6 @@ export const register: Register = on => {
                 <Text color={BLUE}>{subText}</Text>
               </Box>
             ) : null}
-            {Button ? <Button key="refresh" label="↻" plain dimColor onPress={refresh} /> : null}
           </Box>
         </Box>
         {below}

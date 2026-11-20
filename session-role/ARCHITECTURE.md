@@ -214,7 +214,7 @@ Session A — Role: frontend              Session B — Role: backend
 
 **Band above the chat box** (stacks with other mods such as `usage-band`):
 ```
-Role [ frontend ▾ ] ⓘ  ● Working   Subagents Explore · hyv-researcher ×2   ↻
+↻ Role [ frontend ▾ ] ⓘ  ● Working   Subagents Explore · hyv-researcher ×2
 Context ▬▬── 22% 218.6k / 1M     Session ▬─── 3% ↻ 16:30     Week ▬─── 2% ↻ Mon 7:00
 ```
 - **Dropdown:** No role (tagged *(default)* when no role has `default: true`), then local roles, then global roles. Labels are just the role name; the scope appears only when a local and a global role share a name, and a project default is marked `(default)`.

@@ -7,7 +7,7 @@ Role [ shanti-developer ▾ ] ⓘ  ● Working   Subagents Explore ×2   ↻
 Context ▬▬── 22% 218.6k / 1M     Session ▬─── 3% ↻ 16:30     Week ▬─── 2% ↻ Mon 7:00
 ```
 
-The second line comes from the separate `usage-band` mod; the two lines stack. **ⓘ** opens the **Roles panel**, and the **↻** at the end of the first line refreshes both lines: the role list, the subagent list and (with usage-band) the usage figures.
+The second line comes from the separate `usage-band` mod; the two lines stack. **ⓘ** opens the **Roles panel**, and the **↻** at the start of the first line refreshes both lines: the role list, the subagent list and (with usage-band) the usage figures.
 
 ## Role, agent, skill
 
