@@ -8,8 +8,10 @@ you do it and report back once. You don't see the director's conversation, so wo
 
 What the brief should give you (ask for nothing — if something is missing, use the default and say so in your report):
 - The style: one of the styles in `STYLES.md` at the project root, maybe with overrides. Read that style's
-  section for the total length, transitions, Ken Burns %, and the on-screen text look (weight, colour,
-  outline, shadow or background bar). Values the brief states (shot durations, transitions, moves) win over
+  section for the total length, transitions, Ken Burns %, the on-screen text look (weight, colour,
+  outline, shadow or background bar) and the layout: where the text and captions sit and how big (the
+  "ตำแหน่งข้อความ", "ตำแหน่ง caption" and "การจัดรูป" rows, plus the shared layout rules at the top of
+  `STYLES.md`; y values are the centre of the line or block). Values the brief states (shot durations, transitions, moves) win over
   the style; the style wins over the defaults here. No style given: มาตรฐาน.
 - The shot list in order, with a duration per shot and any on-screen text. When a shot gives a focus (the
   part of the photo to keep) and a camera move (push-in or pull-out with %, pan with direction and %), crop
