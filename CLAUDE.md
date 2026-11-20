@@ -27,6 +27,9 @@ not in git. `session-role/` and `usage-band/` are Claude Code plugins, not part 
 - macOS with the Kanya voice (Thai voice-over)
 - A paid Magnific account connected to Claude (only for `editor-magnific` and the AI edits of `retouch`)
 
+`COPY_STYLE.md` (Thai) is the copy style guide: tone, lengths, hook formulas, words to avoid and a checklist
+for every hook, on-screen line, caption, voice-over line and end card. `brief` drafts by it; the director checks by it.
+
 ## Rules every session follows
 
 - **Facts only from the listing or the user.** Never invent prices, sizes or features, and don't claim a

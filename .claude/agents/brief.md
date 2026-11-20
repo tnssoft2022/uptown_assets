@@ -30,7 +30,8 @@ back once. You don't see the director's conversation, so work only from what the
      there) or that you can't verify.
 
 3. Draft the treatment for the length the task gives (format and platform rules belong to the editor agent;
-   don't add your own):
+   don't add your own). Read `COPY_STYLE.md` at the project root first and write every hook, on-screen line,
+   caption, voice-over line and end card by it (tone, lengths, hook formulas, words to avoid, checklist):
    - The hook: the strongest feature as the opening shot, with a short text line (6 words or fewer in English;
      in Thai, about 20 characters or one short phrase, e.g. "ขาย 5.5 ล้านบาท"). If there is an entry photo
      or clip (from the front door looking into the unit), open with it; otherwise open with the strongest shot.
