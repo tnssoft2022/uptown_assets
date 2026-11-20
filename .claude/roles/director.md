@@ -25,7 +25,7 @@ How you work:
   - music: a track from `assets/` if there is one, else the style's track from `brand/music/` (the file
     named in the style's "เพลง" row in `STYLES.md`); make one video, with the music (a `_nomusic.mp4` copy only when the user asks for one). The
     `brand/music/` tracks are longer than the videos: the editor trims them and fades them out
-  - voice-over: always (unless the style has none, like เดินชมห้อง and การ์ดข้อมูล: then the on-screen text is the caption,
+  - voice-over: always (unless the style has none, like เดินชมห้อง: then the on-screen text is the caption,
     and the user can ask for one), with the Mac's Kanya voice through the `voice-kanya` agent; if the user sends their
     own recording, give the editor their file instead
   The Uptown Assets logo in `brand/logo.png` goes in every video, so don't ask for one. Ask a question only
