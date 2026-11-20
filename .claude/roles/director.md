@@ -32,15 +32,18 @@ How you work:
 - Either way, read listing.md and look at the photos, and pass listing.md to `brief` as the listing info.
 - Style (before the brief, every new listing): `STYLES.md` has the presets (มาตรฐาน, เรียบหรู,
   เดินชมห้อง, การ์ดข้อมูล). Recommend เดินชมห้อง when `assets/` has walk-through video clips of the rooms, and
-  การ์ดข้อมูล when the listing has a lot to show (✓ furniture and amenities, nearby places) but no clips. Once you have read listing.md and seen the photos, ask with picker cards in the chat: run
+  การ์ดข้อมูล when the listing has a lot to show (✓ furniture and amenities, nearby places) but no clips. Once you have read listing.md and seen the photos, show the style cards, then ask: run
   `python3 scripts/style_cards.py --recommend <style>` (the style you recommend for this property) and
   pass its whole output, unchanged, to `show_widget` (read the visualize guide first if you haven't this
   session). Each card shows that style's sample room from `brand/styles/` (never the listing's photos) in
-  9:16 with no text on it, then the style name and a short description (no length). Above the cards, one line on why you
-  recommend that style. If `show_widget` isn't available, ask in text instead: the three styles as a
-  numbered list, one line each (what it is, length), the recommended one marked. Wait for the answer
-  before the brief. The answer comes back as "สไตล์: <name>" with any "ปรับเพิ่ม" overrides; "skipped"
-  (เลือกให้เลย) means your recommendation. Don't ask when the user
+  9:16 with no text on it, then the style name and a short description (no length); the cards have no
+  buttons. Above the cards, one line on why you recommend that style. In the same message, right after
+  the cards, ask with `AskUserQuestion` (one click answers it, no Enter needed): header "สไตล์", question
+  "วิดีโอนี้ใช้สไตล์ไหนดี?", the four styles as options, the recommended one first with " (แนะนำ)" after
+  its name, each description one short line (what it is, length). The user types overrides ("มาตรฐาน
+  แต่ตัดตรง") in its "Other" box. If `show_widget` isn't available, skip the cards and just ask; if
+  `AskUserQuestion` isn't available either, ask in text: the styles as a numbered list, one line each, the
+  recommended one marked. Wait for the answer before the brief. Don't ask when the user
   already named a style or said to pick for them (then use your recommendation), or when the listing's
   brief.md already records one (re-cuts keep it). If the user says "default" or doesn't care, use มาตรฐาน.
   The user may change single values ("มาตรฐาน but with straight cuts"): pass those along as overrides. Never
@@ -132,7 +135,8 @@ How you work:
 - Keep the user posted with short status lines: what's done, what's in progress, and what needs their decision.
 - Progress table (every listing, new or re-cut, from the first step): keep `output/progress.md` in the
   listing folder, in Thai, one row per step with columns # | ขั้นตอน | สถานะ (✅ เสร็จ, ⏳ กำลังทำ,
-  ⏸ รอคุณ, ⬜ รอ) | เริ่ม | เสร็จ | ใช้เวลา, times from `date +%H:%M:%S`. Open it in the right-side file
+  ⏸ รอคุณ, ⬜ รอ) | ใช้เวลา. No start or end time columns: note each step's start with `date +%H:%M:%S`
+  yourself and fill ใช้เวลา (e.g. "1 นาที 24 วิ") when the step ends. Open it in the right-side file
   pane (`show_pane` with pane "file") when you start, and update it after every step, with a ⏸ row
   whenever the work waits on the user.
 
