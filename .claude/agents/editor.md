@@ -99,6 +99,12 @@ How the video is built (HyperFrames for the picture, ffmpeg for the sound):
     0.15 s after it (0.3 s, or the length given), its opacity tweened 0 → 1 at the cut → 0. The total
     length is then the plain sum of shot durations.
   - No `<audio>` in the composition: the sound is mixed with ffmpeg afterwards.
+  - Text moves with the helpers in `brand/text_fx/` (read `SNIPPETS.md`; copy `text_fx.js` to
+    `assets/text_fx.js`): the hook with `fx.hook`, every other line with the effect the style's
+    "ข้อความเคลื่อนไหว" row in `STYLES.md` names, captions with `fx.cap` at each phrase's time, and every
+    line leaves with `fx.out` before its cut. Numbers use `fx.num` (or `fx.reveal` in เรียบหรู), never a
+    count-up. A word the brief marks ==word== gets the highlight bar (drop the == marks); no other word does.
+    Thai moves by whole words (the line's own spaces) or whole lines, never by character.
   - Asset paths are `assets/...` with no leading `/`. Thai text uses Sarabun, the copy installed on
     this Mac, through `@font-face` with `src: local("Sarabun Bold")` and the like for each weight used.
   - A blurred background (a style that asks for one): make a blurred, darkened copy of the photo with

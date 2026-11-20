@@ -146,7 +146,7 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      | Why this photo | one line from the photo choice rules | sharpest, whole room in frame |
      | Focus | the part of the photo the 9:16 crop must keep, for horizontal photos and detail crops | right half: sofa and window |
      | Camera move | Ken Burns push-in or pull-out with %, pan with direction and %, none, or AI motion; for a clip, the part of it to use | push-in 6% toward the window · clip 2.0–6.5 s |
-     | On-screen text + position | the Thai text and where it sits (top, centre, lower third) | "เพดานสูง 3 เมตร" · lower third |
+     | On-screen text + position | the Thai text and where it sits (top, centre, lower third); in a style whose "ข้อความเคลื่อนไหว" row uses a highlight, mark at most one word per line as ==word== (a fact word from the listing, a whole word with spaces around it) | "เพดานสูง ==3 เมตร==" · lower third |
      | Voice-over + length | the line and its character count, if there is a voice-over | "ห้องนั่งเล่น..." · 22 chars ≈ 1.8 s |
      | Transition in | none (shot 1), crossfade, hard cut, white flash, slide; with its length | crossfade 0.3 |
      | Retouch / credits | the edits this photo gets and their cost (free or credits) | fix (free) |

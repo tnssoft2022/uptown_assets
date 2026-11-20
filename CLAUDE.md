@@ -21,6 +21,8 @@ brand/
                editor pastes into every cut.
   logo_anim.mov  the sting rendered with alpha (900x900, ProRes 4444, 2.4 s) for other editors;
                logo_anim_preview.mp4 shows it on the wine colour.
+  text_fx/     text effects (text_fx.js helpers and SNIPPETS.md) the editor uses for every on-screen line and
+               caption; each style's "ข้อความเคลื่อนไหว" row in STYLES.md picks them.
   styles/      one sample room per style (standard, calm, walk, card .jpg) for the style picker cards only.
   music/       one instrumental track per style (standard, calm, walk .mp3; card uses walk.mp3 for now), AI music from the
                user's paid Magnific account (Google Lyria 3 Pro). Used when a listing's assets/ has no music.
