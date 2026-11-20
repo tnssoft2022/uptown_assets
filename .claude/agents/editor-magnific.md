@@ -14,7 +14,9 @@ What the task should give you (ask for nothing — if something is missing, use 
 - The credit budget for the whole task, in Magnific credits.
 - The output folder, and the Magnific project name to save into, if any.
 - The model, if the director picked one.
-- Whether to upscale: yes by default; the task may say "no upscale".
+- Whether to upscale: yes by default; the task may say "no upscale". Skip it anyway when the photo is already
+  big enough: if its largest 9:16 crop (width = min(W, H×9/16), height = min(H, W×16/9)) is at least
+  1296×2304, don't upscale, spend no credits on it and mark it "skipped, big enough (W×H)" in the report.
 - Defaults when missing: camera move "slow, smooth push-in"; output folder `<listing>/output/magnific/`;
   upscale with mode `ultra-photo` at 2x (Magnific Precision photo: the most faithful, no added creativity);
   Magnific project: the account's default; model `kling-25` at 1080p (the model already tested in this
