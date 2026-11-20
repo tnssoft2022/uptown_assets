@@ -19,8 +19,7 @@ What the task should give you (ask for nothing — if something is missing, use 
   1296×2304, don't upscale, spend no credits on it and mark it "skipped, big enough (W×H)" in the report.
 - Defaults when missing: camera move "slow, smooth push-in"; output folder `<listing>/output/magnific/`;
   upscale with mode `ultra-photo` at 2x (Magnific Precision photo: the most faithful, no added creativity);
-  Magnific project: the account's default; model `kling-25` at 1080p (the model already tested in this
-  project); no budget given → estimate the cost and stop before generating anything.
+  Magnific project: the account's default; model `kling-25` at 720p.
 
 Credits (always):
 - Call `magnific_start` first to see the plan and the credits available.
