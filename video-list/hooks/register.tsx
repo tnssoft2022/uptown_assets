@@ -212,16 +212,37 @@ async function scanProgress($: Engine) {
   }
 }
 
-/** Opens the steps pane, or closes it when it is open. */
-async function toggleSteps($: Engine) {
-  const isOpen = (await $.ui.panes()).some(pane => pane.id === STEPS_PANE)
-  if (isOpen) {
-    await $.ui.close({ id: STEPS_PANE })
-    return
-  }
+const stepsOpen = async ($: Engine) =>
+  (await $.ui.panes()).some(pane => pane.id === STEPS_PANE)
+
+/** Opens the steps pane (when it isn't open already). */
+async function openSteps($: Engine) {
+  if (await stepsOpen($)) return
   await scanProgress($)
   const opened = await $.ui.open({ id: STEPS_PANE, title: STEPS_TITLE })
   if (!opened.isPlaced) $.ui.toast(`เปิดแผงขั้นตอนไม่ได้: ${opened.reason}`)
+}
+
+/** Opens the steps pane, or closes it when it is open. */
+async function toggleSteps($: Engine) {
+  if (await stepsOpen($)) {
+    await $.ui.close({ id: STEPS_PANE })
+    return
+  }
+  await openSteps($)
+}
+
+/**
+ * Notes the listing a tool call's progress.md belongs to and redraws the pane;
+ * the first time this session touches a listing's table (the work starting),
+ * opens the pane too. Later calls leave it as the user set it, closed or open.
+ */
+async function noteProgress($: Engine, listing: string | null) {
+  if (!listing) return scanProgress($)
+  const before = await read($, current)
+  await update($, current, () => listing)
+  await scanProgress($)
+  if (before !== listing) await openSteps($)
 }
 
 /** The colour a status reads in, by its mark. */
@@ -585,13 +606,12 @@ export const register: Register = on => {
     return done
   })
 
-  // progress.md is updated after every step: redraw the pane as it changes.
+  // progress.md is written when the work starts and after every step: open
+  // the pane on the first one, and redraw it as the table changes.
   on('tool.call', async ($, e, next) => {
     const ran = await next(e)
     if (['Write', 'Edit', 'Bash', 'Read'].includes(e.tool)) {
-      const listing = listingOf(e)
-      const noted = listing ? update($, current, () => listing) : Promise.resolve()
-      void noted.then(() => scanProgress($)).catch(() => {})
+      await noteProgress($, listingOf(e)).catch(() => {})
     }
     return ran
   })

@@ -138,9 +138,10 @@ How you work:
 - Progress table (every listing, new or re-cut, from the first step): keep `output/progress.md` in the
   listing folder, in Thai, one row per step with columns # | ขั้นตอน | สถานะ (✅ เสร็จ, ⏳ กำลังทำ,
   ⏸ รอคุณ, ⬜ รอ) | ใช้เวลา. No start or end time columns: note each step's start with `date +%H:%M:%S`
-  yourself and fill ใช้เวลา (e.g. "1 นาที 24 วิ") when the step ends. Open it in the right-side file
-  pane (`show_pane` with pane "file") when you start, and update it after every step, with a ⏸ row
-  whenever the work waits on the user.
+  yourself and fill ใช้เวลา (e.g. "1 นาที 24 วิ") when the step ends. Write it as your first step:
+  the video-list mod's "ขั้นตอนการทำงาน" pane opens beside the chat by itself the first time this
+  session writes or reads a progress.md, so don't open it with `show_pane`. Update it after every step,
+  with a ⏸ row whenever the work waits on the user.
 
 Accuracy, fair housing and rights rules are in CLAUDE.md. You are the last check before the user sees
 anything, so hold every brief, script and cut to them.

@@ -307,7 +307,7 @@ test('a tool call names its listing by the progress.md path', () => {
   expect(listingOf({ command: 'ls' })).toBeNull()
 })
 
-test('the steps button opens the pane with this session\'s progress table, and closes it', async ($, on) => {
+test('the steps pane opens when the work starts, and the button closes and reopens it', async ($, on) => {
   project(on, PROGRESS)
   // The surface's pane record: what open adds and close takes away.
   const open = new Map<string, string>()
@@ -337,7 +337,20 @@ test('the steps button opens the pane with this session\'s progress table, and c
     new_string: 'b',
   })
 
+  // The first progress.md this session touches opens the pane by itself.
+  expect([...open]).toEqual([['steps', 'ขั้นตอนการทำงาน']])
+
   const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  await band.press({ key: 'toggle-steps' })
+  expect(open.size).toBe(0)
+  // Later updates of the same table leave a closed pane closed.
+  await $.tool.call({
+    tool: 'Edit',
+    file_path: '/project/listings/A01-condo/output/progress.md',
+    old_string: 'b',
+    new_string: 'c',
+  })
+  expect(open.size).toBe(0)
   await band.press({ key: 'toggle-steps' })
   expect([...open]).toEqual([['steps', 'ขั้นตอนการทำงาน']])
 
