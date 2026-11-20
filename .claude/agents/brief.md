@@ -257,6 +257,10 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      text, and leave the hook's first second and the end card quiet unless the task says otherwise. Keep each
      line short enough to say in its shot: in Thai about 12 characters per second of speech, in English about
      2.5 words per second. When there is a voice-over, captions follow the spoken lines.
+     Write it the way an agent talks, by COPY_STYLE.md "เสียงพากย์": short phrases of 2–4 words separated by
+     spaces where the voice should breathe, a short joining word where it helps ("ด้านใน", "แถมยัง",
+     "เดินไปแค่"), numbers and abbreviations as shown on screen (the voice script spells them out), and
+     the line adds to the on-screen text rather than reading it out word for word.
    - The music mood, and the end card: agent name, contact and call to action as the task gives them, or
      [missing] if not given.
 

@@ -149,10 +149,15 @@ Output format:
   at x 120 where the style says so; lower the font size for that line or block if it is wider. Captions
   sit at y ≈ 1200 with their bottom edge at or above 1248. Only photos, texture and the logo go outside it. Use a readable font size and the style's text look (Sarabun at the weight
   the style asks for); every look must still read on a bright photo.
-- Music sits under any voice-over and fades out over the last second. With a voice-over, duck the music
-  while it speaks (sidechain compression, or the music about 12 dB below the voice) and keep the voice
-  clearly on top. A `_nomusic` version keeps the voice-over. With no audio source, add a silent track
-  so the file still has audio.
+- Sound: mix it with `python3 scripts/mix_audio.py --duration <cut length> --out <scratch>/mix.wav
+  [--voice <output>/voiceover.wav --timing <output>/voice/timing.json] [--music <track> --music-start <s>]`.
+  It trims and fades the music (last second), ducks it under the voice (voice 12–18 dB over the music on
+  every line), and brings the whole mix to −14 LUFS integrated, −1 dBTP true peak, at the cut's exact
+  length; it writes `mix.json` and prints any problem (a line under 10 dB over the music, loudness, length).
+  Fix every problem before muxing (a quieter music start, or tell the director). A `_nomusic` version: run
+  it again without `--music`. With no voice and no music it writes silence, so the file still has audio.
+  Use only music listed in `brand/music/LICENSES.md` or with a licence line in the listing's `listing.md`.
+  Mux with `-c:v copy -c:a aac -b:a 192k -ar 44100`. Put the mix commands in `build.sh`.
 
 Storyboard (when the task asks for one instead of a cut; it comes before the cut):
 - Render one still per shot at 1080×1920 with exactly the chain the cut will use: the same crop around the

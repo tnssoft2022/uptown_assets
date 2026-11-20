@@ -50,6 +50,12 @@ or `view/...`) into a listing folder: full-size photos in `assets/` (never overw
 with the site's ✓/✗ checklists (furniture, amenities) kept as marks. Python 3.9,
 standard library only. Listings from other sites are read by hand into the same layout.
 
+`scripts/voiceover.py <script.json> <output-dir>` makes the Thai voice-over with Kanya (macOS `say`): spoken
+spellings for numbers and abbreviations, each line fitted to its shot and levelled, `voiceover.wav` and
+`voice/timing.json` with line and phrase times for the captions; other TTS engines plug into its `ENGINES`.
+`scripts/mix_audio.py` mixes voice and music: music ducked 12–18 dB under the voice, the mix at −14 LUFS,
+−1 dBTP. `brand/music/LICENSES.md` is the music licence register: no listed licence, no track.
+
 `scripts/photo_analysis.py measure|sheet <listing-dir>` is the photo analysis the `brief` agent runs before
 every treatment: `measure` measures each photo (size, sharpness, light, colour cast, near-duplicates);
 `brief` then writes `output/analysis/photos.json` (room, 1–5 scores, focus point, camera move) and `sheet`
@@ -62,7 +68,8 @@ sit and draws `output/analysis/photo_analysis.jpg`. Python 3.9 standard library 
 - Node.js and the HyperFrames skills in `~/.claude/skills/hyperframes/` (the editor renders the picture with
   them; the Thai text uses the Sarabun font that comes with macOS)
 - macOS with the Kanya voice (Thai voice-over)
-- A paid Magnific account connected to Claude (only for `editor-magnific` and the AI edits of `retouch`)
+- A paid Magnific account connected to Claude (only for `editor-magnific` and the AI edits of `retouch`;
+  the `brand/music/` tracks were made with it)
 
 `COPY_STYLE.md` (Thai) is the copy style guide: tone, lengths, hook formulas, words to avoid and a checklist
 for every hook, on-screen line, caption, voice-over line and end card. `brief` drafts by it; the director checks by it.

@@ -94,8 +94,22 @@ How you work:
   approved script table (shot, start, duration, line), the total length, the voice, the pace from the
   style (e.g. 0.92×), and
   the output folder. It only makes the audio; it never writes the script. Listen-check its result (sample a
-  line or two), set the caption timings from the line times it reports, and give the editor the
-  voiceover.wav path. If a line doesn't fit its shot, shorten the line or lengthen the shot, then re-run it.
+  line or two, and read its list of spellings changed for the engine), and give the editor the
+  voiceover.wav and voice/timing.json paths. If a line doesn't fit its shot, shorten the line or lengthen
+  the shot, then re-run it.
+- Sync sound, picture and text (every video with a voice-over), from `voice/timing.json`:
+  - Captions: one caption per phrase or pair of phrases, shown from the phrase's start to the next
+    caption's start (the last one to its line's end + 0.3 s), each at least 0.8 s on screen; never ahead of
+    the voice.
+  - On-screen text: a shot's line lands within 0.2 s of its voice line's start, and says the same fact the
+    voice says in that shot (the voice may add to it, never contradict it). A number on screen (price,
+    area) pops with `fx.num` when the voice reaches that number's phrase.
+  - Cuts: no cut inside a voice phrase; a line may run past its shot's cut only by the 0.2 s gap. Cuts
+    then move to the nearest music beat (±0.15 s) only where that keeps both rules.
+  - The hook's first second and the end card stay without voice unless the style says otherwise.
+- Music: the style's track from `brand/music/` (all listed in `brand/music/LICENSES.md`), or a track in the
+  listing's `assets/` only when `listing.md` has its licence line (see LICENSES.md); otherwise ask the user
+  once and use the style's track meanwhile. Never a commercial song, even a short part.
 - Retouch (optional): offer it in the treatment from the brief's retouch suggestions: free fixes (light,
   colour, straightening, matching the look, blurring faces and plates) and Magnific edits (declutter, virtual
   staging, sky, upscale), with the cost: ask `retouch` for an estimate first (task without a budget: it does
