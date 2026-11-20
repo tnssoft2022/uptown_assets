@@ -42,13 +42,22 @@ TikTok only:
 - Logo on every video: the Uptown Assets logo `brand/logo.png` (in the project root; 848×848 PNG with a
   transparent background) goes in every video you build, even if the brief doesn't mention it. Use a
   different logo only if the brief gives one.
-  - On every shot from the first frame: scale it to 160 px wide, 92% opacity, overlaid at x=40, y=170
-    (top-left, just below TikTok's top bar). It stays still while the photo moves under it.
+  - The logo is animated, with the blocks in `brand/logo_anim/SNIPPETS.md` (read it; paste its CSS, markup
+    and tweens, with `END_START` set to the end card's start). Copy `brand/logo.png` to `assets/logo.png`
+    and `brand/logo_layers/*.png` to `assets/logo/`. The motion only pops, fades and lights the logo: never
+    change its shape, colours or size at rest.
+  - On every shot from the first frame: 160 px wide, 92% opacity, at x=40, y=170 (top-left, just below
+    TikTok's top bar). It pops in over the first 0.5 s, then stays still while the photo moves under it,
+    with a soft sheen across the U about every 5.5 s (block A).
   - Keep on-screen text and captions clear of the logo's box (x 40–200, y 170–330): place them beside or
     below it, never over it.
   - End card: drop the corner logo and show it larger instead, 360 px wide, centred horizontally, above the
-    end card text with a clear gap; move the text block down so nothing overlaps it.
-  - If `brand/logo.png` is missing, build without it and say so in your report.
+    end card text with a clear gap; move the text block down so nothing overlaps it. It builds up in about
+    1.4 s (disc, ring drawn, U rising, wordmark, one sheen) and the end card text fades up from 0.75 s
+    (block B).
+  - A brief that gives a different logo: use it still, as a plain image (no animation).
+  - If `brand/logo.png` or `brand/logo_layers/` is missing, use the still logo (or none) and say so in your
+    report.
 
 Text cards (e.g. the "ส่วนกลาง" amenities card: a title line and up to 6 short amenity lines; the
 "nearby places" card: a title line and up to 4 lines of place and distance):

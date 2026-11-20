@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Uptown Assets logo sting</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    /* Logo sting: 900x900, transparent background, 2.4 s (build 0-2.0 s, then hold).
+       Layers come from scripts/split_logo.py (cut by position from brand/logo.png, never redrawn).
+       Render: brand/logo_anim.mov (ProRes 4444 with alpha). */
+    html, body { margin: 0; padding: 0; background: transparent; }
+    #root { position: relative; width: 900px; height: 900px; overflow: hidden; background: transparent; }
+    #lg { position: absolute; left: 26px; top: 26px; width: 848px; height: 848px; }
+    #lg img, #lg .lyr { position: absolute; left: 0; top: 0; width: 848px; height: 848px; }
+    #lg-disc { position: absolute; left: 16px; top: 16px; width: 816px; height: 816px; border-radius: 50%;
+      background: #fff; transform-origin: 50% 50%; }
+    #lg-ring { --a: 0deg;
+      -webkit-mask-image: conic-gradient(#000 var(--a), transparent var(--a));
+      mask-image: conic-gradient(#000 var(--a), transparent var(--a)); }
+    #lg-mark { transform-origin: 50% 60%; }
+    #lg-sheen { overflow: hidden;
+      -webkit-mask-image: url(assets/mark.png); -webkit-mask-size: 100% 100%;
+      mask-image: url(assets/mark.png); mask-size: 100% 100%; }
+    #lg-band { position: absolute; left: 0; top: 0; width: 320px; height: 848px;
+      background: linear-gradient(100deg, rgba(255,248,225,0) 0%, rgba(255,248,225,0.85) 50%, rgba(255,248,225,0) 100%); }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-start="0" data-duration="2.4" data-width="900" data-height="900">
+    <div id="lg">
+      <div id="lg-disc"></div>
+      <img id="lg-ring" src="assets/ring.png" alt="">
+      <img id="lg-mark" src="assets/mark.png" alt="">
+      <div id="lg-sheen" class="lyr"><div id="lg-band"></div></div>
+      <img id="lg-up" src="assets/uptown.png" alt="">
+      <img id="lg-as" src="assets/assets.png" alt="">
+    </div>
+  </div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    // white disc pops in
+    tl.fromTo("#lg-disc", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.4)" }, 0);
+    // ring draws clockwise from the top
+    tl.fromTo("#lg-ring", { "--a": "0deg" }, { "--a": "360deg", duration: 0.75, ease: "power2.inOut" }, 0.1);
+    // U rises into place
+    tl.fromTo("#lg-mark", { y: 70, scale: 0.9, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }, 0.35);
+    // wordmark, one line after the other
+    tl.fromTo("#lg-up", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }, 0.75);
+    tl.fromTo("#lg-as", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }, 0.9);
+    // one gold sheen across the U
+    tl.fromTo("#lg-band", { x: -360 }, { x: 900, duration: 0.65, ease: "power1.inOut" }, 1.35);
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>
