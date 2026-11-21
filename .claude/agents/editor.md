@@ -123,7 +123,7 @@ How the video is built (HyperFrames for the picture, ffmpeg for the sound):
     "ข้อความเคลื่อนไหว" row in `STYLES.md` names, captions with `fx.cap` at each phrase's time, and every
     line leaves with `fx.out` before its cut. Numbers use `fx.num` (or `fx.reveal` in เรียบหรู), never a
     count-up. A word the brief marks ==word== gets the highlight bar (drop the == marks); no other word does.
-    Thai moves by whole words (the line's own spaces) or whole lines, never by character.
+    Thai moves by whole words (the line's own spaces) or whole lines, never by bare character; only `fx.type` (Thai cells with their marks) and `fx.pop` (dictionary words) split a line, and they do it themselves.
   - Asset paths are `assets/...` with no leading `/`. Typography, the price highlight, feature icons and
     parallax come from `brand/motion_fx/` (read `SNIPPETS.md`; copy `typography.css`, `motion_fx.js` and
     `brand/fonts/kanit/*.ttf` to `assets/` and `assets/fonts/`): Kanit for the hook, head lines, prices and
