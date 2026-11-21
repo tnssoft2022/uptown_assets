@@ -38,7 +38,7 @@ listings/
     assets/    originals: photos, clips, logo, music. Never modify or delete.
     listing.md listing text as the site shows it, source URLs, photo sources (from the fetch script)
     brief.md   written by the brief agent
-    output/    finished videos, preview/ (the draft the user approves), build.sh, hyperframes/ (the cut's HTML
+    output/    finished videos, preview/ (the draft the user approves), qc/ (quality control report), build.sh, hyperframes/ (the cut's HTML
                project; hyperframes_16x9/, hyperframes_1x1/ when asked), voiceover.wav, voice/,
                magnific/, retouched/, analysis/ (photo analysis: measure.json, photos.json, plan.json,
                photo_analysis.jpg)
@@ -56,6 +56,12 @@ standard library only. Listings from other sites are read by hand into the same 
 (the user approves it), then the full render (HyperFrames, CRF 18) muxed with the mix, checked against the
 delivery spec (MP4 H.264 High, yuv420p, 30 fps, 1080×1920 / 1920×1080 / 1080×1080, AAC 44.1 kHz, faststart).
 The picture is HyperFrames (not Remotion); ffmpeg does the copies, mix, mux and checks.
+
+`scripts/qc.py <listing-dir>` is the quality control before every preview and full render: Thai spelling
+(the `SPELLING.md` list, market spellings for real estate words, and broken tone marks or vowels), every
+number and ✗ item against listing.md, text over the subject or outside the safe zone (frames rendered
+with and without text), where each photo's focus lands, and sound and timing. It writes
+`output/qc/qc.md`, `qc.json`, `qc_sheet.jpg`; no ❌ may stay, and the director reads every text line itself.
 
 `scripts/voiceover.py <script.json> <output-dir>` makes the Thai voice-over with Kanya (macOS `say`): spoken
 spellings for numbers and abbreviations, each line fitted to its shot and levelled, `voiceover.wav` and

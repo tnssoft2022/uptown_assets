@@ -138,13 +138,21 @@ How the video is built (HyperFrames for the picture, ffmpeg for the sound):
   1. Preview (every cut, before the full render): mix the sound (below), then
      `python3 scripts/render_cut.py preview output/hyperframes --mix <scratch>/mix.wav --out output/preview/<name>_preview.mp4`:
      a draft render at half size with a "PREVIEW" tag and the real sound, about half the render time.
-     Look at it (sample frames, the sound's timing) and report its path. Stop there: the full render
+     Before it, run QC: `python3 scripts/qc.py <listing folder>` (with `--mix <scratch>/mix.json` if the mix
+     isn't at `output/mix.json`). It checks spelling marks and the SPELLING.md list, every number and ✗ item
+     against listing.md, text over each shot's focus and outside the safe zone, where each photo's focus
+     lands (the crop), and sound and timing (loudness, voice over music, captions and text against the
+     voice, no cut inside a phrase), and writes `output/qc/qc.md`, `qc.json` and `qc_sheet.jpg`. Fix every
+     ❌ that is yours (layout, crop, timing, a typo against the brief) and run it again; a ❌ in the brief's
+     own copy or facts, or a ⚠️ you can't settle, goes in your report for the director. Look at
+     `qc_sheet.jpg` and the preview (sample frames, the sound's timing) and report both paths. Stop there: the full render
      waits for the director's go-ahead (the user approves the preview).
   2. Full render, when the brief or a follow-up task says the preview is approved:
      `python3 scripts/render_cut.py final output/hyperframes --mix <scratch>/mix.wav --out output/<name>.mp4 --duration <length>`:
      HyperFrames at CRF 18, muxed with the mix (AAC 192 kb/s), +faststart, then checked against the delivery
      spec (MP4, H.264 High, yuv420p, 30 fps, the aspect's size, AAC 44.1 kHz, moov first, audio as long as
-     the picture, 9:16 no longer than 60 s). A failed check is fixed before you report.
+     the picture, 9:16 no longer than 60 s). A failed check is fixed before you report. Run
+     `scripts/qc.py` again first if anything changed since the preview.
   A brief that asks for a full render without a preview (a small text fix after an approved preview, say):
   do step 2 only.
   Expected check warnings you can leave: the local Sarabun font, a silent film, nested sections, sparse

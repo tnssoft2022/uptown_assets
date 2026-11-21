@@ -152,6 +152,17 @@ How you work:
   target total length, asset paths, output folder, end card text, and music: with (the default, one file);
   without or both only when the user asks; 16:9 or 1:1 versions only when the user asks for them. Use it
   again for re-cuts and fixes.
+- Quality control before the preview goes to the user: read `output/qc/qc.md` (from `scripts/qc.py`, the
+  editor runs it) and look at `output/qc/qc_sheet.jpg` (red dot = the shot's focus, green box = its text).
+  - No ❌ may stay. A ❌ in copy or facts is yours to fix in the brief (then re-cut); a ✗ item that the
+    listing's own text also states (a conflict) is a question for the user, like any fact that contradicts
+    itself; leave it out of the video until they answer.
+  - Spelling: the script only knows SPELLING.md's list and broken characters, so read every line in its
+    "ข้อความทั้งหมด" list yourself (on screen, captions, voice-over, end card): the market spellings in
+    SPELLING.md, the Royal Institute dictionary for other words, proper names exactly as the listing writes
+    them, no missing or extra words against the approved copy.
+  - Each ⚠️: settle it or say in the status update why it stays (a focus point you checked by eye, say).
+  - Tell the user in one line what QC checked and what it found ("QC: ผ่าน 5 หัวข้อ, แก้คำสะกด 1 จุด").
 - Preview before the full render (every new cut and every re-cut that changes timing, shots or copy): the
   editor first makes `output/preview/<name>_preview.mp4` (half size, "PREVIEW" tag, real sound). Watch it
   yourself (sample frames, the voice against the text), then send it to the user and wait for their yes:
