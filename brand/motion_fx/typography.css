@@ -112,3 +112,18 @@
    "พอใช้ ใส่เงา" / "พื้นรก ใส่แถบเข้ม"): place it at the block's y, about 120 px taller than the block. */
 .scrim-band { position: absolute; left: 0; width: 1080px;
   background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.42) 28%, rgba(0,0,0,0.42) 72%, rgba(0,0,0,0) 100%); }
+
+/* ---------- other aspects (only when the user asks for them; STYLES.md "สัดส่วนอื่น") ----------
+   Put the class on the composition root: <div id="root" class="ar-16x9"> or class="ar-1x1".
+   16:9 (1920x1080): text block bottom-left, left-aligned at x 120, safe area x 96-1824, y 54-1026.
+   1:1 (1080x1080): centred on x 540, safe area x 60-1020, y 60-1020. */
+.ar-16x9 .t-hook { font-size: 84px; }  .ar-16x9 .t-head { font-size: 64px; }
+.ar-16x9 .t-line { font-size: 56px; }  .ar-16x9 .t-sub { font-size: 44px; }
+.ar-16x9 .t-price { font-size: 100px; } .ar-16x9 .t-cap { font-size: 40px; }
+.ar-16x9 .pr { left: 120px; width: auto; align-items: flex-start; }
+.ar-16x9 .ic-row { left: 120px; width: auto; justify-content: flex-start; }
+.ar-16x9 .ic-list { left: 120px; width: auto; align-items: flex-start; }
+.ar-1x1 .t-hook { font-size: 80px; }  .ar-1x1 .t-head { font-size: 64px; }
+.ar-1x1 .t-line { font-size: 56px; }  .ar-1x1 .t-sub { font-size: 44px; }
+.ar-1x1 .t-price { font-size: 96px; } .ar-1x1 .t-cap { font-size: 40px; }
+.ar-1x1 .pr, .ar-1x1 .ic-row, .ar-1x1 .ic-list { width: 1080px; }

@@ -1,6 +1,7 @@
 # Uptown Assets
 
-Claude Code system that turns real estate listings (for sale or rent) into vertical 9:16 TikTok videos:
+Claude Code system that turns real estate listings (for sale or rent) into vertical 9:16 videos for Facebook
+Reels, TikTok and YouTube Shorts (16:9 and 1:1 versions on request):
 read the listing, plan the story, make the voice-over, cut the MP4. The user is Thai; the README is in Thai.
 
 The `director` role (default) talks with the user and sends work to the agents in `.claude/agents/`:
@@ -37,7 +38,8 @@ listings/
     assets/    originals: photos, clips, logo, music. Never modify or delete.
     listing.md listing text as the site shows it, source URLs, photo sources (from the fetch script)
     brief.md   written by the brief agent
-    output/    finished videos, build.sh, hyperframes/ (the cut's HTML project), voiceover.wav, voice/,
+    output/    finished videos, preview/ (the draft the user approves), build.sh, hyperframes/ (the cut's HTML
+               project; hyperframes_16x9/, hyperframes_1x1/ when asked), voiceover.wav, voice/,
                magnific/, retouched/, analysis/ (photo analysis: measure.json, photos.json, plan.json,
                photo_analysis.jpg)
 ```
@@ -49,6 +51,11 @@ not in git. `session-role/` and `video-list/` are Claude Code plugins, not part 
 or `view/...`) into a listing folder: full-size photos in `assets/` (never overwrites one) and `listing.md`,
 with the site's ✓/✗ checklists (furniture, amenities) kept as marks. Python 3.9,
 standard library only. Listings from other sites are read by hand into the same layout.
+
+`scripts/render_cut.py preview|final|check` renders a cut: a half-size draft preview with the real sound
+(the user approves it), then the full render (HyperFrames, CRF 18) muxed with the mix, checked against the
+delivery spec (MP4 H.264 High, yuv420p, 30 fps, 1080×1920 / 1920×1080 / 1080×1080, AAC 44.1 kHz, faststart).
+The picture is HyperFrames (not Remotion); ffmpeg does the copies, mix, mux and checks.
 
 `scripts/voiceover.py <script.json> <output-dir>` makes the Thai voice-over with Kanya (macOS `say`): spoken
 spellings for numbers and abbreviations, each line fitted to its shot and levelled, `voiceover.wav` and
