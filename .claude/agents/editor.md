@@ -63,7 +63,7 @@ Formats:
   - Keep on-screen text and captions clear of the logo's box (x 40–200, y 170–330): place them beside or
     below it, never over it.
   - End card: drop the corner logo and show it larger instead, 360 px wide, centred on the text axis
-    (x 270–630), above the end card text with a clear gap, all end card text inside the safe zone; move the text block down so nothing overlaps it. It builds up in about
+    (x 360–720), above the end card text with a clear gap, all end card text inside the safe zone; move the text block down so nothing overlaps it. It builds up in about
     1.4 s (disc, ring drawn, U rising, wordmark, one sheen) and the end card text fades up from 0.75 s
     (block B).
   - A brief that gives a different logo: use it still, as a plain image (no animation).
@@ -74,7 +74,7 @@ Text cards (e.g. the "ส่วนกลาง" amenities card: a title line and
 "nearby places" card: a title line and up to 4 lines of place and distance):
 - Over the photo the brief gives, darkened (about 50%) or blurred so the text reads; never a plain colour
   unless the brief says so.
-- The title line larger, every line centred on the text axis (x=450) in one block in the middle of the
+- The title line larger, every line centred on the text axis (x=540, the frame centre) in one block in the middle of the
   safe zone, clear of the logo box. With icons from `brand/icons/ICONS.md` for the card's items, build it as
   an `.ic-list` (`brand/motion_fx/SNIPPETS.md`). All lines appear together and stay for the whole shot.
 - Use the lines exactly as the brief writes them. If a line is too wide for the frame, lower the font size
@@ -171,8 +171,9 @@ Output format:
 - Text, captions, prices and icons inside the safe zone that TikTok, Facebook Reels and YouTube Shorts all
   leave clear (the one `HF check` tests as `outside_safe_zone`): y 380–1248 (the logo box above, the app's
   caption, handle and buttons below), x 120–888, and from y 840 down x 120–780 (TikTok's action rail).
-  Centre text on the text axis x=450 (the middle of 120–780), each line at most 660 px wide, or left-align
-  at x 120 where the style says so; lower the font size for that line or block if it is wider. Captions
+  Centre text on the text axis x=540 (the frame centre): each line at most 696 px wide above y 840 and at
+  most 480 px from y 840 down (so it ends by x 780, clear of TikTok's rail), or left-align at x 120 where
+  the style says so; wrap a longer caption onto two lines, or lower the font size for that line or block. Captions
   sit at y ≈ 1200 with their bottom edge at or above 1248. Only photos, texture and the logo go outside it. Use a readable font size and the style's text look (Sarabun at the weight
   the style asks for); every look must still read on a bright photo.
 - Sound: mix it with `python3 scripts/mix_audio.py --duration <cut length> --out <scratch>/mix.wav

@@ -56,12 +56,12 @@ fades it out before the end card, keep that fade on `#logo`).
 Builds up in about 1.4 s, then holds: the white disc pops in, the ring draws clockwise from the top, the U
 rises into place, UPTOWN then ASSETS fade up, and one sheen crosses the U. The end card text fades up from
 0.75 s, so it is readable from about 1.1 s; the end card stays 3–4 s as the style says. Same place and size
-as before: 360 px wide, centred on the text axis of the safe zone (x 270–630, axis x=450), top at y 380
-unless the layout moves it; the end card text below it is centred on x=450 too, inside y 780–1248.
+as before: 360 px wide, centred on the text axis of the safe zone (x 360–720, axis x=540), top at y 380
+unless the layout moves it; the end card text below it is centred on x=540 too, inside y 780–1248.
 
 ```html
 <style>
-  #end-logo { position: absolute; left: 270px; top: 380px; width: 360px; height: 360px; }
+  #end-logo { position: absolute; left: 360px; top: 380px; width: 360px; height: 360px; }
   #el { position: absolute; left: 0; top: 0; width: 848px; height: 848px;
     transform: scale(0.42453); transform-origin: 0 0; }   /* 360 / 848; #el itself is never animated */
   #el img, #el .lyr { position: absolute; left: 0; top: 0; width: 848px; height: 848px; }

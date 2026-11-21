@@ -67,12 +67,13 @@
 .lux .t-head { font-weight: 300; font-size: 64px; }
 .lux .t-price { font-weight: 400; font-size: 96px; }
 
-/* Blocks below are 900 px wide from x 0, so they centre on the text axis x=450 of the safe zone
-   (x 120-780 from y 840 down; STYLES.md "เขตปลอดภัย"). */
+/* Blocks below are 1080 px wide from x 0, so they centre on the text axis x=540 (the frame centre).
+   Keep each line within 696 px above y 840 and 480 px from y 840 down (TikTok's action rail starts at
+   x 780; STYLES.md "เขตปลอดภัย"). */
 
 /* ---------- price highlight (mfx.price) ---------- */
-.pr { position: absolute; left: 0; width: 900px; z-index: 0; display: flex; flex-direction: column; align-items: center; }
-.pr::before { content: ""; position: absolute; left: 90px; right: 90px; top: -70px; bottom: -70px; z-index: -1;
+.pr { position: absolute; left: 0; width: 1080px; z-index: 0; display: flex; flex-direction: column; align-items: center; }
+.pr::before { content: ""; position: absolute; left: 180px; right: 180px; top: -70px; bottom: -70px; z-index: -1;
   background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.32) 55%, rgba(0,0,0,0) 100%); }
 .pr-lbl { color: #fff; }
 .pr-plate { position: relative; display: inline-block; padding: 6px 44px 14px; margin-top: 10px; }
@@ -91,8 +92,8 @@
                       background: var(--gold); transform-origin: 50% 50%; }
 
 /* ---------- feature icons (mfx.icons) ---------- */
-.ic-row { position: absolute; left: 0; width: 900px; display: flex; justify-content: center; gap: 20px; }
-.ic-list { position: absolute; left: 0; width: 900px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.ic-row { position: absolute; left: 0; width: 1080px; display: flex; justify-content: center; gap: 20px; }
+.ic-list { position: absolute; left: 0; width: 1080px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
 .ic { display: flex; align-items: center; gap: 16px; }
 .ic-row .ic { flex-direction: column; gap: 12px; width: 180px; }
 .ic-list .ic { width: 640px; justify-content: flex-start; }
