@@ -22,6 +22,8 @@ composition folder), whichever exist, and checks:
     text and captions (captions never ahead of the voice, text lands within 0.25 s of its line, no cut
     inside a phrase, a quiet hook second and end card); text on screen at least 1.2 s (captions 0.8 s);
     total length; and HyperFrames' own check (layout, motion, contrast).
+    The sound choice on the composition root (data-audio="music" | "voice" | "voice-subs") says what to expect: music only (no voice-over, no captions; an old timing.json is ignored),
+    voice-over without captions, or voice-over with captions (the default for older cuts).
 
 Writes <listing-dir>/output/qc/qc.md (Thai summary, every finding and every text line), qc.json and
 qc_sheet.jpg (each shot's middle frame with its focus point marked). Exit code 1 when there is any error
@@ -153,6 +155,7 @@ def load_comp(hdir):
     H = int(p.root.get("data-height", 1920))
     D = float(p.root.get("data-duration", 0))
     load_comp.layout = p.root.get("data-layout")
+    load_comp.audio = p.root.get("data-audio")
     return p.clips, (W, H), D
 
 
@@ -442,12 +445,19 @@ def check_frames(hdir, clips, size, plan, outdir, F, no_frames, layout=None):
 
 # ---------- 5. sound and timing ----------
 
-def check_timing(clips, total, timing, mixj, F, hf_check):
+def check_timing(clips, total, timing, mixj, F, hf_check, audio=None):
     shots = shots_of(clips)
     texts = text_clips(clips)
     caps = [c for c in texts if "cap" in c["class"]]
     lines = [c for c in texts if "cap" not in c["class"]]
     n0 = len(F.items)
+    # the sound choice (STYLES.md "เสียง"): music = music only, voice = music + voice-over without
+    # captions, voice-subs = music + voice-over + captions; none = older cuts, checked as voice-subs
+    if audio in ("music", "voice") and caps:
+        F.err("timing", "มีซับเสียงพากย์ %d ชิ้น แต่เลือกเสียงแบบ%s" % (
+            len(caps), "เพลงอย่างเดียว" if audio == "music" else "ไม่มีซับ"))
+    if audio == "voice-subs" and timing and timing.get("lines") and not caps:
+        F.err("timing", "เลือกเสียงพากย์ + ซับ แต่คอมโพสิชันไม่มีซับ (class cap)")
     if total and not (29 <= total <= 31):
         F.warn("timing", "คลิปยาว %.2f วิ (เป้า 30 วิ ±1 ถ้าบรีฟไม่ได้กำหนดอื่น)" % total)
     for c in lines:
@@ -483,7 +493,7 @@ def check_timing(clips, total, timing, mixj, F, hf_check):
                 F.warn("timing", "เสียงพากย์ช็อต %d พูดทับ end card" % late[0]["shot"])
         for p in timing.get("problems", []):
             F.err("sound", "เสียงพากย์: " + p)
-    else:
+    elif audio != "music":
         F.warn("timing", "ไม่มี voice/timing.json: ตรวจการซิงก์เสียงกับข้อความไม่ได้")
     if mixj:
         i, tp = mixj.get("integrated_lufs"), mixj.get("true_peak_db")
@@ -552,6 +562,9 @@ def main():
             return None
     plan = jload(os.path.join(L, "output", "analysis", "plan.json"))
     timing = jload(a.timing) if a.timing else jload(os.path.join(L, "output", "voice", "timing.json"))
+    audio = load_comp.audio
+    if audio == "music":
+        timing = None   # music only: an old voice-over in output/voice/ is not part of this cut
     mixj = jload(a.mix) if a.mix else jload(os.path.join(L, "output", "mix.json"))
     with open(os.path.join(L, "listing.md"), encoding="utf-8") as f:
         listing = f.read()
@@ -570,12 +583,12 @@ def main():
     layout = load_comp.layout or (plan or {}).get("layout")
     CUR_LAYOUT[0] = layout if layout in SAFE_LAYOUT and size == (1080, 1920) else None
     rows = check_frames(hdir, clips, size, plan, out, F, a.no_frames, layout)
-    check_timing(clips, total, timing, mixj, F, hf_check)
+    check_timing(clips, total, timing, mixj, F, hf_check, audio)
 
     errs = [f for f in F.items if f["level"] == "error"]
     warns = [f for f in F.items if f["level"] == "warn"]
     md = ["# QC: %s" % os.path.basename(L), "",
-          "คอมโพสิชัน `%s` · %dx%d · %.2f วิ · การจัดวาง %s · ❌ %d · ⚠️ %d" % (a.hf, size[0], size[1], total, layout or "-", len(errs), len(warns)), "",
+          "คอมโพสิชัน `%s` · %dx%d · %.2f วิ · การจัดวาง %s · เสียง %s · ❌ %d · ⚠️ %d" % (a.hf, size[0], size[1], total, layout or "-", audio or "-", len(errs), len(warns)), "",
           "| หัวข้อ | ผล |", "|---|---|"]
     for area in ("spelling", "facts", "overlap", "crop", "sound", "timing", "animation", "layout"):
         fs = [f for f in F.items if f["area"] == area]

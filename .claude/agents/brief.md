@@ -24,6 +24,15 @@ shows, "ห้องนั่งเล่น", "สระว่ายน้ำ";
 doesn't show). With A and C, the header's project name is the listing's own name for it, shortened only
 by dropping words (never a new name). The style still sets the text look, motion and lengths.
 
+Sound: the task names one of `STYLES.md` "เสียง": `voice-subs` (music, voice-over and its captions),
+`voice` (music and voice-over, no captions; the default when the task names none, except เดินชมห้อง,
+whose default is `music`) or `music` (music only). It replaces the style's "เสียงพากย์" and "ตำแหน่ง caption"
+rows (whether there is a voice-over and captions); the style's voice pace and caption place still hold.
+With `music`, write no voice-over script and no captions: the on-screen text tells the whole story, every
+selling point gets its own on-screen line, and cuts follow the music beats only. With `voice`, write the
+voice-over script but no captions, and keep the price and the key facts on screen too, since a muted viewer
+hears none of the voice-over.
+
 1. Take stock of the assets (read only; never move, rename or change them):
    - List every photo, clip, logo and music file in the folder.
    - For each file: its type, orientation (vertical or horizontal), resolution, and for clips and music the
@@ -263,12 +272,13 @@ by dropping words (never a new name). The style still sets the text look, motion
      - Too few photos for 30 s: stretch slow shots up to 4 s and add detail crops of a photo already used
        (another part of it, with its own focus, never next to its first shot); never loop whole photos. If
        it still comes in under about 26 s, keep it shorter and use the "Ready but shorter" verdict.
-   - Captions with timings (start and end second for each line), short enough to read in time.
-   - Voice-over, only if the task asks for one: a script line per shot (a shot may have none), with each
+   - Captions with timings (start and end second for each line), short enough to read in time; only with
+     sound `voice-subs` (leave them out for `voice` and `music`).
+   - Voice-over, only when the sound is `voice` or `voice-subs`: a script line per shot (a shot may have none), with each
      shot's start second and duration. Use only facts from the listing, keep it in step with the on-screen
      text, and leave the hook's first second and the end card quiet unless the task says otherwise. Keep each
      line short enough to say in its shot: in Thai about 12 characters per second of speech, in English about
-     2.5 words per second. When there is a voice-over, captions follow the spoken lines.
+     2.5 words per second. With `voice-subs`, captions follow the spoken lines.
      Write it the way an agent talks, by COPY_STYLE.md "เสียงพากย์": short phrases of 2–4 words separated by
      spaces where the voice should breathe, a short joining word where it helps ("ด้านใน", "แถมยัง",
      "เดินไปแค่"), numbers and abbreviations as shown on screen (the voice script spells them out), and
@@ -296,12 +306,13 @@ by dropping words (never a new name). The style still sets the text look, motion
      picked (with the reason, or the rule it lost on), and the unusable ones with the reason.
    - "Retouch suggestions": photo, suggested edits, and why, in the form the `retouch` agent expects.
    - "Facts": the facts and the missing ones.
-   - "Style": the style name and any overrides, and the layout (A, B, C or none), so re-cuts use the same.
+   - "Style": the style name and any overrides, the layout (A, B, C or none) and the sound (`voice-subs`,
+     `voice` or `music`), so re-cuts use the same.
    - "Treatment": the hook, the selling points ranked with their facts, the beat timeline (hook, selling
      points, cards, price, call to action, with seconds) and the music mood, written so the director can
      show it to the user.
-   - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the `voice-kanya` agent.
-   - "Editor brief": the style name and overrides, the layout (with B, each shot's photo name; with A and C, the header's project name and รหัสทรัพย์), the shot list (every column above), captions with timings, transitions, target total length, asset paths,
+   - "Voice-over" (only for sound `voice` or `voice-subs`): the script table — shot, start, duration, line — ready for the `voice-kanya` agent.
+   - "Editor brief": the style name and overrides, the sound, the layout (with B, each shot's photo name; with A and C, the header's project name and รหัสทรัพย์), the shot list (every column above), captions with timings (`voice-subs` only), transitions, target total length, asset paths,
      output folder, end card text and music (with, the default; without or both only if the user asked), in the form the editor agent expects.
    - "Open questions": what the director needs to ask the user.
 

@@ -31,7 +31,13 @@ What the brief should give you (ask for nothing — if something is missing, use
   given as fractions, e.g. "(0.42, 0.55)", is the point of the photo (share of its width and height) to
   centre the crop and the `transform-origin` on; `output/analysis/plan.json` in the listing has the same
   point with the crop in photo pixels (crop_start, crop_end) and the text band each shot was checked for.
-- The caption text with timings, the transition style and length, and the target total length.
+- The sound (`STYLES.md` "เสียง"): `voice-subs` (voice-over with captions), `voice` (voice-over, no
+  captions) or `music` (music only, no voice-over and no captions). Set `data-audio="voice-subs"` (or
+  `voice`, `music`) on the composition root next to `data-layout`, so `scripts/qc.py` knows what to expect.
+  With `voice` or `music` there is no caption layer (no `.cap` elements, no `fx.cap`), and the main text
+  doesn't need to keep clear of the caption place. With `music`, mix without `--voice` and land the cuts on
+  the music beats only. A brief that names no sound and gives captions is `voice-subs`.
+- The caption text with timings (sound `voice-subs` only), the transition style and length, and the target total length.
 - Paths to the assets: photos, clips, logo, music, and the output folder.
 - The end card text (agent name, contact, "Link in bio").
 - Voice-over (optional): the path to `voiceover.wav`, already aligned to the video timeline from second 0 and

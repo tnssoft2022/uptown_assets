@@ -17,17 +17,16 @@ How you work:
   yet, and open one session for each of the others.
   Re-cuts and fixes of this session's listing stay here; once its video is done, a new listing may start
   here too.
-- Start with the brief. Restate it in one line. The only setup questions you ask up front are the style and the text layout
-  (see "Style" below), in one question box; don't ask about music or voice-over: pick them yourself and show them in the treatment,
+- Start with the brief. Restate it in one line. The only setup questions you ask up front are the style, the text layout
+  and the sound (see "Style" below), in one question box; don't ask which music track or voice: pick them yourself and show them in the treatment,
   where the user can change any of them later. Don't set a target audience: write for the property itself.
   The length comes from the style and the `editor` agent's limits. Use what the user already said; otherwise:
   - tone, pacing, transitions and text look by the chosen style in `STYLES.md`, copy by `COPY_STYLE.md`
   - music: a track from `assets/` if there is one, else the style's track from `brand/music/` (the file
     named in the style's "เพลง" row in `STYLES.md`); make one video, with the music (a `_nomusic.mp4` copy only when the user asks for one). The
     `brand/music/` tracks are longer than the videos: the editor trims them and fades them out
-  - voice-over: always (unless the style has none, like เดินชมห้อง: then the on-screen text is the caption,
-    and the user can ask for one), with the Mac's Kanya voice through the `voice-kanya` agent; if the user sends their
-    own recording, give the editor their file instead
+  - voice-over and its captions: by the sound the user picks (see "Sound" below); the voice is the Mac's
+    Kanya through the `voice-kanya` agent; if the user sends their own recording, give the editor their file instead
   The Uptown Assets logo in `brand/logo.png` goes in every video, so don't ask for one. Ask a question only
   when the work can't go on without the answer (no listing, no photos, facts that contradict each other).
 - Format and platform specs belong to the `editor` agent. Plan the story,
@@ -58,11 +57,24 @@ How you work:
   (or the user already chose it), leave the layout question out: that style has its own layout. Same rules
   as the style otherwise: don't ask when the user already named one, said to pick for them (C) or brief.md
   records one; no answer means C. In text, ask it as a second numbered list.
+- Sound (asked with the style and layout, every new listing): `STYLES.md` "เสียง" has three choices:
+  `voice-subs` ดนตรี + เสียงพากย์ + ซับ (the voice-over with its captions burned in), `voice` ดนตรี +
+  เสียงพากย์ (no captions) and `music` ดนตรีอย่างเดียว (no voice-over; the on-screen text tells the whole
+  story). Ask it as the last question in the same `AskUserQuestion` call: header "เสียง", question
+  "ใช้เสียงแบบไหน?", options "ดนตรี + พากย์ + ซับ", "ดนตรี + พากย์", "ดนตรีอย่างเดียว" (each description one
+  short line), the recommended one first with " (แนะนำ)": ดนตรีอย่างเดียว for เดินชมห้อง (that style has no
+  voice-over), ดนตรี + พากย์ for every other style. Ask it for การ์ดข้อมูล too. Same rules as the
+  style otherwise: don't ask when the user already said, said to pick for them (the recommended one) or
+  brief.md records one; no answer means the recommended one. In text, ask it as a third numbered list.
+  What it changes: with `music`, no voice-over script, no `voice-kanya`, no captions and no sync from
+  `voice/timing.json` (cuts follow the music beats only); with `voice`, the voice-over and its sync as usual
+  but no captions; with `voice-subs`, everything below. Choosing `voice` means a muted viewer hears none of
+  the voice-over, so the on-screen text must still carry the price and the key facts.
   The user may change single values ("มาตรฐาน but with straight cuts"): pass those along as overrides. Never
   name or describe a style by who should live there. If the user changes the style after the treatment,
   redo the brief's copy and shot list, the storyboard, the voice-over and the cut in the new style.
 - Once you know the property, the assets and the style, send the `brief` agent the listing info, the asset
-  folder, the output folder, the style name with any overrides, the layout (A, B or C, none for การ์ดข้อมูล), and the user's wishes (music, what to
+  folder, the output folder, the style name with any overrides, the layout (A, B or C, none for การ์ดข้อมูล), the sound (`voice-subs`, `voice` or `music`), and the user's wishes (music, what to
   highlight). It sorts the
   assets, analyses every photo (room group, scores, the Hero Shot, the focus and camera move, where the
   text can sit) with `scripts/photo_analysis.py`, pulls the facts and writes brief.md with a draft
@@ -76,9 +88,9 @@ How you work:
   points ranked with their facts (price, location, area, standout features), the story order by those
   selling points (same-room shots together), the beat timeline (hook 0–3 · selling points · amenities /
   nearby · price again · call to action 27–30), a shot list with a duration and a pace (slow, normal,
-  fast) per shot, the voice-over script and on-screen text, the music mood and the ending card,
-  plus one line with the settings (style, layout, music, voice-over) so the user can change them.
-- When to wait for the user. Apart from the style and layout question before the brief, wait only when something is
+  fast) per shot, the voice-over script (unless the sound is `music`) and on-screen text, the music mood and the ending card,
+  plus one line with the settings (style, layout, sound, music track) so the user can change them.
+- When to wait for the user. Apart from the style, layout and sound question before the brief, wait only when something is
   missing or contradicts itself: a must-have fact
   (sale or rent, the price or rent, the end-card contact), facts that disagree between the listing and the
   user or the photos, a photo you can't place (another unit, a render, a show unit), or a personal item you
@@ -98,7 +110,7 @@ How you work:
   shows, and the order tells the story. Fix the shot list and re-render if not. Then show the sheet to the
   user with the treatment (send the file), alongside the shot table. If the user changes shots, re-render
   the storyboard before building or re-cutting; the editor's cut reuses its crops.
-- Voice-over (every video whose style has one): ask the `brief` agent for the script per shot along with the treatment, check it
+- Voice-over (every video whose sound is `voice` or `voice-subs`): ask the `brief` agent for the script per shot along with the treatment, check it
   against the listing like any other copy, and show it in the treatment (it waits only if the treatment
   waits, see "When to wait for the user"). Then send the `voice-kanya` agent the
   approved script table (shot, start, duration, line), the total length, the voice, the pace from the
@@ -108,7 +120,7 @@ How you work:
   voiceover.wav and voice/timing.json paths. If a line doesn't fit its shot, shorten the line or lengthen
   the shot, then re-run it.
 - Sync sound, picture and text (every video with a voice-over), from `voice/timing.json`:
-  - Captions: one caption per phrase or pair of phrases, shown from the phrase's start to the next
+  - Captions (sound `voice-subs` only): one caption per phrase or pair of phrases, shown from the phrase's start to the next
     caption's start (the last one to its line's end + 0.3 s), each at least 0.8 s on screen; never ahead of
     the voice.
   - On-screen text: a shot's line lands within 0.2 s of its voice line's start, and says the same fact the
@@ -155,10 +167,10 @@ How you work:
   on photos, cuts, transitions, animated text, captions, cards, logo and end card; ffmpeg for music and voice).
   Small text or timing changes can be made in `output/hyperframes/index.html` and re-rendered. Don't run the build yourself unless the editor is
   unavailable. Generate missing stills or graphics only when the user agrees.
-- You write the caption text and its timing (which words show from which second to which second). End card:
+- With sound `voice-subs`, you write the caption text and its timing (which words show from which second to which second). End card:
   agent name, contact and a call to action.
-- Once nothing is waiting on the user (they approved, or the treatment had nothing to wait for), hand the build to the `editor` agent with a precise brief: the style name and any overrides, the layout, the shot list
-  with durations and on-screen text, the caption text with timings, the transition style and length, the
+- Once nothing is waiting on the user (they approved, or the treatment had nothing to wait for), hand the build to the `editor` agent with a precise brief: the style name and any overrides, the layout, the sound (`voice-subs`, `voice` or `music`), the shot list
+  with durations and on-screen text, the caption text with timings (`voice-subs` only), the transition style and length, the
   target total length, asset paths, output folder, end card text, and music: with (the default, one file);
   without or both only when the user asks; 16:9 or 1:1 versions only when the user asks for them. Use it
   again for re-cuts and fixes.

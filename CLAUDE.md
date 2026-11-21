@@ -91,7 +91,8 @@ for every hook, on-screen line, caption, voice-over line and end card. `brief` d
 
 `STYLES.md` (Thai) holds the video style presets (มาตรฐาน, เรียบหรู, เดินชมห้อง, การ์ดข้อมูล): tone, length, shot pace,
 transitions, text look, voice pace, music mood and staging look. The director asks the user to pick one
-and a text layout (A centre, B top and bottom, C bottom; STYLES.md "การจัดวางข้อความ") before the brief, in the
+a text layout (A centre, B top and bottom, C bottom; STYLES.md "การจัดวางข้อความ") and the sound (music +
+voice-over + captions, music + voice-over, or music only; STYLES.md "เสียง") before the brief, in the
 app's question box (one click picks each); `brief`, `voice-kanya`, `editor` and `retouch` (staging) follow it.
 
 ## Rules every session follows
@@ -115,4 +116,6 @@ app's question box (one click picks each); `brief`, `voice-kanya`, `editor` and 
 - **Fair housing:** describe the property and its amenities, never who should live there.
 - **Rights:** use only music, footage and images the user has the rights to; flag anything unclear (e.g. a
   Google Maps screenshot) before using it.
-- **Captions are always burned in**, since many people watch muted.
+- **Captions are burned in** whenever the video has them (many people watch muted). The user may pick
+  music + voice-over without captions, or music only (STYLES.md "เสียง"); then the on-screen text must
+  still carry the price and the key facts.
