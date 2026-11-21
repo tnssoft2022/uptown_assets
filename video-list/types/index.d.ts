@@ -28,6 +28,11 @@ export type Step = {
   status: string
   /** ใช้เวลา, e.g. "1 นาที 24 วิ"; "" while it isn't filled. */
   time: string
+  /**
+   * While the step is ⏳ or ⏸: when the pane first saw it so (the time the table was written with it),
+   * in epoch milliseconds, for the live timer. Absent on other steps.
+   */
+  startMs?: number
 }
 
 /** The progress table of this session's listing. */
@@ -47,6 +52,8 @@ declare module 'claude-code' {
       progress: Shaped<Progress | null>
       /** The listing folder whose progress.md this session wrote or read. */
       listing: Shaped<string | null>
+      /** The time the steps pane's live timer last ticked, in epoch milliseconds. */
+      now: Shaped<number>
     }
   }
 }

@@ -6,14 +6,17 @@ import {
   codeOf,
   dayLabel,
   downloadName,
+  formatElapsed,
   formatLength,
   formatSize,
   groupByDay,
   groupByListing,
   infoOf,
   listingOf,
+  parseDuration,
   parseSteps,
   tagOf,
+  withStarts,
 } from './register'
 
 const BAND = {
@@ -300,6 +303,25 @@ test('progress.md rows become steps', () => {
   expect(parseSteps('no table')).toEqual([])
 })
 
+test('the live timer: start times, durations and the elapsed format', () => {
+  const steps = parseSteps(PROGRESS)
+  // The first time a step runs, it starts when the table was written.
+  const first = withStarts(steps, [], 5000)
+  expect(first.map(step => step.startMs)).toEqual([undefined, 5000, undefined])
+  // A later write keeps a running step's start; a step that changes status starts again or stops.
+  expect(withStarts(steps, first, 9000)[1]?.startMs).toBe(5000)
+  const moved = parseSteps(PROGRESS.replace('⏸ รอคุณ', '✅ เสร็จ').replace('⬜ รอ', '⏳ กำลังทำ'))
+  expect(withStarts(moved, first, 9000).map(step => step.startMs)).toEqual([undefined, undefined, 9000])
+
+  expect(parseDuration('42 วิ')).toBe(42)
+  expect(parseDuration('1 นาที 24 วิ')).toBe(84)
+  expect(parseDuration('1 ชม. 2 นาที')).toBe(3720)
+  expect(parseDuration('')).toBe(0)
+  expect(formatElapsed(42)).toBe('42 วิ')
+  expect(formatElapsed(185)).toBe('3 นาที 05 วิ')
+  expect(formatElapsed(3725)).toBe('1 ชม. 02 นาที 05 วิ')
+})
+
 test('a tool call names its listing by the progress.md path', () => {
   expect(listingOf({ file_path: '/project/listings/A01-condo/output/progress.md' })).toBe('A01-condo')
   expect(listingOf({ command: "cat 'listings/B02-house/output/progress.md'" })).toBe('B02-house')
@@ -372,6 +394,9 @@ test('the steps pane opens when the work starts, and the button closes and reope
   expect(await pane.find({ type: 'Text', text: /เสร็จ 1\/3 ขั้นตอน/ })).toBeTruthy()
   expect(await pane.find({ type: 'Text', text: '⏸ รอคุณ เลือกสไตล์' })).toBeTruthy()
   expect(await pane.find({ type: 'Text', text: '42 วิ' })).toBeTruthy()
+  // The waiting step counts live from when the table was written with it; the total adds the done steps.
+  expect(await pane.find({ type: 'Text', text: /^⏱ \d/ })).toBeTruthy()
+  expect(await pane.find({ type: 'Text', text: /^⏱ เวลารวม / })).toBeTruthy()
   await pane.unmount()
 
   await band.press({ key: 'toggle-steps' })

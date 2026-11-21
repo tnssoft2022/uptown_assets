@@ -19,7 +19,9 @@ the work steps of this session's listing only: the `listings/<listing>/output/pr
 session last wrote or read (another session's listing never shows here; before this session touches a
 progress.md the pane says there is none yet)
 (# | ขั้นตอน | สถานะ | ใช้เวลา), each step coloured by its status (✅ green, ⏳ yellow, ⏸ magenta),
-with the property name and how many steps are done. The pane redraws as the director updates the table
+with the property name and how many steps are done. A step in progress (⏳) or waiting on you (⏸)
+shows a live ⏱ timer, counting once a second from when the table was first written with it so, and the
+header shows the total time so far (the done steps' ใช้เวลา plus the running timers). The pane redraws as the director updates the table
 (after each file write and at the end of every turn). It opens by itself the first time this session
 writes or reads a listing's progress.md (when the work starts); after that it stays as you leave it.
 `/steps` does the same as the button.

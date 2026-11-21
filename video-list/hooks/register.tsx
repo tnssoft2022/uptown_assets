@@ -18,8 +18,11 @@ const videos = atom({ plugin: 'video-list', key: 'videos' } as const, [], {
 const progress = atom(
   { plugin: 'video-list', key: 'progress' } as const,
   null as Progress | null,
-  { shape: 'progress-2' },
+  { shape: 'progress-3' },
 )
+
+// The steps pane's clock: ticks once a second while a step is running.
+const now = atom({ plugin: 'video-list', key: 'now' } as const, 0, { shape: 'now-1' })
 
 // The listing folder whose progress.md this session wrote or read; session
 // state, so another session's listing never shows in this one's pane.
@@ -183,6 +186,48 @@ export const parseSteps = (text: string): Step[] => {
   return steps
 }
 
+/** A step the live timer runs for: in progress (⏳) or waiting on the user (⏸). */
+export const isRunning = (status: string) => status.includes('⏳') || status.includes('⏸')
+
+/**
+ * Gives each running step its start time: the one it already had while it stays running in the
+ * same listing, else `writtenMs` (the table was written with it running just then).
+ */
+export const withStarts = (
+  steps: readonly Step[],
+  before: readonly Step[],
+  writtenMs: number,
+): Step[] =>
+  steps.map(step => {
+    const { startMs: _, ...rest } = step
+    if (!isRunning(step.status)) return rest
+    const old = before.find(
+      b => b.number === step.number && b.name === step.name && isRunning(b.status) && b.status === step.status,
+    )
+    return { ...rest, startMs: old?.startMs ?? writtenMs }
+  })
+
+/** Seconds in a ใช้เวลา cell such as "1 ชม. 5 นาที", "1 นาที 24 วิ" or "42 วิ"; 0 when none. */
+export const parseDuration = (text: string) => {
+  let seconds = 0
+  for (const m of text.matchAll(/(\d+(?:\.\d+)?)\s*(ชั่วโมง|ชม|นาที|วินาที|วิ)/g)) {
+    const n = Number(m[1])
+    seconds += m[2]!.startsWith('ช') ? n * 3600 : m[2] === 'นาที' ? n * 60 : n
+  }
+  return Math.round(seconds)
+}
+
+/** A length in seconds the way the table writes it: "42 วิ", "3 นาที 05 วิ", "1 ชม. 02 นาที 05 วิ". */
+export const formatElapsed = (total: number) => {
+  const t = Math.max(0, Math.floor(total))
+  const h = Math.floor(t / 3600)
+  const m = Math.floor((t % 3600) / 60)
+  const s = t % 60
+  if (h) return `${h} ชม. ${pad(m)} นาที ${pad(s)} วิ`
+  if (m) return `${m} นาที ${pad(s)} วิ`
+  return `${s} วิ`
+}
+
 /** Reads this session's listing's output/progress.md into the progress atom. */
 async function scanProgress($: Engine) {
   try {
@@ -205,7 +250,9 @@ async function scanProgress($: Engine) {
     const folder = `${root}/${newest.listing}`
     const text = await $.fs.read(`${folder}/output/progress.md`)
     const { title } = await readInfo($, folder, newest.listing)
-    const found: Progress = { ...newest, title, steps: parseSteps(text) }
+    const before = known?.listing === newest.listing ? known.steps : []
+    const steps = withStarts(parseSteps(text), before, newest.mtimeMs)
+    const found: Progress = { ...newest, title, steps }
     await update($, progress, () => found)
   } catch {
     // A half-written file: keep what is shown until the next scan.
@@ -590,6 +637,13 @@ export const register: Register = on => {
     })
     void scan($)
     void scanProgress($)
+    // The live timer: tick once a second while a step runs (a tick redraws the pane).
+    $.clock.every(1000, async () => {
+      const shown = await read($, progress)
+      if (!shown?.steps.some(step => step.startMs !== undefined)) return
+      const at = await $.clock.now()
+      await update($, now, () => at)
+    })
     return started
   })
 
@@ -633,12 +687,20 @@ export const register: Register = on => {
       )
     }
     const done = shown.steps.filter(step => step.status.includes('✅')).length
+    const at = Math.max(await read($, now), shown.mtimeMs)
+    const live = (step: Step) =>
+      step.startMs === undefined ? 0 : Math.max(0, (at - step.startMs) / 1000)
+    const total = shown.steps.reduce(
+      (sum, step) => sum + (step.startMs !== undefined ? live(step) : parseDuration(step.time)),
+      0,
+    )
     return (
       <Box flexDirection="column">
         <Text bold>{shown.title}</Text>
         <Text dimColor>
           {`เสร็จ ${done}/${shown.steps.length} ขั้นตอน · ${formatDate(shown.mtimeMs)}`}
         </Text>
+        {total > 0 && <Text>{`⏱ เวลารวม ${formatElapsed(total)}`}</Text>}
         <Box flexDirection="column" marginTop={1}>
           {shown.steps.length === 0 && <Text dimColor>ตารางยังว่าง</Text>}
           {shown.steps.map((step, i) => (
@@ -647,7 +709,11 @@ export const register: Register = on => {
               <Box flexGrow={1} flexShrink={1}>
                 <Text color={colorOf(step.status)}>{`${step.status} ${step.name}`}</Text>
               </Box>
-              {step.time && <Text dimColor>{step.time}</Text>}
+              {step.startMs !== undefined ? (
+                <Text color={colorOf(step.status)}>{`⏱ ${formatElapsed(live(step))}`}</Text>
+              ) : (
+                step.time && <Text dimColor>{step.time}</Text>
+              )}
             </Box>
           ))}
         </Box>
