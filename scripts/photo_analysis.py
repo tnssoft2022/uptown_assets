@@ -14,8 +14,9 @@ sheet: reads <listing-dir>/output/analysis/photos.json (written by the brief age
   - totals the scores (0-100) and ranks the photos, picks the Hero Shot (highest total among rooms
     that may open a video) unless the agent set "hero": true on one,
   - works out the 9:16 crop around the focus at the start and the end of the camera move,
-  - checks each text band of the 1080x1920 frame (top, centre, lower, caption) over that crop for
-    busy detail and brightness, and recommends where the text goes,
+  - checks each text band of the 1080x1920 frame (top, centre, lower, caption, and the layouts' head,
+    mid, bottom) over that crop for busy detail and brightness, and recommends where the text goes
+    (with "layout": "A"|"B"|"C" the layout's band is kept and only the advice changes),
   - writes the results to <listing-dir>/output/analysis/plan.json and draws
     <listing-dir>/output/analysis/photo_analysis.jpg (one tile per photo: crop boxes, focus,
     text band, scores, Hero star).
@@ -66,8 +67,14 @@ BANDS = {
     "centre": (700, 960),
     "lower": (960, 1130),
     "caption": (1150, 1248),
+    # bands of the text layouts A/B/C (STYLES.md "การจัดวางข้อความ"), which use the wider zone y 80-1840
+    "head": (90, 290),
+    "mid": (860, 1060),
+    "bottom": (1480, 1840),
 }
-BAND_TH = {"top": "บน", "centre": "กลาง", "lower": "ล่าง", "caption": "ซับ"}
+BAND_TH = {"top": "บน", "centre": "กลาง", "lower": "ล่าง", "caption": "ซับ",
+           "head": "หัวบน", "mid": "กลางจอ", "bottom": "ชิดล่าง"}
+LAYOUT_BAND = {"A": "mid", "B": "bottom", "C": "bottom"}  # the main text band of each layout
 BAND_X = (120, 780)
 CALM_LIMIT = 18.0     # mean gradient (0-255 scale) at or below which a band is calm
 BUSY_LIMIT = 28.0     # above this the band is too busy: text needs a dark band behind it
@@ -431,7 +438,10 @@ def cmd_sheet(listing):
         die("write %s first (the brief agent's analysis)" % src)
     with open(src, encoding="utf-8") as f:
         data = json.load(f)
-    style_band = data.get("text_band", "lower")
+    layout = data.get("layout")
+    if layout is not None and layout not in LAYOUT_BAND:
+        die("layout must be one of " + ", ".join(LAYOUT_BAND))
+    style_band = LAYOUT_BAND[layout] if layout else data.get("text_band", "lower")
     if style_band not in BANDS:
         die("text_band must be one of " + ", ".join(BANDS))
     items = data.get("photos", [])
@@ -488,8 +498,8 @@ def cmd_sheet(listing):
                             "ok": busy <= BUSY_LIMIT,
                             "needs_shadow": bright > BRIGHT_LIMIT}
             it["text_zones"] = zones
-            if zones[style_band]["ok"]:
-                it["text_band"] = style_band
+            if layout or zones[style_band]["ok"]:
+                it["text_band"] = style_band   # a layout fixes the text place
             else:
                 calm = [b for b in ("lower", "centre", "top") if zones[b]["ok"]]
                 it["text_band"] = calm[0] if calm else min(("lower", "centre", "top"), key=lambda b: zones[b]["busy"])
@@ -534,7 +544,7 @@ def cmd_sheet(listing):
             die("ffmpeg sheet: " + r.stderr.strip())
     for it in items:
         it.pop("caption_lines", None)
-    plan = {"listing": os.path.basename(listing), "style": data.get("style"), "style_text_band": style_band,
+    plan = {"listing": os.path.basename(listing), "style": data.get("style"), "layout": layout, "style_text_band": style_band,
             "hero": hero["file"], "hero_by": hero["hero_by"],
             "groups": {g: [it["file"] for it in ranked if ROOMS[it["room"]][0] == g] for g in GROUP_ORDER},
             "photos": ranked}

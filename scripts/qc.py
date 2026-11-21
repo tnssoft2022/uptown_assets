@@ -15,7 +15,7 @@ composition folder), whichever exist, and checks:
     item that is ✗ in a checklist but stated in the listing's own text is a conflict to ask about).
  3. Text over the subject: renders each shot's middle frame with and without its text, takes the
     difference as the text's footprint, and checks it against the shot's focus point (plan.json); also
-    text outside the safe zone of the composition's aspect.
+    text outside the safe zone of the composition's aspect (or of its text layout A/B/C).
  4. Crop: where each photo's focus lands in the frame, from the photo's inline crop in the composition;
     off the frame or out of the area the style keeps for the subject is a problem.
  5. Sound and timing: the mix's loudness and voice-over-music gap (mix.json); voice lines against shots,
@@ -46,6 +46,14 @@ SAFE = {  # text safe area per aspect: (x0, x1, y0, y1) and the narrower right e
     (1920, 1080): dict(x0=96, x1=1824, y0=54, y1=1026, rail_y=None, rail_x1=None, subj=(96, 1824, 54, 1026)),
     (1080, 1080): dict(x0=60, x1=1020, y0=60, y1=1020, rail_y=None, rail_x1=None, subj=(60, 1020, 60, 1020)),
 }
+# the text layouts A/B/C (STYLES.md "การจัดวางข้อความ"; composition root data-layout or plan.json "layout")
+# keep text in a wider zone, close to the top and bottom edges; subj is where the photo's focus may land
+SAFE_LAYOUT = {
+    "A": dict(x0=50, x1=888, y0=80, y1=1840, rail_y=840, rail_x1=780, subj=(120, 960, 260, 1450)),
+    "B": dict(x0=50, x1=888, y0=80, y1=1840, rail_y=840, rail_x1=780, subj=(120, 960, 300, 1450)),
+    "C": dict(x0=50, x1=888, y0=80, y1=1840, rail_y=840, rail_x1=780, subj=(120, 960, 260, 1450)),
+}
+CUR_LAYOUT = [None]   # set in main()
 NUM = r"\d[\d,]*(?:\.\d+)?"
 
 
@@ -144,6 +152,7 @@ def load_comp(hdir):
     W = int(p.root.get("data-width", 1080))
     H = int(p.root.get("data-height", 1920))
     D = float(p.root.get("data-duration", 0))
+    load_comp.layout = p.root.get("data-layout")
     return p.clips, (W, H), D
 
 
@@ -318,9 +327,9 @@ def gray(path, w, h):
     return r.stdout
 
 
-def check_frames(hdir, clips, size, plan, outdir, F, no_frames):
+def check_frames(hdir, clips, size, plan, outdir, F, no_frames, layout=None):
     W, H = size
-    safe = SAFE.get(size)
+    safe = SAFE_LAYOUT[layout] if layout in SAFE_LAYOUT and size == (1080, 1920) else SAFE.get(size)
     shots = shots_of(clips)
     texts = text_clips(clips)
     rows = []
@@ -500,6 +509,8 @@ def check_timing(clips, total, timing, mixj, F, hf_check):
                             "container_overflow", "negative_z_index", "sparse_keyframes", "film_silent",
                             "duplicate_media_discovery_risk"):
                     continue
+                if code == "outside_safe_zone" and CUR_LAYOUT[0]:
+                    continue   # a layout's wider zone is checked from the frames (check_frames)
                 if code == "panel_out_of_canvas" and "logo" in (f.get("selector") or ""):
                     continue
                 lvl = "error" if f.get("severity") == "error" else "warn"
@@ -556,13 +567,15 @@ def main():
         texts += [("เสียงพากย์ช็อต %d" % l["shot"], l["text"]) for l in timing.get("lines", [])]
     check_spelling(texts, F)
     check_facts(texts, listing, F)
-    rows = check_frames(hdir, clips, size, plan, out, F, a.no_frames)
+    layout = load_comp.layout or (plan or {}).get("layout")
+    CUR_LAYOUT[0] = layout if layout in SAFE_LAYOUT and size == (1080, 1920) else None
+    rows = check_frames(hdir, clips, size, plan, out, F, a.no_frames, layout)
     check_timing(clips, total, timing, mixj, F, hf_check)
 
     errs = [f for f in F.items if f["level"] == "error"]
     warns = [f for f in F.items if f["level"] == "warn"]
     md = ["# QC: %s" % os.path.basename(L), "",
-          "คอมโพสิชัน `%s` · %dx%d · %.2f วิ · ❌ %d · ⚠️ %d" % (a.hf, size[0], size[1], total, len(errs), len(warns)), "",
+          "คอมโพสิชัน `%s` · %dx%d · %.2f วิ · การจัดวาง %s · ❌ %d · ⚠️ %d" % (a.hf, size[0], size[1], total, layout or "-", len(errs), len(warns)), "",
           "| หัวข้อ | ผล |", "|---|---|"]
     for area in ("spelling", "facts", "overlap", "crop", "sound", "timing", "animation", "layout"):
         fs = [f for f in F.items if f["area"] == area]

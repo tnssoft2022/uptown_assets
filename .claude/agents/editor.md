@@ -16,6 +16,15 @@ What the brief should give you (ask for nothing — if something is missing, use
   timeline nearby card) replaces this file's full-frame photo, centred text and text card defaults with its
   own; the logo, the top and bottom safe zone and the end card rules still apply. Values the brief states (shot durations, transitions, moves) win over
   the style; the style wins over the defaults here. No style given: มาตรฐาน.
+- The layout: A, B or C (`STYLES.md` "การจัดวางข้อความ"; read its rules and table), or none (การ์ดข้อมูล, older
+  briefs: then the safe zone and logo rules below apply as written). A layout replaces this file's text and
+  caption positions, safe zone and corner logo with the table's: A and C put the animated logo (block A of
+  `brand/logo_anim/SNIPPETS.md`, moved to x 50, y 90 and sized 140 px) flush left with the project name and
+  รหัสทรัพย์ beside it on every shot until the end card; B has no corner logo at all and gives each shot its
+  photo name on top, flush left. Set `data-layout="A"` (or B, C) on the composition root so
+  `scripts/qc.py` checks the layout's zone (y 80–1840, x 50–888, x ≤ 780 from y 840 down). An
+  `outside_safe_zone` warning from `HF check` on text inside that zone is expected then; text outside it
+  is not. The end card (large logo) is the same in every layout.
 - The shot list in order, with a duration per shot and any on-screen text. When a shot gives a focus (the
   part of the photo to keep) and a camera move (push-in or pull-out with %, pan with direction and %), crop
   around that focus and make that move; otherwise centre the crop and pick a slow move yourself. A focus
@@ -50,7 +59,7 @@ Formats:
   over 60 seconds, trim shot durations evenly to fit and report it.
 - Hook: the first shot and its text line must be on screen within the first second; no slow fade-in from black.
 - End card: agent name, contact and "Link in bio" unless the brief gives other text.
-- Logo on every video: the Uptown Assets logo `brand/logo.png` (in the project root; 848×848 PNG with a
+- Logo on every video (with a layout, its header or end card places it; the rest of this item still holds): the Uptown Assets logo `brand/logo.png` (in the project root; 848×848 PNG with a
   transparent background) goes in every video you build, even if the brief doesn't mention it. Use a
   different logo only if the brief gives one.
   - The logo is animated, with the blocks in `brand/logo_anim/SNIPPETS.md` (read it; paste its CSS, markup
@@ -158,7 +167,7 @@ How the video is built (HyperFrames for the picture, ffmpeg for the sound):
   Expected check warnings you can leave: the local Sarabun font, a silent film, nested sections, sparse
   keyframes in AI clips, overlap during a crossfade, a `container_overflow` on the price sheen, and contrast
   notes on text that has the style's outline or a `.scrim-band`. An `outside_safe_zone` warning is not
-  expected: move or shrink that text until it is gone. The CLI adds `hyperframes.json` and `.hyperframes/`
+  expected without a layout (with one, only for text outside the layout's zone): move or shrink that text until it is gone. The CLI adds `hyperframes.json` and `.hyperframes/`
   to the project folder; leave them.
 - Sound with ffmpeg (`scripts/mix_audio.py`, below), muxed by `render_cut.py`. A `_nomusic` version only needs
   a second mix and mux of the same picture, not a second render. Other aspects reuse the 9:16 mix.
@@ -168,7 +177,7 @@ Output format:
   at 44.1 kHz, `-movflags +faststart` (`scripts/render_cut.py check` tests all of it).
 - Horizontal photos or clips: scale and crop to fill the frame, with a slow Ken Burns pan or zoom on stills.
   Never stretch or distort.
-- Text, captions, prices and icons inside the safe zone that TikTok, Facebook Reels and YouTube Shorts all
+- Text, captions, prices and icons (without a layout; a layout uses its own zone) inside the safe zone that TikTok, Facebook Reels and YouTube Shorts all
   leave clear (the one `HF check` tests as `outside_safe_zone`): y 380–1248 (the logo box above, the app's
   caption, handle and buttons below), x 120–888, and from y 840 down x 120–780 (TikTok's action rail).
   Centre text on the text axis x=540 (the frame centre): each line at most 696 px wide above y 840 and at

@@ -15,7 +15,9 @@ ffmpeg for the sound).
 ```
 brand/
   logo.png     Uptown Assets logo (transparent PNG). The editor puts it on every video: top-left on every
-               shot and large on the end card, animated.
+               shot (or where the text layout puts it) and large on the end card, animated.
+  layouts/     the text layouts A, B, C (STYLES.md "การจัดวางข้อความ"): layout_A/B/C.png and layouts_all.png,
+               the pictures the director shows when asking, drawn by thumbs.html.
   logo_layers/ the logo cut by position into ring, mark (U), uptown, assets (scripts/split_logo.py); the
                animation moves these, never redraws them.
   logo_anim/   the logo sting (HyperFrames project) and SNIPPETS.md: the corner and end card blocks the
@@ -89,7 +91,8 @@ for every hook, on-screen line, caption, voice-over line and end card. `brief` d
 
 `STYLES.md` (Thai) holds the video style presets (มาตรฐาน, เรียบหรู, เดินชมห้อง, การ์ดข้อมูล): tone, length, shot pace,
 transitions, text look, voice pace, music mood and staging look. The director asks the user to pick one
-before the brief, in the app's question box (one click picks it); `brief`, `voice-kanya`, `editor` and `retouch` (staging) follow it.
+and a text layout (A centre, B top and bottom, C bottom; STYLES.md "การจัดวางข้อความ") before the brief, in the
+app's question box (one click picks each); `brief`, `voice-kanya`, `editor` and `retouch` (staging) follow it.
 
 ## Rules every session follows
 

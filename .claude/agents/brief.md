@@ -16,6 +16,14 @@ into sections: give every shot its section, and write each section's on-screen t
 main heading and chips (the style's lengths), held across all its shots. Everything the style doesn't set, and every rule in CLAUDE.md and
 `COPY_STYLE.md` (facts, words to avoid, formats), stays as written.
 
+Layout: the task may name a text layout, A, B or C (`STYLES.md` "การจัดวางข้อความ"; none for การ์ดข้อมูล or an
+older brief). It sets where every line sits: A the main text in the centre under a header of logo and
+project name, B the photo's name on top and the facts at the bottom, flush left, with no logo, C the text
+at the bottom under the same header as A. With B, give every shot a photo name (the room or part the photo
+shows, "ห้องนั่งเล่น", "สระว่ายน้ำ"; "ราคาขาย" on the price shot; at most ~12 characters, nothing the photo
+doesn't show). With A and C, the header's project name is the listing's own name for it, shortened only
+by dropping words (never a new name). The style still sets the text look, motion and lengths.
+
 1. Take stock of the assets (read only; never move, rename or change them):
    - List every photo, clip, logo and music file in the folder.
    - For each file: its type, orientation (vertical or horizontal), resolution, and for clips and music the
@@ -41,7 +49,7 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
    - Write `output/analysis/photos.json`, one entry per photo (clips are judged by their frames in step 1,
      not here):
      ```json
-     {"style": "มาตรฐาน", "text_band": "lower",
+     {"style": "มาตรฐาน", "text_band": "lower", "layout": "C",
       "photos": [{"file": "assets/photo-05.jpg", "room": "exterior", "what": "twilight, both buildings lit, pool",
                   "scores": {"sharp": 5, "light": 5, "angle": 4, "tidy": 4, "fit": 4, "appeal": 5},
                   "use": true, "reason": "ฟ้าพลบค่ำ ไฟเปิดทั้งหลัง", "focus": [0.42, 0.55],
@@ -49,6 +57,10 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      ```
      - `text_band`: where the style puts its main text line: "lower" (y ≈ 960–1130), "centre"
        (y ≈ 700–960) or "top" (y ≈ 400–620), from the style's "ตำแหน่งข้อความ" row.
+     - `layout`: "A", "B" or "C" when the task names one (leave it out otherwise). It replaces `text_band`:
+       the script checks the layout's band (A `mid` y ≈ 860–1060, B and C `bottom` y ≈ 1480–1840) and
+       never moves the text; aim the focus so the subject sits where that layout keeps it (the
+       "จุดเด่นของภาพ" row).
      - `room`: one of exterior, drone, entry, living, dining, kitchen, primary suite, bedroom, bathroom,
        outdoor, view, amenity, neighborhood, floor plan, other. The script sorts them into the six groups
        ภายนอก, ภายใน, ห้องนอน, ห้องน้ำ, ห้องครัว, พื้นที่รอบบ้าน (plus อื่น ๆ).
@@ -222,7 +234,7 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      | Why this photo | one line from the photo choice rules | sharpest, whole room in frame |
      | Focus | the part of the photo the 9:16 crop must keep, with plan.json's focus point | sofa and window (0.68, 0.52) |
      | Camera move | Ken Burns push-in or pull-out with %, pan with direction and %, none, or AI motion; for a clip, the part of it to use | push-in 6% toward the window · clip 2.0–6.5 s |
-     | On-screen text + position | the Thai text and where it sits (top, centre, lower third), at most two points per scene: a line + a sub-line, a line + an icon row written as [icons: bed-double "3 ห้องนอน" · bath "2 ห้องน้ำ" · ruler-dimension-line "250 ตร.ม."] (2–4 icons of one kind, names from `brand/icons/ICONS.md`, labels from listing facts only), or a price block written as [price: "ราคาขาย" · "5.5 ล้านบาท" · sub "ค่าโอนคนละครึ่ง"]; add "parallax" on slow shots, the price shot and text cards where the style's "Parallax" row allows it; in a style whose "ข้อความเคลื่อนไหว" row uses a highlight, mark at most one word per line as ==word== (a fact word from the listing, a whole word with spaces around it) | "เพดานสูง ==3 เมตร==" · lower third |
+     | On-screen text + position | the Thai text and where it sits (top, centre, lower third; with a layout, its places: write "A centre", "B bottom", "C bottom", and with B the photo name first, e.g. [name: "ห้องนั่งเล่น"]), at most two points per scene: a line + a sub-line, a line + an icon row written as [icons: bed-double "3 ห้องนอน" · bath "2 ห้องน้ำ" · ruler-dimension-line "250 ตร.ม."] (2–4 icons of one kind, names from `brand/icons/ICONS.md`, labels from listing facts only), or a price block written as [price: "ราคาขาย" · "5.5 ล้านบาท" · sub "ค่าโอนคนละครึ่ง"]; add "parallax" on slow shots, the price shot and text cards where the style's "Parallax" row allows it; in a style whose "ข้อความเคลื่อนไหว" row uses a highlight, mark at most one word per line as ==word== (a fact word from the listing, a whole word with spaces around it) | "เพดานสูง ==3 เมตร==" · lower third |
      | Voice-over + length | the line and its character count, if there is a voice-over | "ห้องนั่งเล่น..." · 22 chars ≈ 1.8 s |
      | Transition in | none (shot 1), crossfade, zoom, whip (left/right), flash, fade-through, light leak (over a crossfade), push, lift, hard cut; by the style's "ทรานสิชัน" row, with its length | whip right 0.3 |
      | Retouch / credits | the edits this photo gets and their cost (free or credits) | fix (free) |
@@ -284,12 +296,12 @@ main heading and chips (the style's lengths), held across all its shots. Everyth
      picked (with the reason, or the rule it lost on), and the unusable ones with the reason.
    - "Retouch suggestions": photo, suggested edits, and why, in the form the `retouch` agent expects.
    - "Facts": the facts and the missing ones.
-   - "Style": the style name and any overrides, so re-cuts use the same style.
+   - "Style": the style name and any overrides, and the layout (A, B, C or none), so re-cuts use the same.
    - "Treatment": the hook, the selling points ranked with their facts, the beat timeline (hook, selling
      points, cards, price, call to action, with seconds) and the music mood, written so the director can
      show it to the user.
    - "Voice-over" (only if asked): the script table — shot, start, duration, line — ready for the `voice-kanya` agent.
-   - "Editor brief": the style name and overrides, the shot list (every column above), captions with timings, transitions, target total length, asset paths,
+   - "Editor brief": the style name and overrides, the layout (with B, each shot's photo name; with A and C, the header's project name and รหัสทรัพย์), the shot list (every column above), captions with timings, transitions, target total length, asset paths,
      output folder, end card text and music (with, the default; without or both only if the user asked), in the form the editor agent expects.
    - "Open questions": what the director needs to ask the user.
 

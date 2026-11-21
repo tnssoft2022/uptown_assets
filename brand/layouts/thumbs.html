@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><style>
+@font-face { font-family: "Kanit"; src: url("../fonts/kanit/Kanit-SemiBold.ttf"); font-weight: 600; }
+@font-face { font-family: "Kanit"; src: url("../fonts/kanit/Kanit-Medium.ttf"); font-weight: 500; }
+html,body{margin:0;background:#1d1a16}
+.t{display:none;width:600px;height:960px;position:relative;background:#1d1a16;font-family:Kanit}
+.t.on{display:block}
+/* phone screen 405x720 = 1080x1920 x 0.375 */
+.s{position:absolute;left:97px;top:50px;width:405px;height:720px;border-radius:34px;overflow:hidden;
+   box-shadow:0 0 0 6px #2e2923,0 0 0 8px #4a4036,0 18px 40px rgba(0,0,0,.5);
+   background:linear-gradient(180deg,#8fa6c4 0%,#b9c7d8 30%,#e9e2d4 31%,#d8cfbf 52%,#3fb3c9 53%,#2b8fb0 78%,#1f6d8c 100%)}
+.house{position:absolute;left:60px;top:150px;width:285px;height:230px;background:#f2efe8;box-shadow:inset 0 -60px 0 #e3ddd0}
+.house:before{content:"";position:absolute;left:-14px;right:-14px;top:-18px;height:18px;background:#3a4f6e}
+.house i{position:absolute;width:44px;height:64px;background:#c5713a;border-radius:3px}
+.blue{position:absolute;top:150px;width:26px;height:230px;background:#2f57a8}
+.tb{position:absolute;left:0;right:0;top:0;height:200px;background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,0))}
+.bb{position:absolute;left:0;right:0;bottom:0;height:290px;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.65))}
+.mb{position:absolute;left:0;right:0;top:270px;height:200px;background:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(0,0,0,.5),rgba(0,0,0,0))}
+.b{position:absolute;border-radius:8px}
+.w{background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.55)}
+.g{background:#e6c48a}
+.gp{background:#c9a063;border-radius:999px}
+.cap{background:rgba(255,255,255,.92);box-shadow:0 0 0 2px #000;border-radius:5px}
+.logo{position:absolute;width:52px;height:52px;border-radius:50%;background:url(../logo.png) center/100% 100%}
+.bar{position:absolute;width:4px;background:#c9a063;border-radius:2px}
+.lbl{position:absolute;left:0;right:0;top:800px;text-align:center}
+.lbl .k{display:inline-block;width:58px;height:58px;line-height:56px;border-radius:50%;background:#c9a063;color:#1d1a16;font-weight:600;font-size:36px;vertical-align:middle;margin-right:14px}
+.lbl .n{color:#fff;font-weight:600;font-size:44px;vertical-align:middle}
+.lbl .d{color:#b7ab98;font-weight:500;font-size:26px;margin-top:10px}
+</style></head><body>
+<template id="photo"><div class="house"><i style="left:150px;top:30px"></i><i style="left:215px;top:30px"></i><i style="left:150px;top:140px"></i><i style="left:215px;top:140px"></i></div><div class="blue" style="left:110px"></div><div class="blue" style="left:200px"></div></template>
+
+<!-- A centre -->
+<div class="t" id="A"><div class="s"><div class="ph"></div><div class="tb"></div><div class="mb"></div><div class="bb" style="height:160px"></div>
+  <div class="logo" style="left:19px;top:34px"></div>
+  <div class="b w" style="left:82px;top:42px;width:120px;height:18px"></div>
+  <div class="b g" style="left:82px;top:68px;width:80px;height:10px"></div>
+  <div class="b w" style="left:112px;top:326px;width:181px;height:30px"></div>
+  <div class="b g" style="left:132px;top:370px;width:141px;height:18px"></div>
+  <div class="b cap" style="left:132px;top:654px;width:141px;height:14px"></div>
+</div><div class="lbl"><span class="k">A</span><span class="n">ข้อความกลางจอ</span><div class="d">โลโก้ชิดซ้าย + ชื่อโครงการด้านบน</div></div></div>
+
+<!-- B top + bottom, left, no logo -->
+<div class="t" id="B"><div class="s"><div class="ph"></div><div class="tb"></div><div class="bb"></div>
+  <div class="bar" style="left:22px;top:42px;height:28px"></div>
+  <div class="b w" style="left:32px;top:44px;width:150px;height:24px"></div>
+  <div class="b g" style="left:32px;top:82px;width:96px;height:12px"></div>
+  <div class="b cap" style="left:22px;top:572px;width:141px;height:14px"></div>
+  <div class="b w" style="left:22px;top:604px;width:170px;height:30px"></div>
+  <div class="b g" style="left:22px;top:654px;width:200px;height:18px"></div>
+</div><div class="lbl"><span class="k">B</span><span class="n">ข้อความบนและล่าง</span><div class="d">ไม่มีโลโก้ · ชิดซ้ายทั้งบนและล่าง</div></div></div>
+
+<!-- C bottom -->
+<div class="t" id="C"><div class="s"><div class="ph"></div><div class="tb"></div><div class="bb"></div>
+  <div class="logo" style="left:19px;top:34px"></div>
+  <div class="b w" style="left:82px;top:42px;width:120px;height:18px"></div>
+  <div class="b g" style="left:82px;top:68px;width:80px;height:10px"></div>
+  <div class="b cap" style="left:132px;top:572px;width:141px;height:14px"></div>
+  <div class="b w" style="left:117px;top:604px;width:171px;height:30px"></div>
+  <div class="b g" style="left:102px;top:654px;width:201px;height:18px"></div>
+</div><div class="lbl"><span class="k">C</span><span class="n">ข้อความล่าง</span><div class="d">โลโก้ชิดซ้าย + ชื่อโครงการด้านบน</div></div></div>
+
+<script>
+const tp=document.getElementById('photo').innerHTML;
+document.querySelectorAll('.ph').forEach(p=>p.outerHTML=tp);
+document.getElementById((location.hash||'#A').slice(1)).classList.add('on');
+</script></body></html>

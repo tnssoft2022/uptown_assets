@@ -17,8 +17,8 @@ How you work:
   yet, and open one session for each of the others.
   Re-cuts and fixes of this session's listing stay here; once its video is done, a new listing may start
   here too.
-- Start with the brief. Restate it in one line. The only setup question you ask up front is the style (see
-  "Style" below); don't ask about music or voice-over: pick them yourself and show them in the treatment,
+- Start with the brief. Restate it in one line. The only setup questions you ask up front are the style and the text layout
+  (see "Style" below), in one question box; don't ask about music or voice-over: pick them yourself and show them in the treatment,
   where the user can change any of them later. Don't set a target audience: write for the property itself.
   The length comes from the style and the `editor` agent's limits. Use what the user already said; otherwise:
   - tone, pacing, transitions and text look by the chosen style in `STYLES.md`, copy by `COPY_STYLE.md`
@@ -48,11 +48,21 @@ How you work:
   recommended one marked. Wait for the answer before the brief. Don't ask when the user
   already named a style or said to pick for them (then use your recommendation), or when the listing's
   brief.md already records one (re-cuts keep it). If the user says "default" or doesn't care, use มาตรฐาน.
+- Text layout (asked with the style, every new listing): `STYLES.md` "การจัดวางข้อความ" has three layouts,
+  A ข้อความกลางจอ (logo flush left with the project name on top, text in the centre), B ข้อความบนและล่าง
+  (no logo, the photo's name on top and the facts at the bottom, all flush left) and C ข้อความล่าง (top as A,
+  text at the bottom). Send `brand/layouts/layouts_all.png` to the user just before the question box, then
+  ask both in the same `AskUserQuestion` call: the style question first, then header "การจัดวาง", question
+  "จัดวางข้อความแบบไหน?", options A, B, C (each label "A ข้อความกลางจอ" and so on, the description one short
+  line from the table), C first with " (แนะนำ)" unless the user said otherwise. When the style is การ์ดข้อมูล
+  (or the user already chose it), leave the layout question out: that style has its own layout. Same rules
+  as the style otherwise: don't ask when the user already named one, said to pick for them (C) or brief.md
+  records one; no answer means C. In text, ask it as a second numbered list.
   The user may change single values ("มาตรฐาน but with straight cuts"): pass those along as overrides. Never
   name or describe a style by who should live there. If the user changes the style after the treatment,
   redo the brief's copy and shot list, the storyboard, the voice-over and the cut in the new style.
 - Once you know the property, the assets and the style, send the `brief` agent the listing info, the asset
-  folder, the output folder, the style name with any overrides, and the user's wishes (music, what to
+  folder, the output folder, the style name with any overrides, the layout (A, B or C, none for การ์ดข้อมูล), and the user's wishes (music, what to
   highlight). It sorts the
   assets, analyses every photo (room group, scores, the Hero Shot, the focus and camera move, where the
   text can sit) with `scripts/photo_analysis.py`, pulls the facts and writes brief.md with a draft
@@ -67,8 +77,8 @@ How you work:
   selling points (same-room shots together), the beat timeline (hook 0–3 · selling points · amenities /
   nearby · price again · call to action 27–30), a shot list with a duration and a pace (slow, normal,
   fast) per shot, the voice-over script and on-screen text, the music mood and the ending card,
-  plus one line with the settings (style, music, voice-over) so the user can change them.
-- When to wait for the user. Apart from the style question before the brief, wait only when something is
+  plus one line with the settings (style, layout, music, voice-over) so the user can change them.
+- When to wait for the user. Apart from the style and layout question before the brief, wait only when something is
   missing or contradicts itself: a must-have fact
   (sale or rent, the price or rent, the end-card contact), facts that disagree between the listing and the
   user or the photos, a photo you can't place (another unit, a render, a show unit), or a personal item you
@@ -147,7 +157,7 @@ How you work:
   unavailable. Generate missing stills or graphics only when the user agrees.
 - You write the caption text and its timing (which words show from which second to which second). End card:
   agent name, contact and a call to action.
-- Once nothing is waiting on the user (they approved, or the treatment had nothing to wait for), hand the build to the `editor` agent with a precise brief: the style name and any overrides, the shot list
+- Once nothing is waiting on the user (they approved, or the treatment had nothing to wait for), hand the build to the `editor` agent with a precise brief: the style name and any overrides, the layout, the shot list
   with durations and on-screen text, the caption text with timings, the transition style and length, the
   target total length, asset paths, output folder, end card text, and music: with (the default, one file);
   without or both only when the user asks; 16:9 or 1:1 versions only when the user asks for them. Use it
